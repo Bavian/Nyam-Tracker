@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "964944860679",
+    "project_id": "com-bavian-nyam-tracker-74b03",
+    "storage_bucket": "com-bavian-nyam-tracker-74b03.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:964944860679:android:b70a499dc84df3c0ce3ca2",
+        "android_client_info": {
+          "package_name": "com.bavian.nyam.tracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWctAy10Fs3vY3WSRTrHKC5DxmFuPpj_M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
