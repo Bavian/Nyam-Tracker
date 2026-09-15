@@ -7,54 +7,33 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
 import com.google.firebase.ai.ai
 import com.google.firebase.ai.type.content
-import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
-import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-sealed interface ScannerUiState {
-    data object Idle : ScannerUiState
-    data object Loading : ScannerUiState
-    data class Success(val barcodeValue: String) : ScannerUiState
-    data class Error(val errorMessage: String) : ScannerUiState
-}
-
-class BakingViewModel : ViewModel() {
-    private val _uiState: MutableStateFlow<UiState> =
-        MutableStateFlow(UiState.Initial)
-    val uiState: StateFlow<UiState> =
-        _uiState.asStateFlow()
-
-    private val _scanState = MutableStateFlow<ScannerUiState>(ScannerUiState.Idle)
-    val scanState: StateFlow<ScannerUiState> = _scanState.asStateFlow()
+class BakingViewModel(
+    private val barcodeScanner: BarcodeScanner
+) : ViewModel() {
+    private val _uiState = MutableStateFlow(UiState())
+    val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
     private val generativeModel = Firebase.ai.generativeModel(
         modelName = "gemini-flash-latest",
     )
 
     fun startScan(context: Context) {
-        _scanState.value = ScannerUiState.Loading
-        val options = GmsBarcodeScannerOptions.Builder().build()
-        val scanner = GmsBarcodeScanning.getClient(context, options)
-
-        scanner.startScan()
-            .addOnSuccessListener { barcode ->
-                val result = barcode.displayValue ?: barcode.rawValue ?: "No barcode value detected"
-                _scanState.value = ScannerUiState.Success(result)
+        viewModelScope.launch {
+            barcodeScanner.startScan(context).collect { state ->
+                _uiState.update { it.copy(scanState = state) }
             }
-            .addOnFailureListener { e ->
-                _scanState.value = ScannerUiState.Error(e.localizedMessage ?: "Scan failed")
-            }
-            .addOnCanceledListener {
-                _scanState.value = ScannerUiState.Error("Scan canceled by user")
-            }
+        }
     }
 
     fun sendPrompt(bitmap: Bitmap, prompt: String) {
-        _uiState.value = UiState.Loading
+        _uiState.update { it.copy(resultState = UiState.ResultState.Loading) }
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -65,10 +44,14 @@ class BakingViewModel : ViewModel() {
                     }
                 )
                 response.text?.let { outputContent ->
-                    _uiState.value = UiState.Success(outputContent)
+                    _uiState.update {
+                        it.copy(resultState = UiState.ResultState.Success(outputContent))
+                    }
                 }
             } catch (e: Exception) {
-                _uiState.value = UiState.Error(e.localizedMessage ?: "")
+                _uiState.update {
+                    it.copy(resultState = UiState.ResultState.Error(e.localizedMessage ?: ""))
+                }
             }
         }
     }

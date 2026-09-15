@@ -65,13 +65,12 @@ fun BakingScreen(
     var prompt by rememberSaveable { mutableStateOf(placeholderPrompt) }
     var result by rememberSaveable { mutableStateOf(placeholderResult) }
     val uiState by bakingViewModel.uiState.collectAsState()
-    val scanState by bakingViewModel.scanState.collectAsState()
     val resources = LocalResources.current
     val context = LocalContext.current
 
-    LaunchedEffect(scanState) {
-        if (scanState is ScannerUiState.Success) {
-            prompt = (scanState as ScannerUiState.Success).barcodeValue
+    LaunchedEffect(uiState.scanState) {
+        if (uiState.scanState is BarcodeScanner.ScannerState.Success) {
+            prompt = (uiState.scanState as BarcodeScanner.ScannerState.Success).barcodeValue
         }
     }
 
@@ -152,16 +151,16 @@ fun BakingScreen(
                 }
             }
 
-            if (uiState is UiState.Loading) {
+            if (uiState.resultState is UiState.ResultState.Loading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             } else {
                 var textColor = MaterialTheme.colorScheme.onSurface
-                if (uiState is UiState.Error) {
+                if (uiState.resultState is UiState.ResultState.Error) {
                     textColor = MaterialTheme.colorScheme.error
-                    result = (uiState as UiState.Error).errorMessage
-                } else if (uiState is UiState.Success) {
+                    result = (uiState.resultState as UiState.ResultState.Error).errorMessage
+                } else if (uiState.resultState is UiState.ResultState.Success) {
                     textColor = MaterialTheme.colorScheme.onSurface
-                    result = (uiState as UiState.Success).outputText
+                    result = (uiState.resultState as UiState.ResultState.Success).outputText
                 }
                 val scrollState = rememberScrollState()
                 Text(
