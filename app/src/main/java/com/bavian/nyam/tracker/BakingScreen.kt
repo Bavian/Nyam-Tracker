@@ -22,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -31,6 +32,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -63,17 +65,36 @@ fun BakingScreen(
     var prompt by rememberSaveable { mutableStateOf(placeholderPrompt) }
     var result by rememberSaveable { mutableStateOf(placeholderResult) }
     val uiState by bakingViewModel.uiState.collectAsState()
+    val scanState by bakingViewModel.scanState.collectAsState()
     val resources = LocalResources.current
+    val context = LocalContext.current
+
+    LaunchedEffect(scanState) {
+        if (scanState is ScannerUiState.Success) {
+            prompt = (scanState as ScannerUiState.Success).barcodeValue
+        }
+    }
 
     Scaffold { innerPadding ->
         Column(
             modifier = Modifier.padding(innerPadding).fillMaxSize()
         ) {
-            Text(
-                text = stringResource(R.string.baking_title),
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(16.dp)
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.baking_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(16.dp).weight(1f)
+                )
+                Button(
+                    onClick = { bakingViewModel.startScan(context) },
+                    modifier = Modifier.padding(end = 16.dp)
+                ) {
+                    Text(text = "Scan Barcode")
+                }
+            }
 
             LazyRow(
                 modifier = Modifier.fillMaxWidth()
