@@ -1,6 +1,8 @@
 package com.bavian.nyam.tracker.di
 
 import com.bavian.nyam.tracker.presentation.main.MainViewModel
+import com.bavian.nyam.tracker.presentation.navigation.AppNavigation
+import com.bavian.nyam.tracker.presentation.navigation.AppNavigationImpl
 import com.bavian.nyam.tracker.presentation.scanner.BarcodeScanner
 import com.bavian.nyam.tracker.presentation.scanner.BarcodeScannerImpl
 import org.koin.core.module.dsl.singleOf
@@ -11,5 +13,6 @@ import org.koin.dsl.module
 val appModule =
     module {
         singleOf(::BarcodeScannerImpl) bind BarcodeScanner::class
+        singleOf(::AppNavigationImpl) bind AppNavigation::class
         viewModelOf(::MainViewModel)
     }

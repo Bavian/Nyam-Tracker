@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
 class BarcodeScannerImpl : BarcodeScanner {
+    // Move from flow to start scanning directly
     override fun startScan(context: Context): Flow<BarcodeScanner.ScannerState> =
         callbackFlow {
             trySend(BarcodeScanner.ScannerState.Loading)
