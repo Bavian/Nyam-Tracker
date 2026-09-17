@@ -8,4 +8,10 @@
     <string name="image2_description">Cookies</string>
     <string name="image3_description">Cake</string>
     <string name="results_placeholder">(Results will appear here)</string>
+    <string name="calendar_yesterday">Yesterday</string>
+    <string name="calendar_today">Today</string>
+    <string name="calendar_tomorrow">Tomorrow</string>
+    <string name="calendar_pick_date_description">Pick Date</string>
+    <string name="calendar_previous_day_description">Previous Day</string>
+    <string name="calendar_next_day_description">Next Day</string>
 </resources>
