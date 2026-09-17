@@ -3,35 +3,25 @@ package com.bavian.nyam.tracker.presentation.scanner
 import android.content.Context
 import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 
 class BarcodeScannerImpl : BarcodeScanner {
-    // Move from flow to start scanning directly
-    override fun startScan(context: Context): Flow<BarcodeScanner.ScannerState> =
-        callbackFlow {
-            trySend(BarcodeScanner.ScannerState.Loading)
-
+    override suspend fun startScan(context: Context): Result<BarcodeScanner.ScannerState> =
+        suspendCancellableCoroutine { continuation ->
             val options = GmsBarcodeScannerOptions.Builder().build()
             val scanner = GmsBarcodeScanning.getClient(context, options)
 
             scanner
                 .startScan()
                 .addOnSuccessListener { barcode ->
-                    val result = barcode.displayValue ?: barcode.rawValue ?: "No barcode value detected"
-                    trySend(BarcodeScanner.ScannerState.Success(result))
-                    close()
+                    val result =
+                        barcode.displayValue ?: barcode.rawValue ?: "No barcode value detected"
+                    continuation.resume(Result.success(BarcodeScanner.ScannerState(result)))
                 }.addOnFailureListener { e ->
-                    trySend(BarcodeScanner.ScannerState.Error(e.localizedMessage ?: "Scan failed"))
-                    close()
+                    continuation.resume(Result.failure(e))
                 }.addOnCanceledListener {
-                    trySend(BarcodeScanner.ScannerState.Error("Scan canceled by user"))
-                    close()
+                    continuation.resume(Result.failure(Exception("Scan canceled by user")))
                 }
-
-            awaitClose {
-                // Clean up if needed, though GmsBarcodeScanner doesn't have an explicit stop
-            }
         }
 }

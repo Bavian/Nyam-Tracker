@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.SharedFlow
 interface AppNavigation {
     val navigationActions: SharedFlow<NavigationAction>
 
-    fun startScan(context: Context)
+    suspend fun startScan(context: Context): Result<Unit>
 
     fun back()
 
