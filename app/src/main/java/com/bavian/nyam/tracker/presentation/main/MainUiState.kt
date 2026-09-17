@@ -1,6 +1,8 @@
-package com.bavian.nyam.tracker
+package com.bavian.nyam.tracker.presentation.main
 
-data class UiState(
+import com.bavian.nyam.tracker.presentation.scanner.BarcodeScanner
+
+data class MainUiState(
     val scanState: BarcodeScanner.ScannerState = BarcodeScanner.ScannerState.Idle,
     val resultState: ResultState = ResultState.Initial
 ) {
