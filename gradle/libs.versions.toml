@@ -14,6 +14,7 @@ googleGmsGoogleServices = "4.4.4"
 navigationCompose = "2.10.1"
 playServicesCodeScanner = "16.1.0"
 koin = "4.2.2"
+ktlint = "14.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -41,4 +42,5 @@ koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compos
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 
