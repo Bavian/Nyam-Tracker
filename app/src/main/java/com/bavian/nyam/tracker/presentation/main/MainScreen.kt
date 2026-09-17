@@ -1,4 +1,4 @@
-package com.bavian.nyam.tracker
+package com.bavian.nyam.tracker.presentation.main
 
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.BorderStroke
@@ -39,6 +39,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.bavian.nyam.tracker.R
+import com.bavian.nyam.tracker.presentation.scanner.BarcodeScanner
 import org.koin.androidx.compose.koinViewModel
 
 val images = arrayOf(
@@ -56,15 +58,15 @@ val imageDescriptions = arrayOf(
 )
 
 @Composable
-fun BakingScreen(
-    bakingViewModel: BakingViewModel = koinViewModel()
+fun MainScreen(
+    mainViewModel: MainViewModel = koinViewModel()
 ) {
     val selectedImage = remember { mutableIntStateOf(0) }
     val placeholderPrompt = stringResource(R.string.prompt_placeholder)
     val placeholderResult = stringResource(R.string.results_placeholder)
     var prompt by rememberSaveable { mutableStateOf(placeholderPrompt) }
     var result by rememberSaveable { mutableStateOf(placeholderResult) }
-    val uiState by bakingViewModel.uiState.collectAsState()
+    val uiState by mainViewModel.uiState.collectAsState()
     val resources = LocalResources.current
     val context = LocalContext.current
 
@@ -88,7 +90,7 @@ fun BakingScreen(
                     modifier = Modifier.padding(16.dp).weight(1f)
                 )
                 Button(
-                    onClick = { bakingViewModel.startScan(context) },
+                    onClick = { mainViewModel.startScan(context) },
                     modifier = Modifier.padding(end = 16.dp)
                 ) {
                     Text(text = "Scan Barcode")
@@ -141,7 +143,7 @@ fun BakingScreen(
                             resources,
                             images[selectedImage.intValue]
                         )
-                        bakingViewModel.sendPrompt(bitmap, prompt)
+                        mainViewModel.sendPrompt(bitmap, prompt)
                     },
                     enabled = prompt.isNotEmpty(),
                     modifier = Modifier
@@ -151,16 +153,16 @@ fun BakingScreen(
                 }
             }
 
-            if (uiState.resultState is UiState.ResultState.Loading) {
+            if (uiState.resultState is MainUiState.ResultState.Loading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             } else {
                 var textColor = MaterialTheme.colorScheme.onSurface
-                if (uiState.resultState is UiState.ResultState.Error) {
+                if (uiState.resultState is MainUiState.ResultState.Error) {
                     textColor = MaterialTheme.colorScheme.error
-                    result = (uiState.resultState as UiState.ResultState.Error).errorMessage
-                } else if (uiState.resultState is UiState.ResultState.Success) {
+                    result = (uiState.resultState as MainUiState.ResultState.Error).errorMessage
+                } else if (uiState.resultState is MainUiState.ResultState.Success) {
                     textColor = MaterialTheme.colorScheme.onSurface
-                    result = (uiState.resultState as UiState.ResultState.Success).outputText
+                    result = (uiState.resultState as MainUiState.ResultState.Success).outputText
                 }
                 val scrollState = rememberScrollState()
                 Text(
@@ -180,6 +182,6 @@ fun BakingScreen(
 
 @Preview(showSystemUi = true)
 @Composable
-fun BakingScreenPreview() {
-    BakingScreen()
+fun MainScreenPreview() {
+    MainScreen()
 }

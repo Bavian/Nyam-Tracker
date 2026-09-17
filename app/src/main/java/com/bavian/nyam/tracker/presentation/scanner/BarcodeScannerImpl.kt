@@ -1,4 +1,4 @@
-package com.bavian.nyam.tracker
+package com.bavian.nyam.tracker.presentation.scanner
 
 import android.content.Context
 import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
