@@ -13,9 +13,7 @@ class AppNavigationImpl(
     private val _navigationActions = MutableSharedFlow<NavigationAction>(extraBufferCapacity = 1)
     override val navigationActions: SharedFlow<NavigationAction> = _navigationActions.asSharedFlow()
 
-    override fun startScan(context: Context) {
-        barcodeScanner.startScan(context)
-    }
+    override suspend fun startScan(context: Context): Result<Unit> = barcodeScanner.startScan(context).map { }
 
     override fun back() {
         _navigationActions.tryEmit(NavigationAction.Back)

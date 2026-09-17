@@ -22,7 +22,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -40,7 +39,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bavian.nyam.tracker.R
-import com.bavian.nyam.tracker.presentation.scanner.BarcodeScanner
 import org.koin.androidx.compose.koinViewModel
 
 val images =
@@ -69,12 +67,6 @@ fun MainScreen(mainViewModel: MainViewModel = koinViewModel()) {
     val uiState by mainViewModel.uiState.collectAsState()
     val resources = LocalResources.current
     val context = LocalContext.current
-
-    LaunchedEffect(uiState.scanState) {
-        if (uiState.scanState is BarcodeScanner.ScannerState.Success) {
-            prompt = (uiState.scanState as BarcodeScanner.ScannerState.Success).barcodeValue
-        }
-    }
 
     Scaffold { innerPadding ->
         Column(

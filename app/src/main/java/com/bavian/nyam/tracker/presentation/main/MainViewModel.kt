@@ -27,7 +27,9 @@ class MainViewModel(
         )
 
     fun startScan(context: Context) {
-        appNavigation.startScan(context)
+        viewModelScope.launch {
+            appNavigation.startScan(context)
+        }
     }
 
     fun sendPrompt(
