@@ -16,14 +16,15 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MainViewModel(
-    private val barcodeScanner: BarcodeScanner
+    private val barcodeScanner: BarcodeScanner,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
-    private val generativeModel = Firebase.ai.generativeModel(
-        modelName = "gemini-flash-latest",
-    )
+    private val generativeModel =
+        Firebase.ai.generativeModel(
+            modelName = "gemini-flash-latest",
+        )
 
     fun startScan(context: Context) {
         viewModelScope.launch {
@@ -33,17 +34,21 @@ class MainViewModel(
         }
     }
 
-    fun sendPrompt(bitmap: Bitmap, prompt: String) {
+    fun sendPrompt(
+        bitmap: Bitmap,
+        prompt: String,
+    ) {
         _uiState.update { it.copy(resultState = MainUiState.ResultState.Loading) }
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = generativeModel.generateContent(
-                    content {
-                        image(bitmap)
-                        text(prompt)
-                    }
-                )
+                val response =
+                    generativeModel.generateContent(
+                        content {
+                            image(bitmap)
+                            text(prompt)
+                        },
+                    )
                 response.text?.let { outputContent ->
                     _uiState.update {
                         it.copy(resultState = MainUiState.ResultState.Success(outputContent))

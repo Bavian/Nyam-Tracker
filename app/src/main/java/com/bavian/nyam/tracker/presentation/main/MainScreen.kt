@@ -43,24 +43,24 @@ import com.bavian.nyam.tracker.R
 import com.bavian.nyam.tracker.presentation.scanner.BarcodeScanner
 import org.koin.androidx.compose.koinViewModel
 
-val images = arrayOf(
-    // Image generated using Gemini from the prompt "cupcake image"
-    R.drawable.baked_goods_1,
-    // Image generated using Gemini from the prompt "cookies images"
-    R.drawable.baked_goods_2,
-    // Image generated using Gemini from the prompt "cake images"
-    R.drawable.baked_goods_3,
-)
-val imageDescriptions = arrayOf(
-    R.string.image1_description,
-    R.string.image2_description,
-    R.string.image3_description,
-)
+val images =
+    arrayOf(
+        // Image generated using Gemini from the prompt "cupcake image"
+        R.drawable.baked_goods_1,
+        // Image generated using Gemini from the prompt "cookies images"
+        R.drawable.baked_goods_2,
+        // Image generated using Gemini from the prompt "cake images"
+        R.drawable.baked_goods_3,
+    )
+val imageDescriptions =
+    arrayOf(
+        R.string.image1_description,
+        R.string.image2_description,
+        R.string.image3_description,
+    )
 
 @Composable
-fun MainScreen(
-    mainViewModel: MainViewModel = koinViewModel()
-) {
+fun MainScreen(mainViewModel: MainViewModel = koinViewModel()) {
     val selectedImage = remember { mutableIntStateOf(0) }
     val placeholderPrompt = stringResource(R.string.prompt_placeholder)
     val placeholderResult = stringResource(R.string.results_placeholder)
@@ -78,76 +78,80 @@ fun MainScreen(
 
     Scaffold { innerPadding ->
         Column(
-            modifier = Modifier.padding(innerPadding).fillMaxSize()
+            modifier = Modifier.padding(innerPadding).fillMaxSize(),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = stringResource(R.string.baking_title),
                     style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(16.dp).weight(1f)
+                    modifier = Modifier.padding(16.dp).weight(1f),
                 )
                 Button(
                     onClick = { mainViewModel.startScan(context) },
-                    modifier = Modifier.padding(end = 16.dp)
+                    modifier = Modifier.padding(end = 16.dp),
                 ) {
                     Text(text = "Scan Barcode")
                 }
             }
 
             LazyRow(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 itemsIndexed(images) { index, image ->
-                    var imageModifier = Modifier
-                        .padding(start = 8.dp, end = 8.dp)
-                        .requiredSize(200.dp)
-                        .clickable {
-                            selectedImage.intValue = index
-                        }
+                    var imageModifier =
+                        Modifier
+                            .padding(start = 8.dp, end = 8.dp)
+                            .requiredSize(200.dp)
+                            .clickable {
+                                selectedImage.intValue = index
+                            }
                     if (index == selectedImage.intValue) {
                         imageModifier =
                             imageModifier.border(
                                 BorderStroke(
                                     4.dp,
-                                    MaterialTheme.colorScheme.primary
-                                )
+                                    MaterialTheme.colorScheme.primary,
+                                ),
                             )
                     }
                     Image(
                         painter = painterResource(image),
                         contentDescription = stringResource(imageDescriptions[index]),
-                        modifier = imageModifier
+                        modifier = imageModifier,
                     )
                 }
             }
 
             Row(
-                modifier = Modifier.padding(all = 16.dp)
+                modifier = Modifier.padding(all = 16.dp),
             ) {
                 TextField(
                     value = prompt,
                     label = { Text(stringResource(R.string.label_prompt)) },
                     onValueChange = { prompt = it },
-                    modifier = Modifier
-                        .weight(0.8f)
-                        .padding(end = 16.dp)
-                        .align(Alignment.CenterVertically)
+                    modifier =
+                        Modifier
+                            .weight(0.8f)
+                            .padding(end = 16.dp)
+                            .align(Alignment.CenterVertically),
                 )
 
                 Button(
                     onClick = {
-                        val bitmap = BitmapFactory.decodeResource(
-                            resources,
-                            images[selectedImage.intValue]
-                        )
+                        val bitmap =
+                            BitmapFactory.decodeResource(
+                                resources,
+                                images[selectedImage.intValue],
+                            )
                         mainViewModel.sendPrompt(bitmap, prompt)
                     },
                     enabled = prompt.isNotEmpty(),
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
+                    modifier =
+                        Modifier
+                            .align(Alignment.CenterVertically),
                 ) {
                     Text(text = stringResource(R.string.action_go))
                 }
@@ -169,11 +173,12 @@ fun MainScreen(
                     text = result,
                     textAlign = TextAlign.Start,
                     color = textColor,
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(16.dp)
-                        .fillMaxSize()
-                        .verticalScroll(scrollState)
+                    modifier =
+                        Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(16.dp)
+                            .fillMaxSize()
+                            .verticalScroll(scrollState),
                 )
             }
         }
