@@ -26,6 +26,14 @@ class MainViewModel(
             modelName = "gemini-flash-latest",
         )
 
+    fun onEvent(event: MainScreenEvent) {
+        when (event) {
+            is MainScreenEvent.CalendarDatePicked -> {
+                _uiState.update { it.copy(selectedDate = event.date) }
+            }
+        }
+    }
+
     fun startScan(context: Context) {
         viewModelScope.launch {
             appNavigation.startScan(context)

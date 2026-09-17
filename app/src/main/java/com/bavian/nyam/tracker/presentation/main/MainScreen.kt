@@ -39,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bavian.nyam.tracker.R
+import com.bavian.nyam.tracker.presentation.components.DateCarousel
 import org.koin.androidx.compose.koinViewModel
 
 val images =
@@ -88,6 +89,18 @@ fun MainScreen(mainViewModel: MainViewModel = koinViewModel()) {
                     Text(text = "Scan Barcode")
                 }
             }
+
+            DateCarousel(
+                state = DateCarousel.State(uiState.selectedDate),
+                onEvent = { event ->
+                    when (event) {
+                        is DateCarousel.Event.DatePicked -> {
+                            mainViewModel.onEvent(MainScreenEvent.CalendarDatePicked(event.date))
+                        }
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
 
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
