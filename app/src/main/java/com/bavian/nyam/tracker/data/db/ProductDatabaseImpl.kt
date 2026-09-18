@@ -51,4 +51,35 @@ class ProductDatabaseImpl(
             }
         }
     }
+
+    override fun getAllProducts(): List<ProductEntity> {
+        val db = dbHelper.readableDatabase
+        val cursor =
+            db.query(
+                AppDatabaseHelper.TABLE_PRODUCTS,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+            )
+        val products = mutableListOf<ProductEntity>()
+        cursor.use {
+            while (it.moveToNext()) {
+                products.add(
+                    ProductEntity(
+                        id = it.getString(it.getColumnIndexOrThrow(AppDatabaseHelper.COLUMN_PRODUCT_ID)),
+                        manufacturer = it.getString(it.getColumnIndexOrThrow(AppDatabaseHelper.COLUMN_MANUFACTURER)),
+                        name = it.getString(it.getColumnIndexOrThrow(AppDatabaseHelper.COLUMN_NAME)),
+                        calories = it.getInt(it.getColumnIndexOrThrow(AppDatabaseHelper.COLUMN_CALORIES)),
+                        proteins = it.getInt(it.getColumnIndexOrThrow(AppDatabaseHelper.COLUMN_PROTEINS)),
+                        fat = it.getInt(it.getColumnIndexOrThrow(AppDatabaseHelper.COLUMN_FAT)),
+                        carbohydrates = it.getInt(it.getColumnIndexOrThrow(AppDatabaseHelper.COLUMN_CARBOHYDRATES)),
+                    ),
+                )
+            }
+        }
+        return products
+    }
 }
