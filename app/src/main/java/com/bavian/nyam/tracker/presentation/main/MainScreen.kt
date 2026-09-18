@@ -28,15 +28,20 @@ fun MainScreen(
             modifier = Modifier.padding(innerPadding).fillMaxSize(),
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Button(
                     onClick = { onEvent(MainScreenEvent.StartScanTap) },
-                    modifier = Modifier.padding(end = 16.dp),
                 ) {
                     Text(text = "Scan Barcode")
+                }
+
+                Button(
+                    onClick = { onEvent(MainScreenEvent.AddProductTap) },
+                ) {
+                    Text(text = "Add Product")
                 }
             }
 

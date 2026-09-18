@@ -18,6 +18,7 @@ class MainViewModel(
     fun onEvent(event: MainScreenEvent) {
         when (event) {
             is MainScreenEvent.StartScanTap -> startScan()
+            is MainScreenEvent.AddProductTap -> appNavigation.openSetProductScreen()
             is MainScreenEvent.CalendarDatePicked -> {
                 _uiState.update { it.copy(selectedDate = event.date) }
             }

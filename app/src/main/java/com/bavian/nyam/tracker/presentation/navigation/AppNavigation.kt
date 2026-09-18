@@ -7,15 +7,23 @@ interface AppNavigation {
 
     suspend fun startScan(): Result<Unit>
 
-    fun back()
+    fun back(result: Any? = null)
 
     fun openMainScreen()
 
+    fun openSetProductScreen(productId: String? = null)
+
     sealed interface NavigationAction {
-        data object Back : NavigationAction
+        data class Back(
+            val result: Any? = null,
+        ) : NavigationAction
 
         data class Navigate(
             val route: AppRoute,
+        ) : NavigationAction
+
+        data class NavigateWithTemplate(
+            val path: String,
         ) : NavigationAction
     }
 }
