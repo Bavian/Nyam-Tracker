@@ -16,11 +16,23 @@ class AppNavigationImpl(
 
     override suspend fun startScan(): Result<Unit> = barcodeScanner.startScan(context).map { }
 
-    override fun back() {
-        _navigationActions.tryEmit(NavigationAction.Back)
+    override fun back(result: Any?) {
+        _navigationActions.tryEmit(NavigationAction.Back(result))
     }
 
     override fun openMainScreen() {
         _navigationActions.tryEmit(NavigationAction.Navigate(AppRoute.Main))
+    }
+
+    override fun openSetProductScreen(productId: String?) {
+        val path =
+            if (productId !=
+                null
+            ) {
+                "${AppRoute.SetProduct.path}?${AppRoute.SetProduct.ARG_PRODUCT_ID}=$productId"
+            } else {
+                AppRoute.SetProduct.path
+            }
+        _navigationActions.tryEmit(NavigationAction.NavigateWithTemplate(path))
     }
 }

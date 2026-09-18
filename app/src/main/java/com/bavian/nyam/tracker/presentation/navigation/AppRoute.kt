@@ -1,7 +1,15 @@
 package com.bavian.nyam.tracker.presentation.navigation
 
-enum class AppRoute(
-    val path: String,
-) {
-    Main("main"),
+sealed interface AppRoute {
+    val path: String
+
+    data object Main : AppRoute {
+        override val path: String = "main"
+    }
+
+    data object SetProduct : AppRoute {
+        override val path: String = "set_product"
+        const val ARG_PRODUCT_ID = "productId"
+        val routeWithArgs: String = "$path?$ARG_PRODUCT_ID={$ARG_PRODUCT_ID}"
+    }
 }

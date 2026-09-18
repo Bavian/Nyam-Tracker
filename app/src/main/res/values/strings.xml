@@ -6,4 +6,14 @@
     <string name="calendar_pick_date_description">Pick Date</string>
     <string name="calendar_previous_day_description">Previous Day</string>
     <string name="calendar_next_day_description">Next Day</string>
+
+    <string name="set_product_title">New Product</string>
+    <string name="set_product_manufacturer">Manufacturer</string>
+    <string name="set_product_name">Product Name</string>
+    <string name="set_product_calories">Calories</string>
+    <string name="set_product_proteins">Proteins (g)</string>
+    <string name="set_product_fat">Fat (g)</string>
+    <string name="set_product_carbohydrates">Carbohydrates (g)</string>
+    <string name="set_product_back_description">Back</string>
+    <string name="set_product_confirm_description">Confirm</string>
 </resources>
