@@ -6,4 +6,6 @@ interface ProductDatabase {
     fun insertProduct(product: ProductEntity)
 
     fun getProductById(id: String): ProductEntity?
+
+    fun getAllProducts(): List<ProductEntity>
 }

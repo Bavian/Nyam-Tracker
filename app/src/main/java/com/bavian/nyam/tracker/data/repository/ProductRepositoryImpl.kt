@@ -23,4 +23,9 @@ class ProductRepositoryImpl(
             val entity = productDatabase.getProductById(id)
             entity?.let { productMapper.mapToDomain(it) }
         }
+
+    override suspend fun getAllProducts(): List<Product> =
+        withContext(Dispatchers.IO) {
+            productDatabase.getAllProducts().map { productMapper.mapToDomain(it) }
+        }
 }
