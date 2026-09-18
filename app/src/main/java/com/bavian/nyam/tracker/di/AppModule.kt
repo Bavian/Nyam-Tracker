@@ -30,6 +30,9 @@ import com.bavian.nyam.tracker.domain.usecase.SetBarcodeUseCaseImpl
 import com.bavian.nyam.tracker.presentation.main.MainViewModel
 import com.bavian.nyam.tracker.presentation.navigation.AppNavigation
 import com.bavian.nyam.tracker.presentation.navigation.AppNavigationImpl
+import com.bavian.nyam.tracker.presentation.productslist.ProductsListViewModel
+import com.bavian.nyam.tracker.presentation.productslist.mapper.ProductsListProductMapper
+import com.bavian.nyam.tracker.presentation.productslist.mapper.ProductsListProductMapperImpl
 import com.bavian.nyam.tracker.presentation.scanner.BarcodeScanner
 import com.bavian.nyam.tracker.presentation.scanner.BarcodeScannerImpl
 import com.bavian.nyam.tracker.presentation.setproduct.SetProductViewModel
@@ -47,6 +50,7 @@ val appModule =
         factoryOf(::BarcodeScannerImpl) bind BarcodeScanner::class
         singleOf(::AppNavigationImpl) bind AppNavigation::class
         viewModelOf(::MainViewModel)
+        viewModelOf(::ProductsListViewModel)
 
         viewModel { parameters ->
             SetProductViewModel(
@@ -67,6 +71,7 @@ val appModule =
 
         factoryOf(::ProductMapperImpl) bind ProductMapper::class
         factoryOf(::SetProductUiStateMapperImpl) bind SetProductUiStateMapper::class
+        factoryOf(::ProductsListProductMapperImpl) bind ProductsListProductMapper::class
         factoryOf(::ProductRepositoryImpl) bind ProductRepository::class
         factoryOf(::AddProductUseCaseImpl) bind AddProductUseCase::class
         factoryOf(::GetProductByIdUseCaseImpl) bind GetProductByIdUseCase::class

@@ -16,4 +16,17 @@
     <string name="set_product_carbohydrates">Carbohydrates (g)</string>
     <string name="set_product_back_description">Back</string>
     <string name="set_product_confirm_description">Confirm</string>
+
+    <string name="products_list_search_hint">Search product&#8230;</string>
+    <string name="products_list_context_menu_description">Context menu</string>
+    <string name="products_list_not_implemented">Not implemented yet</string>
+    <string name="products_list_calories_prefix">Cal: </string>
+    <string name="products_list_proteins_prefix">P: </string>
+    <string name="products_list_fat_prefix">F: </string>
+    <string name="products_list_carbohydrates_prefix">C: </string>
+
+    <string name="main_scan_barcode">Scan Barcode</string>
+    <string name="main_add_product">Add Product</string>
+    <string name="main_products_list">Products</string>
+    <string name="main_menu_description">Main Menu</string>
 </resources>

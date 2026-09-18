@@ -7,6 +7,8 @@ sealed interface MainScreenEvent {
 
     data object AddProductTap : MainScreenEvent
 
+    data object ProductsListTap : MainScreenEvent
+
     data class CalendarDatePicked(
         val date: LocalDate,
     ) : MainScreenEvent

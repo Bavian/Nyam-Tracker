@@ -1,0 +1,17 @@
+package com.bavian.nyam.tracker.presentation.productslist
+
+import com.bavian.nyam.tracker.presentation.productslist.model.ProductsListProduct
+
+sealed interface ProductsListEvent {
+    data class SearchQueryChanged(
+        val query: String,
+    ) : ProductsListEvent
+
+    data class ProductClicked(
+        val product: ProductsListProduct,
+    ) : ProductsListEvent
+
+    data class ContextMenuClicked(
+        val product: ProductsListProduct,
+    ) : ProductsListEvent
+}
