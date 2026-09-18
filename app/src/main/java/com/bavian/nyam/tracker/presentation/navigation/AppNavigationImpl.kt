@@ -8,12 +8,13 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
 class AppNavigationImpl(
+    private val context: Context,
     private val barcodeScanner: BarcodeScanner,
 ) : AppNavigation {
     private val _navigationActions = MutableSharedFlow<NavigationAction>(extraBufferCapacity = 1)
     override val navigationActions: SharedFlow<NavigationAction> = _navigationActions.asSharedFlow()
 
-    override suspend fun startScan(context: Context): Result<Unit> = barcodeScanner.startScan(context).map { }
+    override suspend fun startScan(): Result<Unit> = barcodeScanner.startScan(context).map { }
 
     override fun back() {
         _navigationActions.tryEmit(NavigationAction.Back)
