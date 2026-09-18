@@ -1,12 +1,11 @@
 package com.bavian.nyam.tracker.presentation.navigation
 
-import android.content.Context
 import kotlinx.coroutines.flow.SharedFlow
 
 interface AppNavigation {
     val navigationActions: SharedFlow<NavigationAction>
 
-    suspend fun startScan(context: Context): Result<Unit>
+    suspend fun startScan(): Result<Unit>
 
     fun back()
 
