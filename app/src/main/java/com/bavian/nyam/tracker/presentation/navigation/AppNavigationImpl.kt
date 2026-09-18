@@ -35,4 +35,8 @@ class AppNavigationImpl(
             }
         _navigationActions.tryEmit(NavigationAction.NavigateWithTemplate(path))
     }
+
+    override fun openProductsListScreen() {
+        _navigationActions.tryEmit(NavigationAction.Navigate(AppRoute.ProductsList))
+    }
 }

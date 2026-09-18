@@ -13,6 +13,8 @@ interface AppNavigation {
 
     fun openSetProductScreen(productId: String? = null)
 
+    fun openProductsListScreen()
+
     sealed interface NavigationAction {
         data class Back(
             val result: Any? = null,

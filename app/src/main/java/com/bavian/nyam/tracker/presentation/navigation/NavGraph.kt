@@ -11,6 +11,9 @@ import androidx.navigation.navArgument
 import com.bavian.nyam.tracker.presentation.main.MainScreen
 import com.bavian.nyam.tracker.presentation.main.MainUiState
 import com.bavian.nyam.tracker.presentation.main.MainViewModel
+import com.bavian.nyam.tracker.presentation.productslist.ProductsListScreen
+import com.bavian.nyam.tracker.presentation.productslist.ProductsListUiState
+import com.bavian.nyam.tracker.presentation.productslist.ProductsListViewModel
 import com.bavian.nyam.tracker.presentation.setproduct.SetProductScreen
 import com.bavian.nyam.tracker.presentation.setproduct.SetProductUiState
 import com.bavian.nyam.tracker.presentation.setproduct.SetProductViewModel
@@ -65,6 +68,14 @@ fun AppNavGraph(
             val viewModel: SetProductViewModel = koinViewModel { parametersOf(productId) }
             SetProductScreen(
                 state = viewModel.uiState.collectAsStateWithLifecycle(SetProductUiState()).value,
+                onEvent = viewModel::onEvent,
+            )
+        }
+
+        composable(AppRoute.ProductsList.path) {
+            val viewModel: ProductsListViewModel = koinViewModel()
+            ProductsListScreen(
+                state = viewModel.uiState.collectAsStateWithLifecycle(ProductsListUiState()).value,
                 onEvent = viewModel::onEvent,
             )
         }
