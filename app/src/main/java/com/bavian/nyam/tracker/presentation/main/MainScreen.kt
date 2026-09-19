@@ -2,25 +2,16 @@ package com.bavian.nyam.tracker.presentation.main
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,46 +26,34 @@ fun MainScreen(
     state: MainUiState,
     onEvent: (MainScreenEvent) -> Unit,
 ) {
-    var showMenu by remember { mutableStateOf(false) }
+    Scaffold(
+        floatingActionButton = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                FloatingActionButton(
+                    onClick = { onEvent(MainScreenEvent.ProductsListTap) },
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(R.string.main_products_list),
+                    )
+                }
 
-    Scaffold { innerPadding ->
+                FloatingActionButton(
+                    onClick = { onEvent(MainScreenEvent.StartScanTap) },
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.QrCodeScanner,
+                        contentDescription = stringResource(R.string.main_scan_barcode),
+                    )
+                }
+            }
+        },
+    ) { innerPadding ->
         Column(
             modifier = Modifier.padding(innerPadding).fillMaxSize(),
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Button(
-                    onClick = { onEvent(MainScreenEvent.StartScanTap) },
-                ) {
-                    Text(text = stringResource(R.string.main_scan_barcode))
-                }
-
-                IconButton(
-                    onClick = { showMenu = true },
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = stringResource(R.string.main_menu_description),
-                    )
-
-                    DropdownMenu(
-                        expanded = showMenu,
-                        onDismissRequest = { showMenu = false },
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text(text = stringResource(R.string.main_products_list)) },
-                            onClick = {
-                                showMenu = false
-                                onEvent(MainScreenEvent.ProductsListTap)
-                            },
-                        )
-                    }
-                }
-            }
-
             DateCarousel(
                 state = DateCarousel.State(state.selectedDate),
                 onEvent = { event ->
