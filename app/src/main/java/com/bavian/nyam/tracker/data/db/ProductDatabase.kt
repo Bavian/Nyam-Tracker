@@ -8,4 +8,6 @@ interface ProductDatabase {
     fun getProductById(id: String): ProductEntity?
 
     fun getAllProducts(): List<ProductEntity>
+
+    fun deleteProduct(id: String)
 }

@@ -19,6 +19,8 @@ import com.bavian.nyam.tracker.domain.repository.BarcodeRepository
 import com.bavian.nyam.tracker.domain.repository.ProductRepository
 import com.bavian.nyam.tracker.domain.usecase.AddProductUseCase
 import com.bavian.nyam.tracker.domain.usecase.AddProductUseCaseImpl
+import com.bavian.nyam.tracker.domain.usecase.DeleteProductUseCase
+import com.bavian.nyam.tracker.domain.usecase.DeleteProductUseCaseImpl
 import com.bavian.nyam.tracker.domain.usecase.GetBarcodeInfoUseCase
 import com.bavian.nyam.tracker.domain.usecase.GetBarcodeInfoUseCaseImpl
 import com.bavian.nyam.tracker.domain.usecase.GetProductByIdUseCase
@@ -74,6 +76,7 @@ val appModule =
         factoryOf(::ProductsListProductMapperImpl) bind ProductsListProductMapper::class
         factoryOf(::ProductRepositoryImpl) bind ProductRepository::class
         factoryOf(::AddProductUseCaseImpl) bind AddProductUseCase::class
+        factoryOf(::DeleteProductUseCaseImpl) bind DeleteProductUseCase::class
         factoryOf(::GetProductByIdUseCaseImpl) bind GetProductByIdUseCase::class
         factoryOf(::GetProductsUseCaseImpl) bind GetProductsUseCase::class
 

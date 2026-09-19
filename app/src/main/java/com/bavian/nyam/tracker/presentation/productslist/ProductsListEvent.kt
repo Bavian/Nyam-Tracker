@@ -15,9 +15,17 @@ sealed interface ProductsListEvent {
         val product: ProductsListProduct,
     ) : ProductsListEvent
 
+    data class DeleteProductClicked(
+        val product: ProductsListProduct,
+    ) : ProductsListEvent
+
     data class ContextMenuClicked(
         val product: ProductsListProduct,
     ) : ProductsListEvent
 
     data object DismissContextMenu : ProductsListEvent
+
+    data object DeleteProductConfirmed : ProductsListEvent
+
+    data object DeleteProductCancelled : ProductsListEvent
 }

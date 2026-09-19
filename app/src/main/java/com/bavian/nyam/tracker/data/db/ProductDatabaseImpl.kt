@@ -82,4 +82,13 @@ class ProductDatabaseImpl(
         }
         return products
     }
+
+    override fun deleteProduct(id: String) {
+        val db = dbHelper.writableDatabase
+        db.delete(
+            AppDatabaseHelper.TABLE_PRODUCTS,
+            "${AppDatabaseHelper.COLUMN_PRODUCT_ID} = ?",
+            arrayOf(id),
+        )
+    }
 }

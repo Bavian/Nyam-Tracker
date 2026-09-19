@@ -10,10 +10,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -59,16 +61,17 @@ fun ProductsListScreen(
         ) {
             items(state.products, key = { it.id }) { product ->
                 ProductCard(
-                    state = ProductCard.State(
-                        id = product.id,
-                        manufacturer = product.manufacturer,
-                        name = product.name,
-                        calories = product.calories,
-                        proteins = product.proteins,
-                        fat = product.fat,
-                        carbohydrates = product.carbohydrates,
-                        menuExpanded = state.expandedProductId == product.id,
-                    ),
+                    state =
+                        ProductCard.State(
+                            id = product.id,
+                            manufacturer = product.manufacturer,
+                            name = product.name,
+                            calories = product.calories,
+                            proteins = product.proteins,
+                            fat = product.fat,
+                            carbohydrates = product.carbohydrates,
+                            menuExpanded = state.expandedProductId == product.id,
+                        ),
                     onEvent = { event ->
                         when (event) {
                             ProductCard.Event.Clicked -> {
@@ -76,12 +79,40 @@ fun ProductsListScreen(
                                 Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()
                             }
                             ProductCard.Event.EditClicked -> onEvent(ProductsListEvent.EditProductClicked(product))
+                            ProductCard.Event.DeleteClicked -> onEvent(ProductsListEvent.DeleteProductClicked(product))
                             ProductCard.Event.MenuClicked -> onEvent(ProductsListEvent.ContextMenuClicked(product))
                             ProductCard.Event.DismissMenu -> onEvent(ProductsListEvent.DismissContextMenu)
                         }
-                    }
+                    },
                 )
             }
+        }
+
+        state.deleteConfirmationProduct?.let { product ->
+            AlertDialog(
+                onDismissRequest = { onEvent(ProductsListEvent.DeleteProductCancelled) },
+                title = { Text(text = stringResource(R.string.products_list_delete_dialog_title)) },
+                text = {
+                    Text(
+                        text =
+                            stringResource(
+                                R.string.products_list_delete_dialog_message,
+                                product.name,
+                                product.manufacturer,
+                            ),
+                    )
+                },
+                confirmButton = {
+                    TextButton(onClick = { onEvent(ProductsListEvent.DeleteProductConfirmed) }) {
+                        Text(text = stringResource(R.string.products_list_delete_dialog_confirm))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { onEvent(ProductsListEvent.DeleteProductCancelled) }) {
+                        Text(text = stringResource(R.string.products_list_delete_dialog_cancel))
+                    }
+                },
+            )
         }
     }
 }

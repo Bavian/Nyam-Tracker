@@ -31,4 +31,9 @@
     <string name="main_menu_description">Main Menu</string>
 
     <string name="products_list_edit">Edit</string>
+    <string name="products_list_delete">Delete</string>
+    <string name="products_list_delete_dialog_title">Delete Product</string>
+    <string name="products_list_delete_dialog_message">Are you sure you want to delete %1$s produced by %2$s?</string>
+    <string name="products_list_delete_dialog_confirm">Delete</string>
+    <string name="products_list_delete_dialog_cancel">Cancel</string>
 </resources>
