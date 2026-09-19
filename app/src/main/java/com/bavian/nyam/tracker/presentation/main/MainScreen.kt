@@ -5,9 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -35,7 +34,7 @@ fun MainScreen(
                     onClick = { onEvent(MainScreenEvent.ProductsListTap) },
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Add,
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_add_2),
                         contentDescription = stringResource(R.string.main_products_list),
                     )
                 }
@@ -44,7 +43,7 @@ fun MainScreen(
                     onClick = { onEvent(MainScreenEvent.StartScanTap) },
                 ) {
                     Icon(
-                        imageVector = Icons.Default.QrCodeScanner,
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_barcode_scanner),
                         contentDescription = stringResource(R.string.main_scan_barcode),
                     )
                 }

@@ -9,9 +9,8 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -59,7 +58,7 @@ fun SetProductScreen(
                 navigationIcon = {
                     IconButton(onClick = { onEvent(SetProductEvent.BackClicked) }) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_arrow_back),
                             contentDescription = stringResource(R.string.set_product_back_description),
                         )
                     }
@@ -70,7 +69,7 @@ fun SetProductScreen(
                         enabled = state.isConfirmEnabled,
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Check,
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_check),
                             contentDescription = stringResource(R.string.set_product_confirm_description),
                         )
                     }

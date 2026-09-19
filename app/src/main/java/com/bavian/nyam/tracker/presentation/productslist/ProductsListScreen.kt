@@ -11,10 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -75,7 +73,7 @@ fun ProductsListScreen(
             ) {
                 IconButton(onClick = { onEvent(ProductsListEvent.BackClicked) }) {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_arrow_back),
                         contentDescription = stringResource(R.string.set_product_back_description),
                     )
                 }
@@ -85,7 +83,7 @@ fun ProductsListScreen(
                     onValueChange = { onEvent(ProductsListEvent.SearchQueryChanged(it)) },
                     modifier = Modifier.weight(1f).padding(end = 8.dp),
                     placeholder = { Text(stringResource(R.string.products_list_search_hint)) },
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                    leadingIcon = { Icon(ImageVector.vectorResource(id = R.drawable.ic_24dp_search), contentDescription = null) },
                     singleLine = true,
                 )
             }
@@ -95,7 +93,7 @@ fun ProductsListScreen(
                 onClick = { onEvent(ProductsListEvent.AddProductClicked) },
             ) {
                 Icon(
-                    imageVector = Icons.Default.Add,
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_add_2),
                     contentDescription = stringResource(R.string.products_list_add_product),
                 )
             }
