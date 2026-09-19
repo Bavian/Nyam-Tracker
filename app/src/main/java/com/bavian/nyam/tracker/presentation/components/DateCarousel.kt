@@ -6,10 +6,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -155,7 +153,7 @@ fun DateCarousel(
             modifier = Modifier.padding(start = 16.dp),
         ) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_chevron_left),
                 contentDescription = stringResource(R.string.calendar_previous_day_description),
             )
         }
@@ -193,7 +191,7 @@ fun DateCarousel(
             },
         ) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_chevron_right),
                 contentDescription = stringResource(R.string.calendar_next_day_description),
             )
         }
@@ -203,7 +201,7 @@ fun DateCarousel(
             modifier = Modifier.padding(end = 16.dp),
         ) {
             Icon(
-                imageVector = Icons.Default.DateRange,
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_calendar_month),
                 contentDescription = stringResource(R.string.calendar_pick_date_description),
             )
         }

@@ -5,10 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -107,7 +105,7 @@ fun ProductCard(
                 onClick = { onEvent(ProductCard.Event.MenuClicked) },
             ) {
                 Icon(
-                    imageVector = Icons.Default.MoreVert,
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_more_vert),
                     contentDescription = stringResource(R.string.products_list_context_menu_description),
                 )
 
@@ -120,7 +118,7 @@ fun ProductCard(
                         onClick = { onEvent(ProductCard.Event.EditClicked) },
                         leadingIcon = {
                             Icon(
-                                imageVector = Icons.Default.Edit,
+                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_edit),
                                 contentDescription = null,
                             )
                         },
@@ -136,7 +134,7 @@ fun ProductCard(
                         onClick = { onEvent(ProductCard.Event.DeleteClicked) },
                         leadingIcon = {
                             Icon(
-                                imageVector = Icons.Default.Delete,
+                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_delete_forever),
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.error,
                             )
