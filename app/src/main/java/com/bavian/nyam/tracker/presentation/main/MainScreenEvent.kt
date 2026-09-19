@@ -5,8 +5,6 @@ import kotlinx.datetime.LocalDate
 sealed interface MainScreenEvent {
     data object StartScanTap : MainScreenEvent
 
-    data object AddProductTap : MainScreenEvent
-
     data object ProductsListTap : MainScreenEvent
 
     data class CalendarDatePicked(

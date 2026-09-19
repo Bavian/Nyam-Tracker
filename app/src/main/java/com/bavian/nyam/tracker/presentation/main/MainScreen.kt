@@ -52,12 +52,6 @@ fun MainScreen(
                     Text(text = stringResource(R.string.main_scan_barcode))
                 }
 
-                Button(
-                    onClick = { onEvent(MainScreenEvent.AddProductTap) },
-                ) {
-                    Text(text = stringResource(R.string.main_add_product))
-                }
-
                 IconButton(
                     onClick = { showMenu = true },
                 ) {
