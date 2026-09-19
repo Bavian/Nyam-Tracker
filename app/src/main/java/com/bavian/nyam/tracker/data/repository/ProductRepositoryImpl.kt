@@ -28,4 +28,10 @@ class ProductRepositoryImpl(
         withContext(Dispatchers.IO) {
             productDatabase.getAllProducts().map { productMapper.mapToDomain(it) }
         }
+
+    override suspend fun deleteProduct(id: String) {
+        withContext(Dispatchers.IO) {
+            productDatabase.deleteProduct(id)
+        }
+    }
 }

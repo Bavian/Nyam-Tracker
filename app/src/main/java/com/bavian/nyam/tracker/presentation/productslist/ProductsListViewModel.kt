@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bavian.nyam.tracker.domain.model.ProductSearchParams
+import com.bavian.nyam.tracker.domain.usecase.DeleteProductUseCase
 import com.bavian.nyam.tracker.domain.usecase.GetProductsUseCase
 import com.bavian.nyam.tracker.presentation.navigation.AppNavigation
 import com.bavian.nyam.tracker.presentation.productslist.mapper.ProductsListProductMapper
@@ -16,6 +17,7 @@ import kotlinx.coroutines.launch
 class ProductsListViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val getProductsUseCase: GetProductsUseCase,
+    private val deleteProductUseCase: DeleteProductUseCase,
     private val productMapper: ProductsListProductMapper,
     private val appNavigation: AppNavigation,
 ) : ViewModel() {
@@ -44,18 +46,48 @@ class ProductsListViewModel(
                 _uiState.update { it.copy(searchQuery = event.query) }
                 loadProducts()
             }
+
             is ProductsListEvent.ProductClicked -> {
                 // Handled in UI for Toast
             }
+
             is ProductsListEvent.EditProductClicked -> {
                 openSetProductScreen(event.product.id)
             }
+
+            is ProductsListEvent.DeleteProductClicked -> {
+                _uiState.update {
+                    it.copy(
+                        deleteConfirmationProduct = event.product,
+                        expandedProductId = null,
+                    )
+                }
+            }
+
             is ProductsListEvent.ContextMenuClicked -> {
                 _uiState.update { it.copy(expandedProductId = event.product.id) }
             }
+
             ProductsListEvent.DismissContextMenu -> {
                 dismissContextMenu()
             }
+
+            ProductsListEvent.DeleteProductConfirmed -> {
+                confirmDelete()
+            }
+
+            ProductsListEvent.DeleteProductCancelled -> {
+                _uiState.update { it.copy(deleteConfirmationProduct = null) }
+            }
+        }
+    }
+
+    private fun confirmDelete() {
+        val product = _uiState.value.deleteConfirmationProduct ?: return
+        viewModelScope.launch {
+            deleteProductUseCase.execute(product.id)
+            _uiState.update { it.copy(deleteConfirmationProduct = null) }
+            loadProducts()
         }
     }
 

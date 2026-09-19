@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
@@ -40,8 +41,13 @@ object ProductCard {
 
     sealed interface Event {
         data object Clicked : Event
+
         data object MenuClicked : Event
+
         data object EditClicked : Event
+
+        data object DeleteClicked : Event
+
         data object DismissMenu : Event
     }
 }
@@ -116,6 +122,23 @@ fun ProductCard(
                             Icon(
                                 imageVector = Icons.Default.Edit,
                                 contentDescription = null,
+                            )
+                        },
+                    )
+
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = stringResource(R.string.products_list_delete),
+                                color = MaterialTheme.colorScheme.error,
+                            )
+                        },
+                        onClick = { onEvent(ProductCard.Event.DeleteClicked) },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error,
                             )
                         },
                     )

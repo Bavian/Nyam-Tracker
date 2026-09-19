@@ -6,4 +6,5 @@ data class ProductsListUiState(
     val searchQuery: String = "",
     val products: List<ProductsListProduct> = emptyList(),
     val expandedProductId: String? = null,
+    val deleteConfirmationProduct: ProductsListProduct? = null,
 )
