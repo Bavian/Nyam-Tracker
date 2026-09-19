@@ -29,4 +29,6 @@
     <string name="main_add_product">Add Product</string>
     <string name="main_products_list">Products</string>
     <string name="main_menu_description">Main Menu</string>
+
+    <string name="products_list_edit">Edit</string>
 </resources>
