@@ -3,20 +3,24 @@ package com.bavian.nyam.tracker.presentation.productslist
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -38,17 +42,26 @@ fun ProductsListScreen(
 
     Scaffold(
         topBar = {
-            OutlinedTextField(
-                value = state.searchQuery,
-                onValueChange = { onEvent(ProductsListEvent.SearchQueryChanged(it)) },
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                placeholder = { Text(stringResource(R.string.products_list_search_hint)) },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                singleLine = true,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                IconButton(onClick = { onEvent(ProductsListEvent.BackClicked) }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.set_product_back_description),
+                    )
+                }
+
+                OutlinedTextField(
+                    value = state.searchQuery,
+                    onValueChange = { onEvent(ProductsListEvent.SearchQueryChanged(it)) },
+                    modifier = Modifier.weight(1f).padding(end = 8.dp),
+                    placeholder = { Text(stringResource(R.string.products_list_search_hint)) },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                    singleLine = true,
+                )
+            }
         },
     ) { innerPadding ->
         LazyColumn(

@@ -79,6 +79,10 @@ class ProductsListViewModel(
             ProductsListEvent.DeleteProductCancelled -> {
                 _uiState.update { it.copy(deleteConfirmationProduct = null) }
             }
+
+            ProductsListEvent.BackClicked -> {
+                appNavigation.back()
+            }
         }
     }
 
