@@ -84,8 +84,7 @@ class SetProductViewModel(
     private fun validateForm() {
         val state = _uiState.value
         val isValid =
-            state.manufacturer.isNotBlank() &&
-                state.name.isNotBlank() &&
+            state.name.isNotBlank() &&
                 state.calories.toFloatOrNull() != null &&
                 state.proteins.toFloatOrNull() != null &&
                 state.fat.toFloatOrNull() != null &&
