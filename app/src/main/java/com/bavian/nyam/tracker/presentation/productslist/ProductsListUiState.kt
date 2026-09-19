@@ -5,4 +5,5 @@ import com.bavian.nyam.tracker.presentation.productslist.model.ProductsListProdu
 data class ProductsListUiState(
     val searchQuery: String = "",
     val products: List<ProductsListProduct> = emptyList(),
+    val expandedProductId: String? = null,
 )
