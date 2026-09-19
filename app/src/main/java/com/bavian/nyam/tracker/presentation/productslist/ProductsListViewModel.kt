@@ -1,6 +1,5 @@
 package com.bavian.nyam.tracker.presentation.productslist
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bavian.nyam.tracker.domain.model.ProductSearchParams
@@ -15,7 +14,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ProductsListViewModel(
-    private val savedStateHandle: SavedStateHandle,
     private val getProductsUseCase: GetProductsUseCase,
     private val deleteProductUseCase: DeleteProductUseCase,
     private val productMapper: ProductsListProductMapper,
@@ -26,18 +24,6 @@ class ProductsListViewModel(
 
     init {
         loadProducts()
-        observeNavigationResult()
-    }
-
-    private fun observeNavigationResult() {
-        viewModelScope.launch {
-            savedStateHandle.getStateFlow<String?>("result", null).collect { result ->
-                if (result != null) {
-                    loadProducts()
-                    savedStateHandle["result"] = null
-                }
-            }
-        }
     }
 
     fun onEvent(event: ProductsListEvent) {
@@ -82,6 +68,14 @@ class ProductsListViewModel(
 
             ProductsListEvent.BackClicked -> {
                 appNavigation.back()
+            }
+
+            ProductsListEvent.AddProductClicked -> {
+                appNavigation.openSetProductScreen()
+            }
+
+            ProductsListEvent.ScreenStarted -> {
+                loadProducts()
             }
         }
     }

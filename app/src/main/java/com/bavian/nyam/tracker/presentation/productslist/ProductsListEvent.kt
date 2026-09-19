@@ -30,4 +30,8 @@ sealed interface ProductsListEvent {
     data object DeleteProductCancelled : ProductsListEvent
 
     data object BackClicked : ProductsListEvent
+
+    data object AddProductClicked : ProductsListEvent
+
+    data object ScreenStarted : ProductsListEvent
 }
