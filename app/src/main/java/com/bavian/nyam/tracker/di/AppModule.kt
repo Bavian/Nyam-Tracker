@@ -3,26 +3,36 @@ package com.bavian.nyam.tracker.di
 import com.bavian.nyam.tracker.data.db.AppDatabaseHelper
 import com.bavian.nyam.tracker.data.db.BarcodeDatabase
 import com.bavian.nyam.tracker.data.db.BarcodeDatabaseImpl
+import com.bavian.nyam.tracker.data.db.EatenFoodDatabase
+import com.bavian.nyam.tracker.data.db.EatenFoodDatabaseImpl
 import com.bavian.nyam.tracker.data.db.ProductDatabase
 import com.bavian.nyam.tracker.data.db.ProductDatabaseImpl
 import com.bavian.nyam.tracker.data.mapper.BarcodeMapper
 import com.bavian.nyam.tracker.data.mapper.BarcodeMapperImpl
+import com.bavian.nyam.tracker.data.mapper.EatenFoodMapper
+import com.bavian.nyam.tracker.data.mapper.EatenFoodMapperImpl
 import com.bavian.nyam.tracker.data.mapper.ProductMapper
 import com.bavian.nyam.tracker.data.mapper.ProductMapperImpl
 import com.bavian.nyam.tracker.data.repository.BarcodeRepositoryImpl
+import com.bavian.nyam.tracker.data.repository.EatenFoodRepositoryImpl
 import com.bavian.nyam.tracker.data.repository.ProductRepositoryImpl
 import com.bavian.nyam.tracker.domain.infrastructure.ProductIdGenerator
 import com.bavian.nyam.tracker.domain.infrastructure.ProductIdGeneratorImpl
 import com.bavian.nyam.tracker.domain.infrastructure.StringDistanceCalculator
 import com.bavian.nyam.tracker.domain.infrastructure.StringDistanceCalculatorDamerauLevenshteinImpl
 import com.bavian.nyam.tracker.domain.repository.BarcodeRepository
+import com.bavian.nyam.tracker.domain.repository.EatenFoodRepository
 import com.bavian.nyam.tracker.domain.repository.ProductRepository
+import com.bavian.nyam.tracker.domain.usecase.AddEatenFoodUseCase
+import com.bavian.nyam.tracker.domain.usecase.AddEatenFoodUseCaseImpl
 import com.bavian.nyam.tracker.domain.usecase.AddProductUseCase
 import com.bavian.nyam.tracker.domain.usecase.AddProductUseCaseImpl
 import com.bavian.nyam.tracker.domain.usecase.DeleteProductUseCase
 import com.bavian.nyam.tracker.domain.usecase.DeleteProductUseCaseImpl
 import com.bavian.nyam.tracker.domain.usecase.GetBarcodeInfoUseCase
 import com.bavian.nyam.tracker.domain.usecase.GetBarcodeInfoUseCaseImpl
+import com.bavian.nyam.tracker.domain.usecase.GetEatenFoodUseCase
+import com.bavian.nyam.tracker.domain.usecase.GetEatenFoodUseCaseImpl
 import com.bavian.nyam.tracker.domain.usecase.GetProductByIdUseCase
 import com.bavian.nyam.tracker.domain.usecase.GetProductByIdUseCaseImpl
 import com.bavian.nyam.tracker.domain.usecase.GetProductsUseCase
@@ -67,18 +77,23 @@ val appModule =
         singleOf(::AppDatabaseHelper)
         singleOf(::ProductDatabaseImpl) bind ProductDatabase::class
         singleOf(::BarcodeDatabaseImpl) bind BarcodeDatabase::class
+        singleOf(::EatenFoodDatabaseImpl) bind EatenFoodDatabase::class
 
         factoryOf(::ProductIdGeneratorImpl) bind ProductIdGenerator::class
         factoryOf(::StringDistanceCalculatorDamerauLevenshteinImpl) bind StringDistanceCalculator::class
 
         factoryOf(::ProductMapperImpl) bind ProductMapper::class
+        factoryOf(::EatenFoodMapperImpl) bind EatenFoodMapper::class
         factoryOf(::SetProductUiStateMapperImpl) bind SetProductUiStateMapper::class
         factoryOf(::ProductsListProductMapperImpl) bind ProductsListProductMapper::class
         factoryOf(::ProductRepositoryImpl) bind ProductRepository::class
+        factoryOf(::EatenFoodRepositoryImpl) bind EatenFoodRepository::class
         factoryOf(::AddProductUseCaseImpl) bind AddProductUseCase::class
         factoryOf(::DeleteProductUseCaseImpl) bind DeleteProductUseCase::class
         factoryOf(::GetProductByIdUseCaseImpl) bind GetProductByIdUseCase::class
         factoryOf(::GetProductsUseCaseImpl) bind GetProductsUseCase::class
+        factoryOf(::AddEatenFoodUseCaseImpl) bind AddEatenFoodUseCase::class
+        factoryOf(::GetEatenFoodUseCaseImpl) bind GetEatenFoodUseCase::class
 
         factoryOf(::BarcodeMapperImpl) bind BarcodeMapper::class
         factoryOf(::BarcodeRepositoryImpl) bind BarcodeRepository::class

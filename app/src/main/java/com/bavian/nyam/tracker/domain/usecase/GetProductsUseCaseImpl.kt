@@ -18,7 +18,11 @@ class GetProductsUseCaseImpl(
         } else {
             allProducts.sortedBy { product ->
                 val nameDistance = distanceCalculator.calculate(product.name.lowercase(), key.lowercase())
-                val manufacturerDistance = distanceCalculator.calculate(product.manufacturer.lowercase(), key.lowercase())
+                val manufacturerDistance =
+                    distanceCalculator.calculate(
+                        product.manufacturer.lowercase(),
+                        key.lowercase(),
+                    )
                 minOf(nameDistance, manufacturerDistance)
             }
         }

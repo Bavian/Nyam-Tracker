@@ -9,7 +9,7 @@ class AppDatabaseHelper(
 ) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     companion object {
         private const val DATABASE_NAME = "nyam_tracker.db"
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 2
 
         const val TABLE_PRODUCTS = "products"
         const val COLUMN_PRODUCT_ID = "id"
@@ -23,6 +23,30 @@ class AppDatabaseHelper(
         const val TABLE_BARCODES = "barcodes"
         const val COLUMN_BARCODE_NUMBER = "number"
         const val COLUMN_PRODUCT_IDS = "product_ids"
+
+        const val TABLE_EATEN_FOOD = "eaten_food"
+        const val COLUMN_EATEN_FOOD_ID = "id"
+        const val COLUMN_EATEN_FOOD_MANUFACTURER = "manufacturer"
+        const val COLUMN_EATEN_FOOD_NAME = "name"
+        const val COLUMN_EATEN_FOOD_KCALORIES = "kcalories"
+        const val COLUMN_EATEN_FOOD_PROTEINS = "proteins"
+        const val COLUMN_EATEN_FOOD_FAT = "fat"
+        const val COLUMN_EATEN_FOOD_CARBOHYDRATES = "carbohydrates"
+        const val COLUMN_EATEN_FOOD_TIMESTAMP = "timestamp"
+
+        private val CREATE_EATEN_FOOD_TABLE =
+            """
+            CREATE TABLE $TABLE_EATEN_FOOD (
+                $COLUMN_EATEN_FOOD_ID TEXT PRIMARY KEY,
+                $COLUMN_EATEN_FOOD_MANUFACTURER TEXT,
+                $COLUMN_EATEN_FOOD_NAME TEXT,
+                $COLUMN_EATEN_FOOD_KCALORIES INTEGER,
+                $COLUMN_EATEN_FOOD_PROTEINS INTEGER,
+                $COLUMN_EATEN_FOOD_FAT INTEGER,
+                $COLUMN_EATEN_FOOD_CARBOHYDRATES INTEGER,
+                $COLUMN_EATEN_FOOD_TIMESTAMP INTEGER
+            )
+            """.trimIndent()
     }
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -48,6 +72,8 @@ class AppDatabaseHelper(
             )
             """.trimIndent()
         db.execSQL(createBarcodesTable)
+
+        db.execSQL(CREATE_EATEN_FOOD_TABLE)
     }
 
     override fun onUpgrade(
@@ -55,8 +81,8 @@ class AppDatabaseHelper(
         oldVersion: Int,
         newVersion: Int,
     ) {
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_PRODUCTS")
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_BARCODES")
-        onCreate(db)
+        if (oldVersion < 2) {
+            db.execSQL(CREATE_EATEN_FOOD_TABLE)
+        }
     }
 }
