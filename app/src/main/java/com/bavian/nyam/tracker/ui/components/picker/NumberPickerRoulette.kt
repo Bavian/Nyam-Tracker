@@ -20,7 +20,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -59,14 +58,17 @@ fun NumberPickerRoulette(
     key(state.list) {
         val coroutineScope = rememberCoroutineScope()
         val infinitePageCount = Int.MAX_VALUE
-        val initialIndex = state.list.indexOf(state.value).let { index ->
-            if (index == -1) {
-                state.list.indexOfFirst { it >= state.value }.takeIf { it != -1 }
-                    ?: (state.list.size - 1)
-            } else {
-                index
-            }
-        }.coerceIn(0, state.list.size - 1)
+        val initialIndex =
+            state.list
+                .indexOf(state.value)
+                .let { index ->
+                    if (index == -1) {
+                        state.list.indexOfFirst { it >= state.value }.takeIf { it != -1 }
+                            ?: (state.list.size - 1)
+                    } else {
+                        index
+                    }
+                }.coerceIn(0, state.list.size - 1)
 
         val initialPage =
             (infinitePageCount / 2) - ((infinitePageCount / 2) % state.list.size) + initialIndex
