@@ -14,6 +14,7 @@ class EatenFoodDatabaseImpl(
                 put(AppDatabaseHelper.COLUMN_EATEN_FOOD_ID, eatenFood.id)
                 put(AppDatabaseHelper.COLUMN_EATEN_FOOD_MANUFACTURER, eatenFood.manufacturer)
                 put(AppDatabaseHelper.COLUMN_EATEN_FOOD_NAME, eatenFood.name)
+                put(AppDatabaseHelper.COLUMN_EATEN_FOOD_WEIGHT, eatenFood.weight)
                 put(AppDatabaseHelper.COLUMN_EATEN_FOOD_KCALORIES, eatenFood.kCalories)
                 put(AppDatabaseHelper.COLUMN_EATEN_FOOD_PROTEINS, eatenFood.proteins)
                 put(AppDatabaseHelper.COLUMN_EATEN_FOOD_FAT, eatenFood.fat)
@@ -43,6 +44,7 @@ class EatenFoodDatabaseImpl(
                         id = it.getString(it.getColumnIndexOrThrow(AppDatabaseHelper.COLUMN_EATEN_FOOD_ID)),
                         manufacturer = it.getString(it.getColumnIndexOrThrow(AppDatabaseHelper.COLUMN_EATEN_FOOD_MANUFACTURER)),
                         name = it.getString(it.getColumnIndexOrThrow(AppDatabaseHelper.COLUMN_EATEN_FOOD_NAME)),
+                        weight = it.getInt(it.getColumnIndexOrThrow(AppDatabaseHelper.COLUMN_EATEN_FOOD_WEIGHT)),
                         kCalories = it.getInt(it.getColumnIndexOrThrow(AppDatabaseHelper.COLUMN_EATEN_FOOD_KCALORIES)),
                         proteins = it.getInt(it.getColumnIndexOrThrow(AppDatabaseHelper.COLUMN_EATEN_FOOD_PROTEINS)),
                         fat = it.getInt(it.getColumnIndexOrThrow(AppDatabaseHelper.COLUMN_EATEN_FOOD_FAT)),
