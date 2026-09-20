@@ -1,4 +1,4 @@
-package com.bavian.nyam.tracker.presentation.components
+package com.bavian.nyam.tracker.ui.components.picker
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
