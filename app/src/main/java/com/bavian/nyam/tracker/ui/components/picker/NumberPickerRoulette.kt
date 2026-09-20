@@ -17,6 +17,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
@@ -55,113 +56,120 @@ fun NumberPickerRoulette(
 ) {
     if (state.list.isEmpty()) return
 
-    val coroutineScope = rememberCoroutineScope()
-    val infinitePageCount = Int.MAX_VALUE
-    val initialIndex = state.list.indexOf(state.value).coerceAtLeast(0)
-    val initialPage =
-        remember(state.list) {
+    key(state.list) {
+        val coroutineScope = rememberCoroutineScope()
+        val infinitePageCount = Int.MAX_VALUE
+        val initialIndex = state.list.indexOf(state.value).let { index ->
+            if (index == -1) {
+                state.list.indexOfFirst { it >= state.value }.takeIf { it != -1 }
+                    ?: (state.list.size - 1)
+            } else {
+                index
+            }
+        }.coerceIn(0, state.list.size - 1)
+
+        val initialPage =
             (infinitePageCount / 2) - ((infinitePageCount / 2) % state.list.size) + initialIndex
+
+        val pagerState =
+            rememberPagerState(
+                initialPage = initialPage,
+            ) {
+                infinitePageCount
+            }
+
+        LaunchedEffect(state.value) {
+            val currentIndex = pagerState.currentPage % state.list.size
+            val targetIndex = state.list.indexOf(state.value).coerceAtLeast(0)
+            if (currentIndex != targetIndex) {
+                val diff = targetIndex - currentIndex
+                val halfSize = state.list.size / 2
+                val optimizedDiff =
+                    when {
+                        diff > halfSize -> diff - state.list.size
+                        diff < -halfSize -> diff + state.list.size
+                        else -> diff
+                    }
+                pagerState.animateScrollToPage(pagerState.currentPage + optimizedDiff)
+            }
         }
 
-    val pagerState =
-        rememberPagerState(
-            initialPage = initialPage,
-        ) {
-            infinitePageCount
-        }
-
-    LaunchedEffect(state.value) {
-        val currentIndex = pagerState.currentPage % state.list.size
-        val targetIndex = state.list.indexOf(state.value).coerceAtLeast(0)
-        if (currentIndex != targetIndex) {
-            val diff = targetIndex - currentIndex
-            val halfSize = state.list.size / 2
-            val optimizedDiff =
-                when {
-                    diff > halfSize -> diff - state.list.size
-                    diff < -halfSize -> diff + state.list.size
-                    else -> diff
-                }
-            pagerState.animateScrollToPage(pagerState.currentPage + optimizedDiff)
-        }
-    }
-
-    LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }.collect { page ->
+        LaunchedEffect(pagerState.currentPage) {
+            val page = pagerState.currentPage
             val newValue = state.list[page % state.list.size]
             if (newValue != state.value) {
                 onEvent(NumberPickerRoulette.Event.ValueChanged(newValue))
             }
         }
-    }
 
-    Surface(
-        shape = MaterialTheme.shapes.medium,
-        color = MaterialTheme.colorScheme.surfaceVariant,
-        modifier = modifier,
-    ) {
-        VerticalPager(
-            state = pagerState,
-            modifier = Modifier.height(150.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            pageSize = PageSize.Fixed(50.dp),
-            contentPadding = PaddingValues(vertical = 50.dp),
-        ) { page ->
-            val index = page % state.list.size
-            Box(
-                modifier =
-                    Modifier
-                        .graphicsLayer {
-                            val pageOffset =
-                                pagerState.currentPage
-                                    .minus(page)
-                                    .plus(pagerState.currentPageOffsetFraction)
-                                    .absoluteValue
+        Surface(
+            shape = MaterialTheme.shapes.medium,
+            color = MaterialTheme.colorScheme.surfaceVariant,
+            modifier = modifier,
+        ) {
+            VerticalPager(
+                state = pagerState,
+                modifier = Modifier.height(150.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                pageSize = PageSize.Fixed(50.dp),
+                contentPadding = PaddingValues(vertical = 50.dp),
+            ) { page ->
+                val index = page % state.list.size
+                Box(
+                    modifier =
+                        Modifier
+                            .graphicsLayer {
+                                val pageOffset =
+                                    pagerState.currentPage
+                                        .minus(page)
+                                        .plus(pagerState.currentPageOffsetFraction)
+                                        .absoluteValue
 
-                            alpha =
-                                lerp(
-                                    start = 0.3f,
-                                    stop = 1f,
-                                    fraction = 1f - pageOffset.coerceIn(0f, 1f),
-                                )
-                            scaleX =
-                                lerp(
-                                    start = 0.7f,
-                                    stop = 1f,
-                                    fraction = 1f - pageOffset.coerceIn(0f, 1f),
-                                )
-                            scaleY =
-                                lerp(
-                                    start = 0.7f,
-                                    stop = 1f,
-                                    fraction = 1f - pageOffset.coerceIn(0f, 1f),
-                                )
-                        }.height(50.dp)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                        ) {
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(page)
-                            }
-                        },
-                contentAlignment = Alignment.Center,
-            ) {
-                val selected = pagerState.currentPage == page
+                                alpha =
+                                    lerp(
+                                        start = 0.3f,
+                                        stop = 1f,
+                                        fraction = 1f - pageOffset.coerceIn(0f, 1f),
+                                    )
+                                scaleX =
+                                    lerp(
+                                        start = 0.7f,
+                                        stop = 1f,
+                                        fraction = 1f - pageOffset.coerceIn(0f, 1f),
+                                    )
+                                scaleY =
+                                    lerp(
+                                        start = 0.7f,
+                                        stop = 1f,
+                                        fraction = 1f - pageOffset.coerceIn(0f, 1f),
+                                    )
+                            }.height(50.dp)
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                            ) {
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(page)
+                                }
+                            },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    val selected = pagerState.currentPage == page
 
-                if (selected) {
-                    NumberDivider(Alignment.TopCenter)
-                }
+                    if (selected) {
+                        NumberDivider(Alignment.TopCenter)
+                    }
 
-                Text(
-                    text = state.list[index].toString(),
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-                    color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-                )
+                    Text(
+                        text = state.list[index].toString(),
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                        color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                    )
 
-                if (selected) {
-                    NumberDivider(Alignment.BottomCenter)
+                    if (selected) {
+                        NumberDivider(Alignment.BottomCenter)
+                    }
                 }
             }
         }
@@ -188,7 +196,10 @@ private fun NumberPickerRoulettePreview(
     NumberPickerRoulette(
         state = state,
         onEvent = {},
-        modifier = Modifier.padding(16.dp).width(100.dp),
+        modifier =
+            Modifier
+                .padding(16.dp)
+                .width(100.dp),
     )
 }
 
