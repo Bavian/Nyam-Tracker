@@ -35,8 +35,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.bavian.nyam.tracker.R
-import com.bavian.nyam.tracker.presentation.components.ProductCard
 import com.bavian.nyam.tracker.presentation.productslist.model.ProductsListProduct
+import com.bavian.nyam.tracker.ui.components.card.ProductCard
 
 @Composable
 fun ProductsListScreen(

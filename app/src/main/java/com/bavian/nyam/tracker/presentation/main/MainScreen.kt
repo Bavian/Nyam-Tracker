@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.bavian.nyam.tracker.R
-import com.bavian.nyam.tracker.presentation.components.DateCarousel
+import com.bavian.nyam.tracker.ui.components.picker.DateCarousel
 
 @Composable
 fun MainScreen(
@@ -51,7 +51,10 @@ fun MainScreen(
         },
     ) { innerPadding ->
         Column(
-            modifier = Modifier.padding(innerPadding).fillMaxSize(),
+            modifier =
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
         ) {
             DateCarousel(
                 state = DateCarousel.State(state.selectedDate),
