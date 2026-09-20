@@ -37,6 +37,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.bavian.nyam.tracker.R
 import com.bavian.nyam.tracker.presentation.productslist.model.ProductsListProduct
 import com.bavian.nyam.tracker.ui.components.card.ProductCard
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun ProductsListScreen(
@@ -181,7 +182,7 @@ private class ProductsListScreenPreviewParameterProvider : PreviewParameterProvi
         sequenceOf(
             ProductsListUiState(
                 products =
-                    listOf(
+                    persistentListOf(
                         ProductsListProduct("1", "Nestle", "Nesquik", "379.0", "8.5", "1.8", "81.0"),
                         ProductsListProduct("2", "Coca-Cola", "Cola", "42.0", "0.0", "0.0", "10.6"),
                     ),
@@ -189,7 +190,7 @@ private class ProductsListScreenPreviewParameterProvider : PreviewParameterProvi
             ProductsListUiState(
                 searchQuery = "Nes",
                 products =
-                    listOf(
+                    persistentListOf(
                         ProductsListProduct("1", "Nestle", "Nesquik", "379.0", "8.5", "1.8", "81.0"),
                     ),
                 expandedProductId = "1",
