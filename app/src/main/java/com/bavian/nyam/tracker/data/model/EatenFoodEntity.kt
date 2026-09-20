@@ -4,6 +4,7 @@ data class EatenFoodEntity(
     val id: String,
     val manufacturer: String,
     val name: String,
+    val weight: Int,
     val kCalories: Int,
     val proteins: Int,
     val fat: Int,

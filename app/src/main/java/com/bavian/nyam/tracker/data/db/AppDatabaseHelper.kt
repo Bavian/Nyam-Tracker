@@ -28,6 +28,7 @@ class AppDatabaseHelper(
         const val COLUMN_EATEN_FOOD_ID = "id"
         const val COLUMN_EATEN_FOOD_MANUFACTURER = "manufacturer"
         const val COLUMN_EATEN_FOOD_NAME = "name"
+        const val COLUMN_EATEN_FOOD_WEIGHT = "weight"
         const val COLUMN_EATEN_FOOD_KCALORIES = "kcalories"
         const val COLUMN_EATEN_FOOD_PROTEINS = "proteins"
         const val COLUMN_EATEN_FOOD_FAT = "fat"
@@ -40,6 +41,7 @@ class AppDatabaseHelper(
                 $COLUMN_EATEN_FOOD_ID TEXT PRIMARY KEY,
                 $COLUMN_EATEN_FOOD_MANUFACTURER TEXT,
                 $COLUMN_EATEN_FOOD_NAME TEXT,
+                $COLUMN_EATEN_FOOD_WEIGHT INTEGER,
                 $COLUMN_EATEN_FOOD_KCALORIES INTEGER,
                 $COLUMN_EATEN_FOOD_PROTEINS INTEGER,
                 $COLUMN_EATEN_FOOD_FAT INTEGER,
