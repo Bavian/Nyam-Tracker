@@ -7,6 +7,7 @@ import com.bavian.nyam.tracker.domain.usecase.DeleteProductUseCase
 import com.bavian.nyam.tracker.domain.usecase.GetProductsUseCase
 import com.bavian.nyam.tracker.presentation.navigation.AppNavigation
 import com.bavian.nyam.tracker.presentation.productslist.mapper.ProductsListProductMapper
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -95,7 +96,10 @@ class ProductsListViewModel(
                 getProductsUseCase.execute(
                     ProductSearchParams(key = _uiState.value.searchQuery),
                 )
-            val presentationProducts = domainProducts.map { productMapper.mapToPresentation(it) }
+            val presentationProducts =
+                domainProducts
+                    .map { productMapper.mapToPresentation(it) }
+                    .toImmutableList()
             _uiState.update { it.copy(products = presentationProducts) }
         }
     }
