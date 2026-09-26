@@ -16,4 +16,10 @@ sealed interface AppRoute {
     data object ProductsList : AppRoute {
         override val path: String = "products_list"
     }
+
+    data object SetFood : AppRoute {
+        override val path: String = "set_food"
+        const val ARG_PRODUCT_ID = "productId"
+        val routeWithArgs: String = "$path?$ARG_PRODUCT_ID={$ARG_PRODUCT_ID}"
+    }
 }

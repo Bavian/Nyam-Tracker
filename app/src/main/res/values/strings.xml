@@ -36,4 +36,17 @@
     <string name="products_list_delete_dialog_confirm">Delete</string>
     <string name="products_list_delete_dialog_cancel">Cancel</string>
     <string name="products_list_add_product">Add Product</string>
+
+    <string name="set_food_title_past">What did you eat?</string>
+    <string name="set_food_title_future">What will you eat?</string>
+    <string name="set_food_manufacturer">Manufacturer</string>
+    <string name="set_food_name">Name</string>
+    <string name="set_food_weight">Weight (g)</string>
+    <string name="set_food_calories">Calories (kcal)</string>
+    <string name="set_food_proteins">Proteins (g)</string>
+    <string name="set_food_fat">Fat (g)</string>
+    <string name="set_food_carbohydrates">Carbohydrates (g)</string>
+    <string name="set_food_ok">OK</string>
+    <string name="set_food_cancel">Cancel</string>
+    <string name="set_food_save_content_description">Save</string>
 </resources>

@@ -15,6 +15,8 @@ interface AppNavigation {
 
     fun openProductsListScreen()
 
+    fun openAddFoodScreen(productId: String? = null)
+
     sealed interface NavigationAction {
         data class Back(
             val result: Any? = null,

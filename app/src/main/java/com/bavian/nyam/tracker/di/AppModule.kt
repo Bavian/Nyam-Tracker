@@ -47,6 +47,11 @@ import com.bavian.nyam.tracker.presentation.productslist.mapper.ProductsListProd
 import com.bavian.nyam.tracker.presentation.productslist.mapper.ProductsListProductMapperImpl
 import com.bavian.nyam.tracker.presentation.scanner.BarcodeScanner
 import com.bavian.nyam.tracker.presentation.scanner.BarcodeScannerImpl
+import com.bavian.nyam.tracker.presentation.setfood.SetFoodViewModel
+import com.bavian.nyam.tracker.presentation.setfood.mapper.SetFoodScreenEventMapper
+import com.bavian.nyam.tracker.presentation.setfood.mapper.SetFoodScreenEventMapperImpl
+import com.bavian.nyam.tracker.presentation.setfood.mapper.SetFoodScreenStateMapper
+import com.bavian.nyam.tracker.presentation.setfood.mapper.SetFoodScreenStateMapperImpl
 import com.bavian.nyam.tracker.presentation.setproduct.SetProductViewModel
 import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductUiStateMapper
 import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductUiStateMapperImpl
@@ -63,7 +68,6 @@ val appModule =
         singleOf(::AppNavigationImpl) bind AppNavigation::class
         viewModelOf(::MainViewModel)
         viewModelOf(::ProductsListViewModel)
-
         viewModel { parameters ->
             SetProductViewModel(
                 initialProductId = parameters.getOrNull(),
@@ -71,6 +75,15 @@ val appModule =
                 getProductByIdUseCase = get(),
                 productMapper = get(),
                 appNavigation = get(),
+            )
+        }
+        viewModel { parameters ->
+            SetFoodViewModel(
+                productId = parameters.getOrNull(),
+                getProductByIdUseCase = get(),
+                addEatenFoodUseCase = get(),
+                appNavigation = get(),
+                productIdGenerator = get(),
             )
         }
 
@@ -86,6 +99,8 @@ val appModule =
         factoryOf(::EatenFoodMapperImpl) bind EatenFoodMapper::class
         factoryOf(::SetProductUiStateMapperImpl) bind SetProductUiStateMapper::class
         factoryOf(::ProductsListProductMapperImpl) bind ProductsListProductMapper::class
+        factoryOf(::SetFoodScreenEventMapperImpl) bind SetFoodScreenEventMapper::class
+        factoryOf(::SetFoodScreenStateMapperImpl) bind SetFoodScreenStateMapper::class
         factoryOf(::ProductRepositoryImpl) bind ProductRepository::class
         factoryOf(::EatenFoodRepositoryImpl) bind EatenFoodRepository::class
         factoryOf(::AddProductUseCaseImpl) bind AddProductUseCase::class

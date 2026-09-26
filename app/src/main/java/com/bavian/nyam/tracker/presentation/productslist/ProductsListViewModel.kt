@@ -35,7 +35,7 @@ class ProductsListViewModel(
             }
 
             is ProductsListEvent.ProductClicked -> {
-                // Handled in UI for Toast
+                openSetFoodScreen(event.product.id)
             }
 
             is ProductsListEvent.EditProductClicked -> {
@@ -107,6 +107,10 @@ class ProductsListViewModel(
     private fun openSetProductScreen(productId: String) {
         dismissContextMenu()
         appNavigation.openSetProductScreen(productId)
+    }
+
+    private fun openSetFoodScreen(productId: String) {
+        appNavigation.openAddFoodScreen(productId)
     }
 
     private fun dismissContextMenu() {
