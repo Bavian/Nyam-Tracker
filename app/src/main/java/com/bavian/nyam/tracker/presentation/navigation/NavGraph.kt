@@ -2,6 +2,7 @@ package com.bavian.nyam.tracker.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -9,8 +10,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.bavian.nyam.tracker.presentation.main.MainScreen
-import com.bavian.nyam.tracker.presentation.main.MainUiState
+import com.bavian.nyam.tracker.presentation.main.MainScreenViewModelState
 import com.bavian.nyam.tracker.presentation.main.MainViewModel
+import com.bavian.nyam.tracker.presentation.main.mapper.MainScreenEventMapper
+import com.bavian.nyam.tracker.presentation.main.mapper.MainScreenStateMapper
 import com.bavian.nyam.tracker.presentation.productslist.ProductsListScreen
 import com.bavian.nyam.tracker.presentation.productslist.ProductsListUiState
 import com.bavian.nyam.tracker.presentation.productslist.ProductsListViewModel
@@ -51,9 +54,12 @@ fun AppNavGraph(
     ) {
         composable(AppRoute.Main.path) {
             val viewModel: MainViewModel = koinViewModel()
+            val stateMapper = koinInject<MainScreenStateMapper>()
+            val eventMapper = koinInject<MainScreenEventMapper>()
+            val state by viewModel.uiState.collectAsStateWithLifecycle(MainScreenViewModelState())
             MainScreen(
-                state = viewModel.uiState.collectAsStateWithLifecycle(MainUiState()).value,
-                onEvent = viewModel::onEvent,
+                state = stateMapper.map(state),
+                onEvent = { eventMapper.map(it).let(viewModel::onEvent) },
             )
         }
 

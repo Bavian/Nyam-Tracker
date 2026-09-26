@@ -131,9 +131,7 @@ fun DateCarousel(
         snapshotFlow { pagerState.currentPage }.collect { page ->
             val daysDiff = (page.toLong() - initialPage.toLong())
             val newDate = today.plus(DatePeriod(days = daysDiff.toInt()))
-            if (newDate != state.pickedDate) {
-                onEvent(DateCarousel.Event.DatePicked(newDate))
-            }
+            onEvent(DateCarousel.Event.DatePicked(newDate))
         }
     }
 
