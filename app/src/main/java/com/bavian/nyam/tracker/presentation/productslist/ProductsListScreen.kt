@@ -1,6 +1,5 @@
 package com.bavian.nyam.tracker.presentation.productslist
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -24,7 +23,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,9 +55,6 @@ fun ProductsListScreen(
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
-
-    val context = LocalContext.current
-    val toastMessage = stringResource(R.string.products_list_not_implemented)
 
     Scaffold(
         modifier = Modifier.imePadding(),
@@ -125,7 +120,6 @@ fun ProductsListScreen(
                         when (event) {
                             ProductCard.Event.Clicked -> {
                                 onEvent(ProductsListEvent.ProductClicked(product))
-                                Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()
                             }
                             ProductCard.Event.EditClicked -> onEvent(ProductsListEvent.EditProductClicked(product))
                             ProductCard.Event.DeleteClicked -> onEvent(ProductsListEvent.DeleteProductClicked(product))

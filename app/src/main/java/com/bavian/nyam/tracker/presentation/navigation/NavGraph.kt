@@ -14,6 +14,10 @@ import com.bavian.nyam.tracker.presentation.main.MainViewModel
 import com.bavian.nyam.tracker.presentation.productslist.ProductsListScreen
 import com.bavian.nyam.tracker.presentation.productslist.ProductsListUiState
 import com.bavian.nyam.tracker.presentation.productslist.ProductsListViewModel
+import com.bavian.nyam.tracker.presentation.setfood.SetFoodViewModel
+import com.bavian.nyam.tracker.presentation.setfood.compose.SetFoodScreen
+import com.bavian.nyam.tracker.presentation.setfood.mapper.SetFoodScreenEventMapper
+import com.bavian.nyam.tracker.presentation.setfood.mapper.SetFoodScreenStateMapper
 import com.bavian.nyam.tracker.presentation.setproduct.SetProductScreen
 import com.bavian.nyam.tracker.presentation.setproduct.SetProductUiState
 import com.bavian.nyam.tracker.presentation.setproduct.SetProductViewModel
@@ -77,6 +81,27 @@ fun AppNavGraph(
             ProductsListScreen(
                 state = viewModel.uiState.collectAsStateWithLifecycle(ProductsListUiState()).value,
                 onEvent = viewModel::onEvent,
+            )
+        }
+
+        composable(
+            route = AppRoute.SetFood.routeWithArgs,
+            arguments =
+                listOf(
+                    navArgument(AppRoute.SetFood.ARG_PRODUCT_ID) {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    },
+                ),
+        ) { backStackEntry ->
+            val productId = backStackEntry.arguments?.getString(AppRoute.SetFood.ARG_PRODUCT_ID)
+            val viewModel: SetFoodViewModel = koinViewModel { parametersOf(productId) }
+            val stateMapper = koinInject<SetFoodScreenStateMapper>()
+            val eventMapper = koinInject<SetFoodScreenEventMapper>()
+            SetFoodScreen(
+                state = stateMapper.map(viewModel.uiState.collectAsStateWithLifecycle().value),
+                onEvent = { eventMapper.map(it).let(viewModel::onEvent) },
             )
         }
     }
