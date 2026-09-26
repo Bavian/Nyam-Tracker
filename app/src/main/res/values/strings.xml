@@ -24,6 +24,7 @@
     <string name="products_list_proteins_prefix">P: </string>
     <string name="products_list_fat_prefix">F: </string>
     <string name="products_list_carbohydrates_prefix">C: </string>
+    <string name="eaten_food_weight_prefix">W: </string>
 
     <string name="main_scan_barcode">Scan Barcode</string>
     <string name="main_products_list">Products</string>
