@@ -25,9 +25,5 @@ interface AppNavigation {
         data class Navigate(
             val route: AppRoute,
         ) : NavigationAction
-
-        data class NavigateWithTemplate(
-            val path: String,
-        ) : NavigationAction
     }
 }

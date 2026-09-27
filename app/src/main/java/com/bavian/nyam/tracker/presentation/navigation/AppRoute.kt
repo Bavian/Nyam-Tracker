@@ -1,25 +1,23 @@
 package com.bavian.nyam.tracker.presentation.navigation
 
-sealed interface AppRoute {
-    val path: String
+import androidx.navigation3.runtime.NavKey
+import kotlinx.serialization.Serializable
 
-    data object Main : AppRoute {
-        override val path: String = "main"
-    }
+@Serializable
+sealed interface AppRoute : NavKey {
+    @Serializable
+    data object Main : AppRoute
 
-    data object SetProduct : AppRoute {
-        override val path: String = "set_product"
-        const val ARG_PRODUCT_ID = "productId"
-        val routeWithArgs: String = "$path?$ARG_PRODUCT_ID={$ARG_PRODUCT_ID}"
-    }
+    @Serializable
+    data class SetProduct(
+        val productId: String? = null,
+    ) : AppRoute
 
-    data object ProductsList : AppRoute {
-        override val path: String = "products_list"
-    }
+    @Serializable
+    data object ProductsList : AppRoute
 
-    data object SetFood : AppRoute {
-        override val path: String = "set_food"
-        const val ARG_PRODUCT_ID = "productId"
-        val routeWithArgs: String = "$path?$ARG_PRODUCT_ID={$ARG_PRODUCT_ID}"
-    }
+    @Serializable
+    data class SetFood(
+        val productId: String? = null,
+    ) : AppRoute
 }
