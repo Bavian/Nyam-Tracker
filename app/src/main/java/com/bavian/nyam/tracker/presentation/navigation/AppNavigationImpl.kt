@@ -25,15 +25,7 @@ class AppNavigationImpl(
     }
 
     override fun openSetProductScreen(productId: String?) {
-        val path =
-            if (productId !=
-                null
-            ) {
-                "${AppRoute.SetProduct.path}?${AppRoute.SetProduct.ARG_PRODUCT_ID}=$productId"
-            } else {
-                AppRoute.SetProduct.path
-            }
-        _navigationActions.tryEmit(NavigationAction.NavigateWithTemplate(path))
+        _navigationActions.tryEmit(NavigationAction.Navigate(AppRoute.SetProduct(productId)))
     }
 
     override fun openProductsListScreen() {
@@ -41,12 +33,6 @@ class AppNavigationImpl(
     }
 
     override fun openAddFoodScreen(productId: String?) {
-        val path =
-            if (productId != null) {
-                "${AppRoute.SetFood.path}?${AppRoute.SetFood.ARG_PRODUCT_ID}=$productId"
-            } else {
-                AppRoute.SetFood.path
-            }
-        _navigationActions.tryEmit(NavigationAction.NavigateWithTemplate(path))
+        _navigationActions.tryEmit(NavigationAction.Navigate(AppRoute.SetFood(productId)))
     }
 }
