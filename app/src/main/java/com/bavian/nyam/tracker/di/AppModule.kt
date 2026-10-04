@@ -67,7 +67,6 @@ import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductUiStateM
 import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductUiStateMapperImpl
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
-import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -78,24 +77,8 @@ val appModule =
         singleOf(::AppNavigationImpl) bind AppNavigation::class
         viewModelOf(::MainViewModel)
         viewModelOf(::ProductsListViewModel)
-        viewModel { parameters ->
-            SetProductViewModel(
-                initialProductId = parameters.getOrNull(),
-                addProductUseCase = get(),
-                getProductByIdUseCase = get(),
-                productMapper = get(),
-                appNavigation = get(),
-            )
-        }
-        viewModel { parameters ->
-            SetFoodViewModel(
-                productId = parameters.getOrNull(),
-                getProductByIdUseCase = get(),
-                addEatenFoodUseCase = get(),
-                appNavigation = get(),
-                productIdGenerator = get(),
-            )
-        }
+        viewModelOf(::SetProductViewModel)
+        viewModelOf(::SetFoodViewModel)
 
         singleOf(::AppDatabaseHelper)
         singleOf(::ProductDatabaseImpl) bind ProductDatabase::class

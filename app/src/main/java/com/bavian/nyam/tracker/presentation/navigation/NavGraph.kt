@@ -66,7 +66,8 @@ fun AppNavGraph(appNavigation: AppNavigation = koinInject()) {
                 }
 
                 entry<AppRoute.SetProduct> { key ->
-                    val viewModel: SetProductViewModel = koinViewModel { parametersOf(key.productId) }
+                    val viewModel: SetProductViewModel =
+                        koinViewModel(key = "${key.productId}#${key.barcode}") { parametersOf(key.productId, key.barcode) }
                     SetProductScreen(
                         state = viewModel.uiState.collectAsStateWithLifecycle(SetProductUiState()).value,
                         onEvent = viewModel::onEvent,
@@ -85,7 +86,7 @@ fun AppNavGraph(appNavigation: AppNavigation = koinInject()) {
                 }
 
                 entry<AppRoute.SetFood> { key ->
-                    val viewModel: SetFoodViewModel = koinViewModel { parametersOf(key.productId) }
+                    val viewModel: SetFoodViewModel = koinViewModel(key = key.productId) { parametersOf(key.productId) }
                     val stateMapper = koinInject<SetFoodScreenStateMapper>()
                     val eventMapper = koinInject<SetFoodScreenEventMapper>()
                     SetFoodScreen(

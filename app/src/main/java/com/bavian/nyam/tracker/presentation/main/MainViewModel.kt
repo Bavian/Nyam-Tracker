@@ -2,9 +2,11 @@ package com.bavian.nyam.tracker.presentation.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bavian.nyam.tracker.domain.usecase.GetBarcodeInfoUseCase
 import com.bavian.nyam.tracker.domain.usecase.GetEatenFoodUseCase
 import com.bavian.nyam.tracker.presentation.main.mapper.MainScreenEatenFoodItemMapper
 import com.bavian.nyam.tracker.presentation.navigation.AppNavigation
+import com.bavian.nyam.tracker.presentation.scanner.BarcodeScanner
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,6 +23,8 @@ class MainViewModel(
     private val appNavigation: AppNavigation,
     private val getEatenFoodUseCase: GetEatenFoodUseCase,
     private val eatenFoodItemMapper: MainScreenEatenFoodItemMapper,
+    private val barcodeScanner: BarcodeScanner,
+    private val getBarcodeInfoUseCase: GetBarcodeInfoUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(MainScreenViewModelState())
     val uiState: StateFlow<MainScreenViewModelState> = _uiState.asStateFlow()
@@ -74,7 +78,16 @@ class MainViewModel(
 
     fun startScan() {
         viewModelScope.launch {
-            appNavigation.startScan()
+            val scanResult = barcodeScanner.startScan()
+            scanResult.getOrNull()?.let { scannerState ->
+                val barcodeInfo = getBarcodeInfoUseCase.execute(scannerState.barcode)
+                val productId = barcodeInfo?.productIds?.firstOrNull()
+                if (productId != null) {
+                    appNavigation.openAddFoodScreen(productId)
+                } else {
+                    appNavigation.openSetProductScreen(barcode = scannerState.barcode)
+                }
+            }
         }
     }
 }

@@ -2,10 +2,15 @@ package com.bavian.nyam.tracker.presentation.setproduct
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bavian.nyam.tracker.domain.model.BarcodeInfo
 import com.bavian.nyam.tracker.domain.usecase.AddProductUseCase
+import com.bavian.nyam.tracker.domain.usecase.GetBarcodeInfoUseCase
 import com.bavian.nyam.tracker.domain.usecase.GetProductByIdUseCase
+import com.bavian.nyam.tracker.domain.usecase.SetBarcodeUseCase
 import com.bavian.nyam.tracker.presentation.navigation.AppNavigation
 import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductUiStateMapper
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,8 +19,11 @@ import kotlinx.coroutines.launch
 
 class SetProductViewModel(
     private val initialProductId: String?,
+    private val barcode: String?,
     private val addProductUseCase: AddProductUseCase,
     private val getProductByIdUseCase: GetProductByIdUseCase,
+    private val setBarcodeUseCase: SetBarcodeUseCase,
+    private val getBarcodeInfoUseCase: GetBarcodeInfoUseCase,
     private val productMapper: SetProductUiStateMapper,
     private val appNavigation: AppNavigation,
 ) : ViewModel() {
@@ -52,29 +60,36 @@ class SetProductViewModel(
                 _uiState.update { it.copy(manufacturer = event.value) }
                 validateForm()
             }
+
             is SetProductEvent.NameChanged -> {
                 _uiState.update { it.copy(name = event.value) }
                 validateForm()
             }
+
             is SetProductEvent.CaloriesChanged -> {
                 _uiState.update { it.copy(calories = event.value) }
                 validateForm()
             }
+
             is SetProductEvent.ProteinsChanged -> {
                 _uiState.update { it.copy(proteins = event.value) }
                 validateForm()
             }
+
             is SetProductEvent.FatChanged -> {
                 _uiState.update { it.copy(fat = event.value) }
                 validateForm()
             }
+
             is SetProductEvent.CarbohydratesChanged -> {
                 _uiState.update { it.copy(carbohydrates = event.value) }
                 validateForm()
             }
+
             SetProductEvent.ConfirmClicked -> {
                 confirmAddition()
             }
+
             SetProductEvent.BackClicked -> {
                 appNavigation.back()
             }
@@ -97,7 +112,32 @@ class SetProductViewModel(
         viewModelScope.launch {
             val domainProduct = productMapper.mapToDomain(state)
             addProductUseCase.execute(domainProduct)
+
+            if (!barcode.isNullOrBlank()) {
+                saveBarcodeInfo(barcode, domainProduct.id)
+            }
+
             appNavigation.back(result = domainProduct.id)
         }
+    }
+
+    private suspend fun saveBarcodeInfo(
+        barcode: String,
+        productId: String,
+    ) {
+        val existing = getBarcodeInfoUseCase.execute(barcode)
+        val updatedProductIds =
+            existing
+                ?.productIds
+                ?.toPersistentList()
+                ?.adding(productId)
+                ?: persistentListOf(productId)
+
+        setBarcodeUseCase.execute(
+            BarcodeInfo(
+                number = barcode,
+                productIds = updatedProductIds,
+            ),
+        )
     }
 }
