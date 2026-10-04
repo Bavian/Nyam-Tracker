@@ -31,20 +31,35 @@
         android:fillColor="#4CAF50"
         android:pathData="M 74,37 C 67,33 67,27 74,23 C 81,27 81,33 74,37 Z" />
 
-    <!-- Eye Outer White -->
+    <!-- Left Eye Outer White -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M 70.5,27.5 m -2.5,0 a 2.5,2.5 0 1,0 5,0 a 2.5,2.5 0 1,0 -5,0" />
+        android:pathData="M 70,27.5 m -2.2,0 a 2.2,2.2 0 1,0 4.4,0 a 2.2,2.2 0 1,0 -4.4,0" />
 
-    <!-- Eye Pupil -->
+    <!-- Left Eye Pupil -->
     <path
         android:fillColor="#1B1B1B"
-        android:pathData="M 70,27.5 m -1.3,0 a 1.3,1.3 0 1,0 2.6,0 a 1.3,1.3 0 1,0 -2.6,0" />
+        android:pathData="M 70,27.0 m -1.1,0 a 1.1,1.1 0 1,0 2.2,0 a 1.1,1.1 0 1,0 -2.2,0" />
 
-    <!-- Eye Reflection Dot -->
+    <!-- Left Eye Reflection Dot -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M 69.4,26.9 m -0.6,0 a 0.6,0.6 0 1,0 1.2,0 a 0.6,0.6 0 1,0 -1.2,0" />
+        android:pathData="M 69.5,26.5 m -0.5,0 a 0.5,0.5 0 1,0 1.0,0 a 0.5,0.5 0 1,0 -1.0,0" />
+
+    <!-- Right Eye Outer White -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M 78,27.5 m -2.2,0 a 2.2,2.2 0 1,0 4.4,0 a 2.2,2.2 0 1,0 -4.4,0" />
+
+    <!-- Right Eye Pupil -->
+    <path
+        android:fillColor="#1B1B1B"
+        android:pathData="M 78,27.0 m -1.1,0 a 1.1,1.1 0 1,0 2.2,0 a 1.1,1.1 0 1,0 -2.2,0" />
+
+    <!-- Right Eye Reflection Dot -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M 77.5,26.5 m -0.5,0 a 0.5,0.5 0 1,0 1.0,0 a 0.5,0.5 0 1,0 -1.0,0" />
 
     <!-- Forked Red Tongue -->
     <path
