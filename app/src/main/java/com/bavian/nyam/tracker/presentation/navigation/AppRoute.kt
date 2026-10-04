@@ -11,6 +11,7 @@ sealed interface AppRoute : NavKey {
     @Serializable
     data class SetProduct(
         val productId: String? = null,
+        val barcode: String? = null,
     ) : AppRoute
 
     @Serializable

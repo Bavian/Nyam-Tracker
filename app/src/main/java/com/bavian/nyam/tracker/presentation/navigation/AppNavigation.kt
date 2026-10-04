@@ -5,13 +5,14 @@ import kotlinx.coroutines.flow.SharedFlow
 interface AppNavigation {
     val navigationActions: SharedFlow<NavigationAction>
 
-    suspend fun startScan(): Result<Unit>
-
     fun back(result: Any? = null)
 
     fun openMainScreen()
 
-    fun openSetProductScreen(productId: String? = null)
+    fun openSetProductScreen(
+        productId: String? = null,
+        barcode: String? = null,
+    )
 
     fun openProductsListScreen()
 
