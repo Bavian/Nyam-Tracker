@@ -9,6 +9,12 @@ import kotlin.time.Instant
 
 class MainScreenStateMapperImpl : MainScreenStateMapper {
     override fun map(state: MainScreenViewModelState): MainScreen.State {
+        if (state.loading) {
+            return MainScreen.State.Loading(
+                selectedDate = state.selectedDate,
+            )
+        }
+
         val timeZone = TimeZone.currentSystemDefault()
 
         val grouped =

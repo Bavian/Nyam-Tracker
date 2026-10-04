@@ -25,34 +25,42 @@ class MainViewModel(
     private val _uiState = MutableStateFlow(MainScreenViewModelState())
     val uiState: StateFlow<MainScreenViewModelState> = _uiState.asStateFlow()
 
-    init {
-        loadEatenFood()
-    }
-
     fun onEvent(event: MainScreenViewModelEvent) {
         when (event) {
             is MainScreenViewModelEvent.StartScanTap -> startScan()
             is MainScreenViewModelEvent.ProductsListTap -> appNavigation.openProductsListScreen()
             is MainScreenViewModelEvent.CalendarDatePicked -> {
                 _uiState.update { it.copy(selectedDate = event.date) }
-                loadEatenFood()
+                loadEatenFood(event.date)
             }
 
-            is MainScreenViewModelEvent.ScreenViewModelStarted -> loadEatenFood()
+            is MainScreenViewModelEvent.ScreenViewModelStarted -> loadEatenFood(uiState.value.selectedDate)
             is MainScreenViewModelEvent.EatenFoodTap -> appNavigation.openAddFoodScreen(event.foodId)
         }
     }
 
-    private fun loadEatenFood() {
-        val selectedDate = _uiState.value.selectedDate
+    private fun loadEatenFood(date: LocalDate) {
+        _uiState.update {
+            it.copy(
+                loading = true,
+                selectedDate = date,
+            )
+        }
+
         viewModelScope.launch {
-            val period = getPeriodForDate(selectedDate)
+            val period = getPeriodForDate(date)
             val eatenFoodList = getEatenFoodUseCase.execute(period)
             val foodItems =
                 eatenFoodList
                     .sortedBy { it.timestamp }
                     .map(eatenFoodItemMapper::map)
-            _uiState.update { it.copy(eatenFoodGroups = foodItems.toImmutableList()) }
+            _uiState.update {
+                it.copy(
+                    selectedDate = date,
+                    eatenFoodGroups = foodItems.toImmutableList(),
+                    loading = false,
+                )
+            }
         }
     }
 

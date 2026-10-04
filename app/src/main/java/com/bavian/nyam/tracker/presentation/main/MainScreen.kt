@@ -29,7 +29,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
@@ -37,7 +36,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.bavian.nyam.tracker.R
+import com.bavian.nyam.tracker.ui.components.loader.SnakeLoaderWrapper
 import com.bavian.nyam.tracker.ui.components.picker.DateCarousel
+import com.bavian.nyam.tracker.ui.preview.PreviewScreen
+import com.bavian.nyam.tracker.ui.theme.NyamTrackerTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.datetime.LocalDate
@@ -47,8 +49,14 @@ import kotlin.time.Clock
 
 object MainScreen {
     sealed interface State {
+        val selectedDate: LocalDate
+
+        data class Loading(
+            override val selectedDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
+        ) : State
+
         data class Success(
-            val selectedDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
+            override val selectedDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
             val eatenFoodGroups: ImmutableList<EatenFoodGroup> = persistentListOf(),
         ) : State {
             data class EatenFoodGroup(
@@ -92,16 +100,6 @@ fun MainScreen(
     state: MainScreen.State,
     onEvent: (MainScreen.Event) -> Unit,
 ) {
-    when (state) {
-        is MainScreen.State.Success -> MainScreenSuccess(state, onEvent)
-    }
-}
-
-@Composable
-fun MainScreenSuccess(
-    state: MainScreen.State.Success,
-    onEvent: (MainScreen.Event) -> Unit,
-) {
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer =
@@ -116,71 +114,90 @@ fun MainScreenSuccess(
         }
     }
 
-    Scaffold(
-        topBar = {
-            Surface(
+    MainScreenContent(
+        selectedDate = state.selectedDate,
+        eatenFoodGroups = (state as? MainScreen.State.Success?)?.eatenFoodGroups ?: persistentListOf(),
+        loading = state is MainScreen.State.Loading,
+        onEvent = onEvent,
+    )
+}
+
+@Composable
+fun MainScreenContent(
+    selectedDate: LocalDate,
+    eatenFoodGroups: ImmutableList<MainScreen.State.Success.EatenFoodGroup>,
+    loading: Boolean,
+    onEvent: (MainScreen.Event) -> Unit,
+) {
+    SnakeLoaderWrapper(
+        isLoading = loading,
+    ) {
+        Scaffold(
+            topBar = {
+                Surface(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .statusBarsPadding(),
+                    color = MaterialTheme.colorScheme.background,
+                    shadowElevation = 2.dp,
+                ) {
+                    DateCarousel(
+                        state = DateCarousel.State(selectedDate),
+                        onEvent = { event ->
+                            when (event) {
+                                is DateCarousel.Event.DatePicked -> {
+                                    onEvent(MainScreen.Event.CalendarDatePicked(event.date))
+                                }
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            },
+            floatingActionButton = {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    FloatingActionButton(
+                        onClick = { onEvent(MainScreen.Event.ProductsListTap) },
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_add_2),
+                            contentDescription = stringResource(R.string.main_products_list),
+                        )
+                    }
+
+                    FloatingActionButton(
+                        onClick = { onEvent(MainScreen.Event.StartScanTap) },
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_barcode_scanner),
+                            contentDescription = stringResource(R.string.main_scan_barcode),
+                        )
+                    }
+                }
+            },
+        ) { innerPadding ->
+            LazyColumn(
                 modifier =
                     Modifier
-                        .fillMaxWidth()
-                        .statusBarsPadding(),
-                color = MaterialTheme.colorScheme.background,
-                shadowElevation = 2.dp,
-            ) {
-                DateCarousel(
-                    state = DateCarousel.State(state.selectedDate),
-                    onEvent = { event ->
-                        when (event) {
-                            is DateCarousel.Event.DatePicked -> {
-                                onEvent(MainScreen.Event.CalendarDatePicked(event.date))
-                            }
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
-        },
-        floatingActionButton = {
-            Column(
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                FloatingActionButton(
-                    onClick = { onEvent(MainScreen.Event.ProductsListTap) },
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_add_2),
-                        contentDescription = stringResource(R.string.main_products_list),
+                items(
+                    items = eatenFoodGroups,
+                    key = { group -> group.title },
+                ) { group ->
+                    EatenFoodGroupBlock(
+                        group = group,
+                        onItemClick = { foodId ->
+                            onEvent(MainScreen.Event.EatenFoodTap(foodId))
+                        },
                     )
                 }
-
-                FloatingActionButton(
-                    onClick = { onEvent(MainScreen.Event.StartScanTap) },
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_barcode_scanner),
-                        contentDescription = stringResource(R.string.main_scan_barcode),
-                    )
-                }
-            }
-        },
-    ) { innerPadding ->
-        LazyColumn(
-            modifier =
-                Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            items(
-                items = state.eatenFoodGroups,
-                key = { group -> group.title },
-            ) { group ->
-                EatenFoodGroupBlock(
-                    group = group,
-                    onItemClick = { foodId ->
-                        onEvent(MainScreen.Event.EatenFoodTap(foodId))
-                    },
-                )
             }
         }
     }
@@ -322,20 +339,23 @@ private fun EatenFoodNutrientInfo(
 }
 
 @Composable
-@Preview(showSystemUi = true)
+@PreviewScreen
 private fun MainScreenPreview(
     @PreviewParameter(MainScreenPreviewParameterProvider::class)
-    state: MainScreen.State.Success,
+    state: MainScreen.State,
 ) {
-    MainScreen(
-        state = state,
-        onEvent = {},
-    )
+    NyamTrackerTheme {
+        MainScreen(
+            state = state,
+            onEvent = {},
+        )
+    }
 }
 
 private class MainScreenPreviewParameterProvider : PreviewParameterProvider<MainScreen.State> {
     override val values: Sequence<MainScreen.State> =
         sequenceOf(
+            MainScreen.State.Loading(),
             MainScreen.State.Success(),
             MainScreen.State.Success(
                 eatenFoodGroups =

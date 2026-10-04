@@ -6,12 +6,11 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
 
-@OptIn(ExperimentalTime::class)
 data class MainScreenViewModelState(
     val selectedDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
     val eatenFoodGroups: ImmutableList<Item> = persistentListOf(),
+    val loading: Boolean = true,
 ) {
     data class Item(
         val id: String,
