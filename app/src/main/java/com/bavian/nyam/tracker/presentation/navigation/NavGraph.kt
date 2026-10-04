@@ -14,8 +14,10 @@ import com.bavian.nyam.tracker.presentation.main.MainViewModel
 import com.bavian.nyam.tracker.presentation.main.mapper.MainScreenEventMapper
 import com.bavian.nyam.tracker.presentation.main.mapper.MainScreenStateMapper
 import com.bavian.nyam.tracker.presentation.productslist.ProductsListScreen
-import com.bavian.nyam.tracker.presentation.productslist.ProductsListUiState
 import com.bavian.nyam.tracker.presentation.productslist.ProductsListViewModel
+import com.bavian.nyam.tracker.presentation.productslist.ProductsListViewModelState
+import com.bavian.nyam.tracker.presentation.productslist.mapper.ProductsListScreenEventMapper
+import com.bavian.nyam.tracker.presentation.productslist.mapper.ProductsListScreenStateMapper
 import com.bavian.nyam.tracker.presentation.setfood.SetFoodViewModel
 import com.bavian.nyam.tracker.presentation.setfood.compose.SetFoodScreen
 import com.bavian.nyam.tracker.presentation.setfood.mapper.SetFoodScreenEventMapper
@@ -73,9 +75,12 @@ fun AppNavGraph(appNavigation: AppNavigation = koinInject()) {
 
                 entry<AppRoute.ProductsList> {
                     val viewModel: ProductsListViewModel = koinViewModel()
+                    val stateMapper = koinInject<ProductsListScreenStateMapper>()
+                    val eventMapper = koinInject<ProductsListScreenEventMapper>()
+                    val state by viewModel.uiState.collectAsStateWithLifecycle(ProductsListViewModelState())
                     ProductsListScreen(
-                        state = viewModel.uiState.collectAsStateWithLifecycle(ProductsListUiState()).value,
-                        onEvent = viewModel::onEvent,
+                        state = stateMapper.map(state),
+                        onEvent = { eventMapper.map(it).let(viewModel::onEvent) },
                     )
                 }
 
