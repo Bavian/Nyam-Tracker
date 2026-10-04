@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.ksp)
 }
 
 ktlint {
@@ -12,9 +13,7 @@ ktlint {
 
 android {
     namespace = "com.bavian.nyam.tracker"
-    compileSdk {
-        version = release(37)
-    }
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.bavian.nyam.tracker"
@@ -57,6 +56,9 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
     implementation(libs.firebase.ai)
     implementation(libs.play.services.code.scanner)
     implementation(libs.koin.android)

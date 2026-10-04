@@ -3,7 +3,7 @@ package com.bavian.nyam.tracker.data.db
 import com.bavian.nyam.tracker.data.model.BarcodeInfoEntity
 
 interface BarcodeDatabase {
-    fun insertBarcode(barcode: BarcodeInfoEntity)
+    suspend fun insertBarcode(barcode: BarcodeInfoEntity)
 
-    fun getBarcodeByNumber(number: String): BarcodeInfoEntity?
+    suspend fun getBarcodeByNumber(number: String): BarcodeInfoEntity?
 }

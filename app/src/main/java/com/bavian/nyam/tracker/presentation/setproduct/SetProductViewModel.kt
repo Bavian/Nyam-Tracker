@@ -4,13 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bavian.nyam.tracker.domain.model.BarcodeInfo
 import com.bavian.nyam.tracker.domain.usecase.AddProductUseCase
-import com.bavian.nyam.tracker.domain.usecase.GetBarcodeInfoUseCase
 import com.bavian.nyam.tracker.domain.usecase.GetProductByIdUseCase
 import com.bavian.nyam.tracker.domain.usecase.SetBarcodeUseCase
 import com.bavian.nyam.tracker.presentation.navigation.AppNavigation
 import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductUiStateMapper
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,7 +20,6 @@ class SetProductViewModel(
     private val addProductUseCase: AddProductUseCase,
     private val getProductByIdUseCase: GetProductByIdUseCase,
     private val setBarcodeUseCase: SetBarcodeUseCase,
-    private val getBarcodeInfoUseCase: GetBarcodeInfoUseCase,
     private val productMapper: SetProductUiStateMapper,
     private val appNavigation: AppNavigation,
 ) : ViewModel() {
@@ -125,18 +121,10 @@ class SetProductViewModel(
         barcode: String,
         productId: String,
     ) {
-        val existing = getBarcodeInfoUseCase.execute(barcode)
-        val updatedProductIds =
-            existing
-                ?.productIds
-                ?.toPersistentList()
-                ?.adding(productId)
-                ?: persistentListOf(productId)
-
         setBarcodeUseCase.execute(
             BarcodeInfo(
                 number = barcode,
-                productIds = updatedProductIds,
+                productId = productId,
             ),
         )
     }
