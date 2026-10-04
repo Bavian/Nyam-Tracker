@@ -81,7 +81,7 @@ class MainViewModel(
             val scanResult = barcodeScanner.startScan()
             scanResult.getOrNull()?.let { scannerState ->
                 val barcodeInfo = getBarcodeInfoUseCase.execute(scannerState.barcode)
-                val productId = barcodeInfo?.productIds?.firstOrNull()
+                val productId = barcodeInfo?.productId
                 if (productId != null) {
                     appNavigation.openAddFoodScreen(productId)
                 } else {
