@@ -9,7 +9,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -20,9 +19,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -35,7 +32,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.bavian.nyam.tracker.R
-import kotlinx.coroutines.launch
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -45,7 +41,6 @@ import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 object DateCarousel {
@@ -60,7 +55,6 @@ object DateCarousel {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalTime::class)
 @Composable
 fun DateCarousel(
     state: DateCarousel.State,
@@ -73,9 +67,6 @@ fun DateCarousel(
             initialPage = initialPage,
             pageCount = { Int.MAX_VALUE },
         )
-    val coroutineScope = rememberCoroutineScope()
-
-    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
 
     var showDatePicker by remember { mutableStateOf(false) }
 
@@ -119,19 +110,11 @@ fun DateCarousel(
 
     // Update pager when state change from outside
     LaunchedEffect(state.pickedDate) {
-        val daysBetween = (state.pickedDate.toEpochDays() - today.toEpochDays())
+        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+        val daysBetween = state.pickedDate.toEpochDays() - today.toEpochDays()
         val targetPage = (initialPage.toLong() + daysBetween).toInt()
         if (pagerState.currentPage != targetPage) {
-            pagerState.scrollToPage(targetPage)
-        }
-    }
-
-    // Trigger event when user swipes
-    LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }.collect { page ->
-            val daysDiff = (page.toLong() - initialPage.toLong())
-            val newDate = today.plus(DatePeriod(days = daysDiff.toInt()))
-            onEvent(DateCarousel.Event.DatePicked(newDate))
+            pagerState.animateScrollToPage(targetPage)
         }
     }
 
@@ -142,11 +125,7 @@ fun DateCarousel(
     ) {
         IconButton(
             onClick = {
-                coroutineScope.launch {
-                    if (pagerState.currentPage > 0) {
-                        pagerState.animateScrollToPage(pagerState.currentPage - 1)
-                    }
-                }
+                onEvent(DateCarousel.Event.DatePicked(state.pickedDate.minus(DatePeriod(days = 1))))
             },
             modifier = Modifier.padding(start = 16.dp),
         ) {
@@ -158,34 +137,28 @@ fun DateCarousel(
 
         HorizontalPager(
             state = pagerState,
+            key = { it },
             modifier = Modifier.weight(1f),
         ) { page ->
-            val daysDiff = (page.toLong() - initialPage.toLong())
-            val date = today.plus(DatePeriod(days = daysDiff.toInt()))
-            val dateText =
-                when (date) {
-                    today -> stringResource(R.string.calendar_today)
-                    today.minus(DatePeriod(days = 1)) -> stringResource(R.string.calendar_yesterday)
-                    today.plus(DatePeriod(days = 1)) -> stringResource(R.string.calendar_tomorrow)
-                    else -> date.toString()
-                }
+            val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+            val currentDay = today + DatePeriod(days = page - initialPage)
+            val dateText = formatDate(currentDay)
 
             Text(
                 text = dateText,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
             )
         }
 
         IconButton(
             onClick = {
-                coroutineScope.launch {
-                    if (pagerState.currentPage < Int.MAX_VALUE - 1) {
-                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                    }
-                }
+                onEvent(DateCarousel.Event.DatePicked(state.pickedDate.plus(DatePeriod(days = 1))))
             },
         ) {
             Icon(
@@ -207,6 +180,17 @@ fun DateCarousel(
 }
 
 @Composable
+private fun formatDate(date: LocalDate): String {
+    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+    return when (date) {
+        today -> stringResource(R.string.calendar_today)
+        today.minus(DatePeriod(days = 1)) -> stringResource(R.string.calendar_yesterday)
+        today.plus(DatePeriod(days = 1)) -> stringResource(R.string.calendar_tomorrow)
+        else -> date.toString()
+    }
+}
+
+@Composable
 @PreviewLightDark
 private fun DateCarouselPreview(
     @PreviewParameter(DateCarouselPreviewParameterProvider::class)
@@ -219,7 +203,6 @@ private fun DateCarouselPreview(
 }
 
 private class DateCarouselPreviewParameterProvider : PreviewParameterProvider<DateCarousel.State> {
-    @OptIn(ExperimentalTime::class)
     override val values: Sequence<DateCarousel.State> =
         sequenceOf(
             DateCarousel.State(
