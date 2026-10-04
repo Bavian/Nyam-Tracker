@@ -51,6 +51,10 @@ import com.bavian.nyam.tracker.presentation.navigation.AppNavigationImpl
 import com.bavian.nyam.tracker.presentation.productslist.ProductsListViewModel
 import com.bavian.nyam.tracker.presentation.productslist.mapper.ProductsListProductMapper
 import com.bavian.nyam.tracker.presentation.productslist.mapper.ProductsListProductMapperImpl
+import com.bavian.nyam.tracker.presentation.productslist.mapper.ProductsListScreenEventMapper
+import com.bavian.nyam.tracker.presentation.productslist.mapper.ProductsListScreenEventMapperImpl
+import com.bavian.nyam.tracker.presentation.productslist.mapper.ProductsListScreenStateMapper
+import com.bavian.nyam.tracker.presentation.productslist.mapper.ProductsListScreenStateMapperImpl
 import com.bavian.nyam.tracker.presentation.scanner.BarcodeScanner
 import com.bavian.nyam.tracker.presentation.scanner.BarcodeScannerImpl
 import com.bavian.nyam.tracker.presentation.setfood.SetFoodViewModel
@@ -108,6 +112,8 @@ val appModule =
         factoryOf(::MainScreenEventMapperImpl) bind MainScreenEventMapper::class
         factoryOf(::SetProductUiStateMapperImpl) bind SetProductUiStateMapper::class
         factoryOf(::ProductsListProductMapperImpl) bind ProductsListProductMapper::class
+        factoryOf(::ProductsListScreenStateMapperImpl) bind ProductsListScreenStateMapper::class
+        factoryOf(::ProductsListScreenEventMapperImpl) bind ProductsListScreenEventMapper::class
         factoryOf(::SetFoodScreenEventMapperImpl) bind SetFoodScreenEventMapper::class
         factoryOf(::SetFoodScreenStateMapperImpl) bind SetFoodScreenStateMapper::class
         factoryOf(::ProductRepositoryImpl) bind ProductRepository::class

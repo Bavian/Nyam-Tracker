@@ -20,29 +20,29 @@ class ProductsListViewModel(
     private val productMapper: ProductsListProductMapper,
     private val appNavigation: AppNavigation,
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(ProductsListUiState())
-    val uiState: StateFlow<ProductsListUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(ProductsListViewModelState())
+    val uiState: StateFlow<ProductsListViewModelState> = _uiState.asStateFlow()
 
     init {
         loadProducts()
     }
 
-    fun onEvent(event: ProductsListEvent) {
+    fun onEvent(event: ProductsListViewModelEvent) {
         when (event) {
-            is ProductsListEvent.SearchQueryChanged -> {
+            is ProductsListViewModelEvent.SearchQueryChanged -> {
                 _uiState.update { it.copy(searchQuery = event.query) }
                 loadProducts()
             }
 
-            is ProductsListEvent.ProductClicked -> {
+            is ProductsListViewModelEvent.ProductClicked -> {
                 openSetFoodScreen(event.product.id)
             }
 
-            is ProductsListEvent.EditProductClicked -> {
+            is ProductsListViewModelEvent.EditProductClicked -> {
                 openSetProductScreen(event.product.id)
             }
 
-            is ProductsListEvent.DeleteProductClicked -> {
+            is ProductsListViewModelEvent.DeleteProductClicked -> {
                 _uiState.update {
                     it.copy(
                         deleteConfirmationProduct = event.product,
@@ -51,31 +51,31 @@ class ProductsListViewModel(
                 }
             }
 
-            is ProductsListEvent.ContextMenuClicked -> {
+            is ProductsListViewModelEvent.ContextMenuClicked -> {
                 _uiState.update { it.copy(expandedProductId = event.product.id) }
             }
 
-            ProductsListEvent.DismissContextMenu -> {
+            ProductsListViewModelEvent.DismissContextMenu -> {
                 dismissContextMenu()
             }
 
-            ProductsListEvent.DeleteProductConfirmed -> {
+            ProductsListViewModelEvent.DeleteProductConfirmed -> {
                 confirmDelete()
             }
 
-            ProductsListEvent.DeleteProductCancelled -> {
+            ProductsListViewModelEvent.DeleteProductCancelled -> {
                 _uiState.update { it.copy(deleteConfirmationProduct = null) }
             }
 
-            ProductsListEvent.BackClicked -> {
+            ProductsListViewModelEvent.BackClicked -> {
                 appNavigation.back()
             }
 
-            ProductsListEvent.AddProductClicked -> {
+            ProductsListViewModelEvent.AddProductClicked -> {
                 appNavigation.openSetProductScreen()
             }
 
-            ProductsListEvent.ScreenStarted -> {
+            ProductsListViewModelEvent.ScreenStarted -> {
                 loadProducts()
             }
         }
@@ -91,6 +91,7 @@ class ProductsListViewModel(
     }
 
     private fun loadProducts() {
+        _uiState.update { it.copy(loading = true) }
         viewModelScope.launch {
             val domainProducts =
                 getProductsUseCase.execute(
@@ -100,7 +101,12 @@ class ProductsListViewModel(
                 domainProducts
                     .map { productMapper.mapToPresentation(it) }
                     .toImmutableList()
-            _uiState.update { it.copy(products = presentationProducts) }
+            _uiState.update {
+                it.copy(
+                    products = presentationProducts,
+                    loading = false,
+                )
+            }
         }
     }
 
