@@ -1,12 +1,15 @@
 package com.bavian.nyam.tracker.di
 
+import androidx.room.Room
 import com.bavian.nyam.tracker.data.db.AppDatabaseHelper
 import com.bavian.nyam.tracker.data.db.BarcodeDatabase
 import com.bavian.nyam.tracker.data.db.BarcodeDatabaseImpl
+import com.bavian.nyam.tracker.data.db.BarcodeRoomDatabase
 import com.bavian.nyam.tracker.data.db.EatenFoodDatabase
 import com.bavian.nyam.tracker.data.db.EatenFoodDatabaseImpl
-import com.bavian.nyam.tracker.data.db.ProductDatabase
-import com.bavian.nyam.tracker.data.db.ProductDatabaseImpl
+import com.bavian.nyam.tracker.data.db.product.ProductDatabase
+import com.bavian.nyam.tracker.data.db.product.ProductDatabaseImpl
+import com.bavian.nyam.tracker.data.db.product.ProductRoomDatabase
 import com.bavian.nyam.tracker.data.mapper.BarcodeMapper
 import com.bavian.nyam.tracker.data.mapper.BarcodeMapperImpl
 import com.bavian.nyam.tracker.data.mapper.EatenFoodMapper
@@ -79,6 +82,20 @@ val appModule =
         viewModelOf(::ProductsListViewModel)
         viewModelOf(::SetProductViewModel)
         viewModelOf(::SetFoodViewModel)
+
+        single {
+            Room.databaseBuilder(get(), ProductRoomDatabase::class.java, "products.db")
+                .fallbackToDestructiveMigration(true)
+                .build()
+        }
+        single { get<ProductRoomDatabase>().productDao() }
+
+        single {
+            Room.databaseBuilder(get(), BarcodeRoomDatabase::class.java, "barcodes.db")
+                .fallbackToDestructiveMigration(true)
+                .build()
+        }
+        single { get<BarcodeRoomDatabase>().barcodeDao() }
 
         singleOf(::AppDatabaseHelper)
         singleOf(::ProductDatabaseImpl) bind ProductDatabase::class

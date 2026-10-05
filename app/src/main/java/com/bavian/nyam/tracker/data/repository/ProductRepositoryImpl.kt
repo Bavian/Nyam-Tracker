@@ -1,6 +1,6 @@
 package com.bavian.nyam.tracker.data.repository
 
-import com.bavian.nyam.tracker.data.db.ProductDatabase
+import com.bavian.nyam.tracker.data.db.product.ProductDatabase
 import com.bavian.nyam.tracker.data.mapper.ProductMapper
 import com.bavian.nyam.tracker.domain.model.Product
 import com.bavian.nyam.tracker.domain.repository.ProductRepository
