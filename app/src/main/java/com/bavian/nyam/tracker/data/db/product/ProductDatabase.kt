@@ -1,4 +1,4 @@
-package com.bavian.nyam.tracker.data.db
+package com.bavian.nyam.tracker.data.db.product
 
 import com.bavian.nyam.tracker.data.model.ProductEntity
 
