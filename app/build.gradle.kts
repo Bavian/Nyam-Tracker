@@ -8,6 +8,10 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+kotlin {
+    jvmToolchain(11)
+}
+
 ktlint {
     android.set(true)
 }
