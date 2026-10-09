@@ -1,12 +1,12 @@
 package com.bavian.nyam.tracker.di
 
 import androidx.room.Room
-import com.bavian.nyam.tracker.data.db.AppDatabaseHelper
 import com.bavian.nyam.tracker.data.db.BarcodeDatabase
 import com.bavian.nyam.tracker.data.db.BarcodeDatabaseImpl
 import com.bavian.nyam.tracker.data.db.BarcodeRoomDatabase
 import com.bavian.nyam.tracker.data.db.EatenFoodDatabase
 import com.bavian.nyam.tracker.data.db.EatenFoodDatabaseImpl
+import com.bavian.nyam.tracker.data.db.EatenFoodRoomDatabase
 import com.bavian.nyam.tracker.data.db.product.ProductDatabase
 import com.bavian.nyam.tracker.data.db.product.ProductDatabaseImpl
 import com.bavian.nyam.tracker.data.db.product.ProductRoomDatabase
@@ -97,7 +97,12 @@ val appModule =
         }
         single { get<BarcodeRoomDatabase>().barcodeDao() }
 
-        singleOf(::AppDatabaseHelper)
+        single {
+            Room.databaseBuilder(get(), EatenFoodRoomDatabase::class.java, "eaten_food.db")
+                .fallbackToDestructiveMigration(true)
+                .build()
+        }
+        single { get<EatenFoodRoomDatabase>().eatenFoodDao() }
         singleOf(::ProductDatabaseImpl) bind ProductDatabase::class
         singleOf(::BarcodeDatabaseImpl) bind BarcodeDatabase::class
         singleOf(::EatenFoodDatabaseImpl) bind EatenFoodDatabase::class
