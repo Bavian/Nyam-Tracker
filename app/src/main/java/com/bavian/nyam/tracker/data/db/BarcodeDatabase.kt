@@ -6,4 +6,6 @@ interface BarcodeDatabase {
     suspend fun insertBarcode(barcode: BarcodeInfoEntity)
 
     suspend fun getBarcodeByNumber(number: String): BarcodeInfoEntity?
+
+    suspend fun getBarcodesByProductId(productId: String): List<BarcodeInfoEntity>
 }
