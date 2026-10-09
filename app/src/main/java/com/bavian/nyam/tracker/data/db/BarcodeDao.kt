@@ -13,4 +13,7 @@ interface BarcodeDao {
 
     @Query("SELECT * FROM barcodes WHERE number = :number")
     suspend fun getBarcodeByNumber(number: String): BarcodeInfoEntity?
+
+    @Query("SELECT * FROM barcodes WHERE product_id = :productId")
+    suspend fun getBarcodesByProductId(productId: String): List<BarcodeInfoEntity>
 }
