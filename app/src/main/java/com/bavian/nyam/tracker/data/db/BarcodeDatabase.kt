@@ -8,4 +8,6 @@ interface BarcodeDatabase {
     suspend fun getBarcodeByNumber(number: String): BarcodeInfoEntity?
 
     suspend fun getBarcodesByProductId(productId: String): List<BarcodeInfoEntity>
+
+    suspend fun deleteBarcode(number: String)
 }

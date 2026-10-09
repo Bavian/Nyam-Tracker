@@ -16,4 +16,7 @@ interface BarcodeDao {
 
     @Query("SELECT * FROM barcodes WHERE product_id = :productId")
     suspend fun getBarcodesByProductId(productId: String): List<BarcodeInfoEntity>
+
+    @Query("DELETE FROM barcodes WHERE number = :number")
+    suspend fun deleteBarcode(number: String)
 }
