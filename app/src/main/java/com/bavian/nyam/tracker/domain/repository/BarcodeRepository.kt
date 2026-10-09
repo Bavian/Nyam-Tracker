@@ -9,4 +9,6 @@ interface BarcodeRepository {
     suspend fun getBarcodeByNumber(number: String): BarcodeInfo?
 
     suspend fun getBarcodesByProductId(productId: String): ProductBarcodes
+
+    suspend fun deleteBarcode(number: String)
 }

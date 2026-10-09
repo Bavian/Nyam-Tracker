@@ -33,4 +33,9 @@ class BarcodeRepositoryImpl(
                 barcodes = entities.map(barcodeMapper::mapToDomain).toImmutableList(),
             )
         }
+
+    override suspend fun deleteBarcode(number: String) =
+        withContext(Dispatchers.IO) {
+            barcodeDatabase.deleteBarcode(number)
+        }
 }
