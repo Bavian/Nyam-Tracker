@@ -12,5 +12,8 @@ interface EatenFoodDao {
     fun insertEatenFood(eatenFood: EatenFoodEntity)
 
     @Query("SELECT * FROM eaten_food WHERE timestamp BETWEEN :start AND :end ORDER BY timestamp ASC")
-    fun getEatenFoodForPeriod(start: Long, end: Long): List<EatenFoodEntity>
+    fun getEatenFoodForPeriod(
+        start: Long,
+        end: Long,
+    ): List<EatenFoodEntity>
 }

@@ -86,21 +86,24 @@ val appModule =
         viewModelOf(::SetFoodViewModel)
 
         single {
-            Room.databaseBuilder(get(), ProductRoomDatabase::class.java, "products.db")
+            Room
+                .databaseBuilder(get(), ProductRoomDatabase::class.java, "products.db")
                 .fallbackToDestructiveMigration(true)
                 .build()
         }
         single { get<ProductRoomDatabase>().productDao() }
 
         single {
-            Room.databaseBuilder(get(), BarcodeRoomDatabase::class.java, "barcodes.db")
+            Room
+                .databaseBuilder(get(), BarcodeRoomDatabase::class.java, "barcodes.db")
                 .fallbackToDestructiveMigration(true)
                 .build()
         }
         single { get<BarcodeRoomDatabase>().barcodeDao() }
 
         single {
-            Room.databaseBuilder(get(), EatenFoodRoomDatabase::class.java, "eaten_food.db")
+            Room
+                .databaseBuilder(get(), EatenFoodRoomDatabase::class.java, "eaten_food.db")
                 .fallbackToDestructiveMigration(true)
                 .build()
         }

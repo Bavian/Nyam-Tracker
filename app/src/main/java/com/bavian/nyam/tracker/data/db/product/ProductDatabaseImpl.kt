@@ -9,11 +9,9 @@ class ProductDatabaseImpl(
         productDao.insertProduct(product)
     }
 
-    override fun getProductById(id: String): ProductEntity? =
-        productDao.getProductById(id)
+    override fun getProductById(id: String): ProductEntity? = productDao.getProductById(id)
 
-    override fun getAllProducts(): List<ProductEntity> =
-        productDao.getAllProducts()
+    override fun getAllProducts(): List<ProductEntity> = productDao.getAllProducts()
 
     override fun deleteProduct(id: String) {
         productDao.deleteProduct(id)
