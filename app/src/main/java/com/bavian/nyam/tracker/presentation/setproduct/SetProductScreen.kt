@@ -2,7 +2,6 @@ package com.bavian.nyam.tracker.presentation.setproduct
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -18,17 +17,18 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
@@ -57,6 +57,7 @@ object SetProductScreen {
             val carbohydrates: StringSource = StringSource.Empty,
             val barcodes: ImmutableList<StringSource> = persistentListOf(),
             val barcodeToDelete: StringSource = StringSource.Empty,
+            val keyboardOpened: Boolean = false,
         ) : State
     }
 
@@ -128,16 +129,33 @@ fun SetProductScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = stringResource(R.string.set_product_title),
-                            style = MaterialTheme.typography.titleLarge,
-                            textAlign = TextAlign.Center,
-                        )
+                    when (state) {
+                        is SetProductScreen.State.Success -> {
+                            TextField(
+                                value = state.name.get(),
+                                onValueChange = { onEvent(SetProductScreen.Event.NameChanged(it)) },
+                                placeholder = {
+                                    Text(
+                                        text = stringResource(R.string.set_product_name),
+                                        style = MaterialTheme.typography.titleLarge,
+                                    )
+                                },
+                                textStyle = MaterialTheme.typography.titleLarge,
+                                singleLine = true,
+                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                                colors =
+                                    TextFieldDefaults.colors(
+                                        focusedContainerColor = Color.Transparent,
+                                        unfocusedContainerColor = Color.Transparent,
+                                        disabledContainerColor = Color.Transparent,
+                                        focusedIndicatorColor = Color.Transparent,
+                                        unfocusedIndicatorColor = Color.Transparent,
+                                    ),
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth(),
+                            )
+                        }
                     }
                 },
                 navigationIcon = {
@@ -192,17 +210,6 @@ private fun SetProductScreenContent(
                 value = state.manufacturer.get(),
                 onValueChange = { onEvent(SetProductScreen.Event.ManufacturerChanged(it)) },
                 label = { Text(stringResource(R.string.set_product_manufacturer)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            )
-        }
-
-        item {
-            OutlinedTextField(
-                value = state.name.get(),
-                onValueChange = { onEvent(SetProductScreen.Event.NameChanged(it)) },
-                label = { Text(stringResource(R.string.set_product_name)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
