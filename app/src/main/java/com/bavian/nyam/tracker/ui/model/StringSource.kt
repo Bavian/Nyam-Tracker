@@ -33,3 +33,9 @@ sealed interface StringSource {
 
 inline val String.stringSource: StringSource
     get() = StringSource.Constant(this)
+
+@Composable
+fun StringSource.isEmpty(): Boolean = this == StringSource.Empty || get() == ""
+
+@Composable
+fun StringSource.isNotEmpty(): Boolean = !isEmpty()

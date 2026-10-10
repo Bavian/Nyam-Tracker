@@ -1,8 +1,8 @@
 package com.bavian.nyam.tracker.presentation.setproduct.mapper
 
 import com.bavian.nyam.tracker.domain.model.Product
-import com.bavian.nyam.tracker.presentation.setproduct.SetProductUiState
+import com.bavian.nyam.tracker.presentation.setproduct.SetProductViewModelState
 
 interface SetProductUiStateMapper {
-    fun mapToDomain(state: SetProductUiState): Product
+    fun mapToDomain(state: SetProductViewModelState): Product
 }

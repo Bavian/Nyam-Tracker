@@ -16,6 +16,11 @@
     <string name="set_product_carbohydrates">Carbohydrates (g)</string>
     <string name="set_product_back_description">Back</string>
     <string name="set_product_confirm_description">Confirm</string>
+    <string name="set_product_barcodes_title">Barcode</string>
+    <string name="set_product_delete_barcode_dialog_title">Delete Barcode</string>
+    <string name="set_product_delete_barcode_dialog_message">Are you sure you want to delete barcode %1$s?</string>
+    <string name="set_product_delete_barcode_dialog_confirm">Delete</string>
+    <string name="set_product_delete_barcode_dialog_cancel">Cancel</string>
 
     <string name="products_list_search_hint">Search product&#8230;</string>
     <string name="products_list_context_menu_description">Context menu</string>

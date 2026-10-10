@@ -70,6 +70,10 @@ import com.bavian.nyam.tracker.presentation.setfood.mapper.SetFoodScreenEventMap
 import com.bavian.nyam.tracker.presentation.setfood.mapper.SetFoodScreenStateMapper
 import com.bavian.nyam.tracker.presentation.setfood.mapper.SetFoodScreenStateMapperImpl
 import com.bavian.nyam.tracker.presentation.setproduct.SetProductViewModel
+import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductEventMapper
+import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductEventMapperImpl
+import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductStateMapper
+import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductStateMapperImpl
 import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductUiStateMapper
 import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductUiStateMapperImpl
 import org.koin.core.module.dsl.factoryOf
@@ -122,6 +126,8 @@ val appModule =
         factoryOf(::MainScreenEatenFoodItemMapperImpl) bind MainScreenEatenFoodItemMapper::class
         factoryOf(::MainScreenStateMapperImpl) bind MainScreenStateMapper::class
         factoryOf(::MainScreenEventMapperImpl) bind MainScreenEventMapper::class
+        factoryOf(::SetProductStateMapperImpl) bind SetProductStateMapper::class
+        factoryOf(::SetProductEventMapperImpl) bind SetProductEventMapper::class
         factoryOf(::SetProductUiStateMapperImpl) bind SetProductUiStateMapper::class
         factoryOf(::ProductsListProductMapperImpl) bind ProductsListProductMapper::class
         factoryOf(::ProductsListScreenStateMapperImpl) bind ProductsListScreenStateMapper::class

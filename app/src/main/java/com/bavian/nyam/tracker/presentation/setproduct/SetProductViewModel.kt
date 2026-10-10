@@ -2,12 +2,17 @@ package com.bavian.nyam.tracker.presentation.setproduct
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bavian.nyam.tracker.domain.infrastructure.ProductIdGenerator
 import com.bavian.nyam.tracker.domain.model.BarcodeInfo
 import com.bavian.nyam.tracker.domain.usecase.AddProductUseCase
+import com.bavian.nyam.tracker.domain.usecase.DeleteBarcodeUseCase
+import com.bavian.nyam.tracker.domain.usecase.GetBarcodesByProductIdUseCase
 import com.bavian.nyam.tracker.domain.usecase.GetProductByIdUseCase
 import com.bavian.nyam.tracker.domain.usecase.SetBarcodeUseCase
 import com.bavian.nyam.tracker.presentation.navigation.AppNavigation
+import com.bavian.nyam.tracker.presentation.scanner.BarcodeScanner
 import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductUiStateMapper
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,14 +25,84 @@ class SetProductViewModel(
     private val addProductUseCase: AddProductUseCase,
     private val getProductByIdUseCase: GetProductByIdUseCase,
     private val setBarcodeUseCase: SetBarcodeUseCase,
+    private val getBarcodesByProductIdUseCase: GetBarcodesByProductIdUseCase,
+    private val deleteBarcodeUseCase: DeleteBarcodeUseCase,
+    private val barcodeScanner: BarcodeScanner,
     private val productMapper: SetProductUiStateMapper,
+    productIdGenerator: ProductIdGenerator,
     private val appNavigation: AppNavigation,
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(SetProductUiState(id = initialProductId))
-    val uiState: StateFlow<SetProductUiState> = _uiState.asStateFlow()
+    private val _uiState =
+        MutableStateFlow(
+            value =
+                SetProductViewModelState(
+                    id = initialProductId ?: productIdGenerator.generateId(),
+                ),
+        )
+    val uiState: StateFlow<SetProductViewModelState> = _uiState.asStateFlow()
 
     init {
         loadProductIfIdExists()
+    }
+
+    fun onEvent(event: SetProductViewModelEvent) {
+        when (event) {
+            is SetProductViewModelEvent.ManufacturerChanged -> {
+                _uiState.update { it.copy(manufacturer = event.value) }
+            }
+
+            is SetProductViewModelEvent.NameChanged -> {
+                _uiState.update { it.copy(name = event.value) }
+            }
+
+            is SetProductViewModelEvent.CaloriesChanged -> {
+                _uiState.update { it.copy(calories = event.value) }
+            }
+
+            is SetProductViewModelEvent.ProteinsChanged -> {
+                _uiState.update { it.copy(proteins = event.value) }
+            }
+
+            is SetProductViewModelEvent.FatChanged -> {
+                _uiState.update { it.copy(fat = event.value) }
+            }
+
+            is SetProductViewModelEvent.CarbohydratesChanged -> {
+                _uiState.update { it.copy(carbohydrates = event.value) }
+            }
+
+            is SetProductViewModelEvent.ConfirmClicked -> {
+                confirmAddition()
+            }
+
+            is SetProductViewModelEvent.BackClicked -> {
+                appNavigation.back()
+            }
+
+            is SetProductViewModelEvent.BarcodesPlusClicked -> {
+                scanBarcode()
+            }
+
+            is SetProductViewModelEvent.BarcodeCrossClicked -> {
+                _uiState.update { it.copy(barcodeToDelete = event.number) }
+            }
+
+            is SetProductViewModelEvent.DeleteBarcodeConfirmed -> {
+                deleteBarcode()
+            }
+
+            is SetProductViewModelEvent.DeleteBarcodeCancelled -> {
+                _uiState.update { it.copy(barcodeToDelete = "") }
+            }
+
+            is SetProductViewModelEvent.ScreenStarted -> {
+                loadData()
+            }
+        }
+    }
+
+    private fun loadData() {
+        loadBarcodes()
     }
 
     private fun loadProductIfIdExists() {
@@ -42,7 +117,6 @@ class SetProductViewModel(
                             proteins = product.proteins.toString(),
                             fat = product.fat.toString(),
                             carbohydrates = product.carbohydrates.toString(),
-                            isConfirmEnabled = true,
                         )
                     }
                 }
@@ -50,57 +124,15 @@ class SetProductViewModel(
         }
     }
 
-    fun onEvent(event: SetProductEvent) {
-        when (event) {
-            is SetProductEvent.ManufacturerChanged -> {
-                _uiState.update { it.copy(manufacturer = event.value) }
-                validateForm()
-            }
-
-            is SetProductEvent.NameChanged -> {
-                _uiState.update { it.copy(name = event.value) }
-                validateForm()
-            }
-
-            is SetProductEvent.CaloriesChanged -> {
-                _uiState.update { it.copy(calories = event.value) }
-                validateForm()
-            }
-
-            is SetProductEvent.ProteinsChanged -> {
-                _uiState.update { it.copy(proteins = event.value) }
-                validateForm()
-            }
-
-            is SetProductEvent.FatChanged -> {
-                _uiState.update { it.copy(fat = event.value) }
-                validateForm()
-            }
-
-            is SetProductEvent.CarbohydratesChanged -> {
-                _uiState.update { it.copy(carbohydrates = event.value) }
-                validateForm()
-            }
-
-            SetProductEvent.ConfirmClicked -> {
-                confirmAddition()
-            }
-
-            SetProductEvent.BackClicked -> {
-                appNavigation.back()
+    private fun loadBarcodes() {
+        viewModelScope.launch {
+            val productBarcodes = getBarcodesByProductIdUseCase.execute(uiState.value.id)
+            _uiState.update { currentState ->
+                currentState.copy(
+                    barcodes = productBarcodes.barcodes.map { it.number }.toImmutableList(),
+                )
             }
         }
-    }
-
-    private fun validateForm() {
-        val state = _uiState.value
-        val isValid =
-            state.name.isNotBlank() &&
-                state.calories.toFloatOrNull() != null &&
-                state.proteins.toFloatOrNull() != null &&
-                state.fat.toFloatOrNull() != null &&
-                state.carbohydrates.toFloatOrNull() != null
-        _uiState.update { it.copy(isConfirmEnabled = isValid) }
     }
 
     private fun confirmAddition() {
@@ -127,5 +159,32 @@ class SetProductViewModel(
                 productId = productId,
             ),
         )
+    }
+
+    private fun scanBarcode() {
+        viewModelScope.launch {
+            barcodeScanner.startScan().onSuccess { scannerState ->
+                if (scannerState.barcode.isNotBlank()) {
+                    setBarcodeUseCase.execute(
+                        BarcodeInfo(
+                            number = scannerState.barcode,
+                            productId = uiState.value.id,
+                        ),
+                    )
+                    loadBarcodes()
+                }
+            }
+        }
+    }
+
+    private fun deleteBarcode() {
+        val barcodeToDelete = _uiState.value.barcodeToDelete
+        if (barcodeToDelete != "") {
+            viewModelScope.launch {
+                deleteBarcodeUseCase(barcodeToDelete)
+                _uiState.update { it.copy(barcodeToDelete = "") }
+                loadBarcodes()
+            }
+        }
     }
 }

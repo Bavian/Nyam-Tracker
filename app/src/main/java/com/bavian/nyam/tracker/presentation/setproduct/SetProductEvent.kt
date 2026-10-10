@@ -28,4 +28,14 @@ sealed interface SetProductEvent {
     data object ConfirmClicked : SetProductEvent
 
     data object BackClicked : SetProductEvent
+
+    data object BarcodesPlusClicked : SetProductEvent
+
+    data class BarcodeCrossClicked(
+        val number: String,
+    ) : SetProductEvent
+
+    data object DeleteBarcodeConfirmed : SetProductEvent
+
+    data object DeleteBarcodeCancelled : SetProductEvent
 }
