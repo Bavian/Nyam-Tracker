@@ -23,8 +23,10 @@ import com.bavian.nyam.tracker.presentation.setfood.compose.SetFoodScreen
 import com.bavian.nyam.tracker.presentation.setfood.mapper.SetFoodScreenEventMapper
 import com.bavian.nyam.tracker.presentation.setfood.mapper.SetFoodScreenStateMapper
 import com.bavian.nyam.tracker.presentation.setproduct.SetProductScreen
-import com.bavian.nyam.tracker.presentation.setproduct.SetProductUiState
 import com.bavian.nyam.tracker.presentation.setproduct.SetProductViewModel
+import com.bavian.nyam.tracker.presentation.setproduct.SetProductViewModelState
+import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductEventMapper
+import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductStateMapper
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
@@ -68,9 +70,12 @@ fun AppNavGraph(appNavigation: AppNavigation = koinInject()) {
                 entry<AppRoute.SetProduct> { key ->
                     val viewModel: SetProductViewModel =
                         koinViewModel(key = "${key.productId}#${key.barcode}") { parametersOf(key.productId, key.barcode) }
+                    val stateMapper = koinInject<SetProductStateMapper>()
+                    val eventMapper = koinInject<SetProductEventMapper>()
+                    val state by viewModel.uiState.collectAsStateWithLifecycle(SetProductViewModelState(id = key.productId ?: ""))
                     SetProductScreen(
-                        state = viewModel.uiState.collectAsStateWithLifecycle(SetProductUiState()).value,
-                        onEvent = viewModel::onEvent,
+                        state = stateMapper.map(state),
+                        onEvent = { eventMapper.map(it).let(viewModel::onEvent) },
                     )
                 }
 
