@@ -25,4 +25,5 @@ data class SetFoodViewModelState(
             .now()
             .toLocalDateTime(TimeZone.currentSystemDefault())
             .time,
+    val loading: Boolean = false,
 )
