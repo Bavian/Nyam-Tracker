@@ -2,6 +2,7 @@ package com.bavian.nyam.tracker.presentation.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bavian.nyam.tracker.domain.usecase.DeleteEatenFoodUseCase
 import com.bavian.nyam.tracker.domain.usecase.GetBarcodeInfoUseCase
 import com.bavian.nyam.tracker.domain.usecase.GetEatenFoodUseCase
 import com.bavian.nyam.tracker.presentation.main.mapper.MainScreenEatenFoodItemMapper
@@ -22,6 +23,7 @@ import kotlinx.datetime.plus
 class MainViewModel(
     private val appNavigation: AppNavigation,
     private val getEatenFoodUseCase: GetEatenFoodUseCase,
+    private val deleteEatenFoodUseCase: DeleteEatenFoodUseCase,
     private val eatenFoodItemMapper: MainScreenEatenFoodItemMapper,
     private val barcodeScanner: BarcodeScanner,
     private val getBarcodeInfoUseCase: GetBarcodeInfoUseCase,
@@ -39,7 +41,16 @@ class MainViewModel(
             }
 
             is MainScreenViewModelEvent.ScreenViewModelStarted -> loadEatenFood(uiState.value.selectedDate)
-            is MainScreenViewModelEvent.EatenFoodTap -> appNavigation.openAddFoodScreen(event.foodId)
+            is MainScreenViewModelEvent.EatenFoodTap -> openEditFoodScreen(event.foodId)
+            is MainScreenViewModelEvent.EatenFoodEditTap -> openEditFoodScreen(event.foodId)
+            is MainScreenViewModelEvent.EatenFoodDeleteTap -> deleteEatenFood(event.foodId)
+        }
+    }
+
+    private fun deleteEatenFood(foodId: String) {
+        viewModelScope.launch {
+            deleteEatenFoodUseCase.execute(foodId)
+            loadEatenFood(uiState.value.selectedDate)
         }
     }
 
@@ -76,18 +87,22 @@ class MainViewModel(
         return startOfDay until startOfNextDay
     }
 
-    fun startScan() {
+    private fun startScan() {
         viewModelScope.launch {
             val scanResult = barcodeScanner.startScan()
             scanResult.getOrNull()?.let { scannerState ->
                 val barcodeInfo = getBarcodeInfoUseCase.execute(scannerState.barcode)
                 val productId = barcodeInfo?.productId
                 if (productId != null) {
-                    appNavigation.openAddFoodScreen(productId)
+                    appNavigation.openAddNewFoodScreen(productId)
                 } else {
                     appNavigation.openSetProductScreen(barcode = scannerState.barcode)
                 }
             }
         }
+    }
+
+    private fun openEditFoodScreen(id: String) {
+        appNavigation.openEditFoodScreen(id)
     }
 }

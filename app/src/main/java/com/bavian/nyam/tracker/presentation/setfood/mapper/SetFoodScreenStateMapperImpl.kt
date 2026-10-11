@@ -29,6 +29,8 @@ internal class SetFoodScreenStateMapperImpl : SetFoodScreenStateMapper {
             carbohydrates = state.carbohydratesPer100 * factor,
             date = state.date,
             time = state.time,
+            canDelete = state.canDelete,
+            deleteConfirmation = state.deleteConfirmation,
         )
     }
 }

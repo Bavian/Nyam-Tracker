@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -21,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -63,6 +66,8 @@ object SetFoodScreen {
             val carbohydrates: Float,
             val date: LocalDate,
             val time: LocalTime,
+            val canDelete: Boolean = false,
+            val deleteConfirmation: Boolean = false,
         ) : State
     }
 
@@ -106,6 +111,12 @@ object SetFoodScreen {
         data object SavePressed : Event
 
         data object BackClicked : Event
+
+        data object DeleteClicked : Event
+
+        data object DeleteConfirmed : Event
+
+        data object DeleteCancelled : Event
     }
 }
 
@@ -151,7 +162,17 @@ fun SetFoodScreenSuccess(
                     }
                 },
                 actions = {
-                    Spacer(modifier = Modifier.height(48.dp))
+                    if (state.canDelete) {
+                        IconButton(onClick = { onEvent(SetFoodScreen.Event.DeleteClicked) }) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_delete_forever),
+                                contentDescription = stringResource(R.string.products_list_delete),
+                                tint = MaterialTheme.colorScheme.error,
+                            )
+                        }
+                    } else {
+                        Spacer(modifier = Modifier.width(48.dp))
+                    }
                 },
             )
         },
@@ -168,6 +189,36 @@ fun SetFoodScreenSuccess(
             }
         },
     ) { paddingValues ->
+        if (state.deleteConfirmation) {
+            AlertDialog(
+                onDismissRequest = { onEvent(SetFoodScreen.Event.DeleteCancelled) },
+                title = { Text(text = stringResource(R.string.products_list_delete_dialog_title)) },
+                text = {
+                    Text(
+                        text =
+                            stringResource(
+                                R.string.products_list_delete_dialog_message,
+                                state.name.get(),
+                                state.manufacturer.get(),
+                            ),
+                    )
+                },
+                confirmButton = {
+                    TextButton(onClick = { onEvent(SetFoodScreen.Event.DeleteConfirmed) }) {
+                        Text(
+                            text = stringResource(R.string.products_list_delete_dialog_confirm),
+                            color = MaterialTheme.colorScheme.error,
+                        )
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { onEvent(SetFoodScreen.Event.DeleteCancelled) }) {
+                        Text(text = stringResource(R.string.products_list_delete_dialog_cancel))
+                    }
+                },
+            )
+        }
+
         Column(
             modifier =
                 Modifier
@@ -301,6 +352,25 @@ internal class SetFoodScreenPreviewParameterProvider : PreviewParameterProvider<
                         .now()
                         .toLocalDateTime(TimeZone.currentSystemDefault())
                         .time,
+                canDelete = true,
+            ),
+            SetFoodScreen.State.Success(
+                title = StringSource.Resource(R.string.set_food_title_future),
+                manufacturer = "Sample Manufacturer".stringSource,
+                name = "Sample Food".stringSource,
+                weight = "250".stringSource,
+                kCalories = 500f,
+                proteins = 20f,
+                fat = 10f,
+                carbohydrates = 40f,
+                date = Clock.System.todayIn(TimeZone.currentSystemDefault()),
+                time =
+                    Clock.System
+                        .now()
+                        .toLocalDateTime(TimeZone.currentSystemDefault())
+                        .time,
+                canDelete = true,
+                deleteConfirmation = true,
             ),
             SetFoodScreen.State.Success(
                 title = StringSource.Resource(R.string.set_food_title_past),
@@ -317,6 +387,7 @@ internal class SetFoodScreenPreviewParameterProvider : PreviewParameterProvider<
                         .now()
                         .toLocalDateTime(TimeZone.currentSystemDefault())
                         .time,
+                canDelete = false,
             ),
         )
 }

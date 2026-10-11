@@ -43,4 +43,10 @@ sealed class SetFoodViewModelEvent {
     data object SavePressed : SetFoodViewModelEvent()
 
     data object BackClicked : SetFoodViewModelEvent()
+
+    data object DeleteClicked : SetFoodViewModelEvent()
+
+    data object DeleteConfirmed : SetFoodViewModelEvent()
+
+    data object DeleteCancelled : SetFoodViewModelEvent()
 }

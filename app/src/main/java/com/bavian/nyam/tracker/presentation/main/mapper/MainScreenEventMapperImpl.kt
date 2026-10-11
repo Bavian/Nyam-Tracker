@@ -11,5 +11,7 @@ class MainScreenEventMapperImpl : MainScreenEventMapper {
             is MainScreen.Event.CalendarDatePicked -> MainScreenViewModelEvent.CalendarDatePicked(event.date)
             is MainScreen.Event.ScreenStarted -> MainScreenViewModelEvent.ScreenViewModelStarted
             is MainScreen.Event.EatenFoodTap -> MainScreenViewModelEvent.EatenFoodTap(event.foodId)
+            is MainScreen.Event.EatenFoodEditTap -> MainScreenViewModelEvent.EatenFoodEditTap(event.foodId)
+            is MainScreen.Event.EatenFoodDeleteTap -> MainScreenViewModelEvent.EatenFoodDeleteTap(event.foodId)
         }
 }

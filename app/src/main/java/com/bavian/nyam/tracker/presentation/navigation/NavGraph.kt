@@ -46,6 +46,7 @@ fun AppNavGraph(appNavigation: AppNavigation = koinInject()) {
                 is AppNavigation.NavigationAction.Back -> {
                     navigator.goBack()
                 }
+
                 is AppNavigation.NavigationAction.Navigate -> {
                     navigator.navigate(action.route)
                 }
@@ -60,7 +61,9 @@ fun AppNavGraph(appNavigation: AppNavigation = koinInject()) {
                     val viewModel: MainViewModel = koinViewModel()
                     val stateMapper = koinInject<MainScreenStateMapper>()
                     val eventMapper = koinInject<MainScreenEventMapper>()
-                    val state by viewModel.uiState.collectAsStateWithLifecycle(MainScreenViewModelState())
+                    val state by viewModel.uiState.collectAsStateWithLifecycle(
+                        MainScreenViewModelState(),
+                    )
                     MainScreen(
                         state = stateMapper.map(state),
                         onEvent = { eventMapper.map(it).let(viewModel::onEvent) },
@@ -69,10 +72,17 @@ fun AppNavGraph(appNavigation: AppNavigation = koinInject()) {
 
                 entry<AppRoute.SetProduct> { key ->
                     val viewModel: SetProductViewModel =
-                        koinViewModel(key = "${key.productId}#${key.barcode}") { parametersOf(key.productId, key.barcode) }
+                        koinViewModel(key = "${key.productId}#${key.barcode}") {
+                            parametersOf(
+                                key.productId,
+                                key.barcode,
+                            )
+                        }
                     val stateMapper = koinInject<SetProductStateMapper>()
                     val eventMapper = koinInject<SetProductEventMapper>()
-                    val state by viewModel.uiState.collectAsStateWithLifecycle(SetProductViewModelState(id = key.productId ?: ""))
+                    val state by viewModel.uiState.collectAsStateWithLifecycle(
+                        SetProductViewModelState(id = key.productId ?: ""),
+                    )
                     SetProductScreen(
                         state = stateMapper.map(state),
                         onEvent = { eventMapper.map(it).let(viewModel::onEvent) },
@@ -83,7 +93,9 @@ fun AppNavGraph(appNavigation: AppNavigation = koinInject()) {
                     val viewModel: ProductsListViewModel = koinViewModel()
                     val stateMapper = koinInject<ProductsListScreenStateMapper>()
                     val eventMapper = koinInject<ProductsListScreenEventMapper>()
-                    val state by viewModel.uiState.collectAsStateWithLifecycle(ProductsListViewModelState())
+                    val state by viewModel.uiState.collectAsStateWithLifecycle(
+                        ProductsListViewModelState(),
+                    )
                     ProductsListScreen(
                         state = stateMapper.map(state),
                         onEvent = { eventMapper.map(it).let(viewModel::onEvent) },
@@ -91,7 +103,10 @@ fun AppNavGraph(appNavigation: AppNavigation = koinInject()) {
                 }
 
                 entry<AppRoute.SetFood> { key ->
-                    val viewModel: SetFoodViewModel = koinViewModel(key = key.productId) { parametersOf(key.productId) }
+                    val viewModel: SetFoodViewModel =
+                        koinViewModel(key = key.initialStateSource.toString()) {
+                            parametersOf(key.initialStateSource)
+                        }
                     val stateMapper = koinInject<SetFoodScreenStateMapper>()
                     val eventMapper = koinInject<SetFoodScreenEventMapper>()
                     SetFoodScreen(

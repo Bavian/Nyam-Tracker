@@ -8,6 +8,9 @@ import kotlinx.datetime.todayIn
 import kotlin.time.Clock
 
 data class SetFoodViewModelState(
+    val foodId: String,
+    val canDelete: Boolean = false,
+    val deleteConfirmation: Boolean = false,
     val pastDay: Boolean = false,
     val manufacturer: String = "",
     val name: String = "",

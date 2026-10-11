@@ -16,7 +16,9 @@ interface AppNavigation {
 
     fun openProductsListScreen()
 
-    fun openAddFoodScreen(productId: String? = null)
+    fun openAddNewFoodScreen(productId: String? = null)
+
+    fun openEditFoodScreen(foodId: String)
 
     sealed interface NavigationAction {
         data class Back(
