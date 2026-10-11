@@ -160,6 +160,16 @@ fun ProductsListScreenContent(
                         modifier = Modifier.weight(1f).padding(end = 8.dp),
                         placeholder = { Text(stringResource(R.string.products_list_search_hint)) },
                         leadingIcon = { Icon(ImageVector.vectorResource(id = R.drawable.ic_24dp_search), contentDescription = null) },
+                        trailingIcon = {
+                            if (searchQuery.isNotEmpty()) {
+                                IconButton(onClick = { onEvent(ProductsListScreen.Event.SearchQueryChanged("")) }) {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_close),
+                                        contentDescription = null,
+                                    )
+                                }
+                            }
+                        },
                         singleLine = true,
                     )
                 }
