@@ -227,8 +227,6 @@ fun SetFoodScreenSuccess(
                     .verticalScroll(rememberScrollState())
                     .padding(
                         bottom = 16.dp,
-                        start = 24.dp,
-                        end = 24.dp,
                     ),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
@@ -242,82 +240,93 @@ fun SetFoodScreenSuccess(
                 modifier = Modifier.fillMaxWidth(),
             )
 
-            Box(
-                contentAlignment = Alignment.Center,
+            Column(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 8.dp),
+                        .padding(horizontal = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                TimePicker(
-                    state = TimePicker.State(state.time),
-                    onEvent = {
-                        if (it is TimePicker.Event.TimeChanged) {
-                            onEvent(SetFoodScreen.Event.TimeChanged(it.time))
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp),
+                ) {
+                    TimePicker(
+                        state = TimePicker.State(state.time),
+                        onEvent = {
+                            if (it is TimePicker.Event.TimeChanged) {
+                                onEvent(SetFoodScreen.Event.TimeChanged(it.time))
+                            }
+                        },
+                    )
+                }
+
+                OutlinedTextField(
+                    value = state.manufacturer.get(),
+                    onValueChange = { onEvent(SetFoodScreen.Event.ManufacturerChanged(it)) },
+                    label = { Text(stringResource(R.string.set_food_manufacturer)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                )
+
+                OutlinedTextField(
+                    value = state.name.get(),
+                    onValueChange = { onEvent(SetFoodScreen.Event.NameChanged(it)) },
+                    label = { Text("Name") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                )
+
+                OutlinedTextField(
+                    value = state.weight.get(),
+                    onValueChange = { onEvent(SetFoodScreen.Event.WeightChanged(it)) },
+                    label = { Text("Weight (g)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                )
+
+                NutrientsCard(
+                    state =
+                        NutrientsCard.State(
+                            kCalories = formatNutrient(state.kCalories),
+                            proteins = formatNutrient(state.proteins),
+                            fats = formatNutrient(state.fat),
+                            carbohydrates = formatNutrient(state.carbohydrates),
+                        ),
+                    onEvent = { event ->
+                        when (event) {
+                            is NutrientsCard.Event.KCaloriesChanged ->
+                                onEvent(SetFoodScreen.Event.CaloriesChanged(event.value))
+
+                            is NutrientsCard.Event.ProteinsChanged ->
+                                onEvent(SetFoodScreen.Event.ProteinsChanged(event.value))
+
+                            is NutrientsCard.Event.FatsChanged ->
+                                onEvent(SetFoodScreen.Event.FatChanged(event.value))
+
+                            is NutrientsCard.Event.CarbohydratesChanged ->
+                                onEvent(SetFoodScreen.Event.CarbohydratesChanged(event.value))
                         }
                     },
                 )
+
+                NutrientsDiagram(
+                    state =
+                        NutrientsDiagram.State(
+                            proteins = state.proteins,
+                            fats = state.fat,
+                            carbohydrates = state.carbohydrates,
+                        ),
+                )
+
+                Spacer(modifier = Modifier.height(80.dp))
             }
-
-            OutlinedTextField(
-                value = state.manufacturer.get(),
-                onValueChange = { onEvent(SetFoodScreen.Event.ManufacturerChanged(it)) },
-                label = { Text(stringResource(R.string.set_food_manufacturer)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            )
-
-            OutlinedTextField(
-                value = state.name.get(),
-                onValueChange = { onEvent(SetFoodScreen.Event.NameChanged(it)) },
-                label = { Text("Name") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            )
-
-            OutlinedTextField(
-                value = state.weight.get(),
-                onValueChange = { onEvent(SetFoodScreen.Event.WeightChanged(it)) },
-                label = { Text("Weight (g)") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            )
-
-            NutrientsCard(
-                state =
-                    NutrientsCard.State(
-                        kCalories = formatNutrient(state.kCalories),
-                        proteins = formatNutrient(state.proteins),
-                        fats = formatNutrient(state.fat),
-                        carbohydrates = formatNutrient(state.carbohydrates),
-                    ),
-                onEvent = { event ->
-                    when (event) {
-                        is NutrientsCard.Event.KCaloriesChanged ->
-                            onEvent(SetFoodScreen.Event.CaloriesChanged(event.value))
-                        is NutrientsCard.Event.ProteinsChanged ->
-                            onEvent(SetFoodScreen.Event.ProteinsChanged(event.value))
-                        is NutrientsCard.Event.FatsChanged ->
-                            onEvent(SetFoodScreen.Event.FatChanged(event.value))
-                        is NutrientsCard.Event.CarbohydratesChanged ->
-                            onEvent(SetFoodScreen.Event.CarbohydratesChanged(event.value))
-                    }
-                },
-            )
-
-            NutrientsDiagram(
-                state =
-                    NutrientsDiagram.State(
-                        proteins = state.proteins,
-                        fats = state.fat,
-                        carbohydrates = state.carbohydrates,
-                    ),
-            )
-
-            Spacer(modifier = Modifier.height(80.dp))
         }
     }
 }
