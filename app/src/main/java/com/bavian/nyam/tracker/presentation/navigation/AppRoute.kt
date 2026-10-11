@@ -1,6 +1,7 @@
 package com.bavian.nyam.tracker.presentation.navigation
 
 import androidx.navigation3.runtime.NavKey
+import com.bavian.nyam.tracker.presentation.setfood.SetFoodInitialStateSource
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -19,6 +20,6 @@ sealed interface AppRoute : NavKey {
 
     @Serializable
     data class SetFood(
-        val productId: String? = null,
+        val initialStateSource: SetFoodInitialStateSource,
     ) : AppRoute
 }

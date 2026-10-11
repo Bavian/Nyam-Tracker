@@ -17,5 +17,8 @@ internal class SetFoodScreenEventMapperImpl : SetFoodScreenEventMapper {
             is SetFoodScreen.Event.TimeChanged -> SetFoodViewModelEvent.TimeChanged(event.value)
             is SetFoodScreen.Event.SavePressed -> SetFoodViewModelEvent.SavePressed
             is SetFoodScreen.Event.BackClicked -> SetFoodViewModelEvent.BackClicked
+            is SetFoodScreen.Event.DeleteClicked -> SetFoodViewModelEvent.DeleteClicked
+            is SetFoodScreen.Event.DeleteConfirmed -> SetFoodViewModelEvent.DeleteConfirmed
+            is SetFoodScreen.Event.DeleteCancelled -> SetFoodViewModelEvent.DeleteCancelled
         }
 }

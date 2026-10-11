@@ -91,6 +91,14 @@ object MainScreen {
         data class EatenFoodTap(
             val foodId: String,
         ) : Event
+
+        data class EatenFoodEditTap(
+            val foodId: String,
+        ) : Event
+
+        data class EatenFoodDeleteTap(
+            val foodId: String,
+        ) : Event
     }
 }
 
@@ -220,6 +228,12 @@ fun MainScreenContent(
                             when (event) {
                                 is FoodListCard.Event.ItemClicked -> {
                                     onEvent(MainScreen.Event.EatenFoodTap(event.id))
+                                }
+                                is FoodListCard.Event.EditClicked -> {
+                                    onEvent(MainScreen.Event.EatenFoodEditTap(event.id))
+                                }
+                                is FoodListCard.Event.DeleteClicked -> {
+                                    onEvent(MainScreen.Event.EatenFoodDeleteTap(event.id))
                                 }
                             }
                         },

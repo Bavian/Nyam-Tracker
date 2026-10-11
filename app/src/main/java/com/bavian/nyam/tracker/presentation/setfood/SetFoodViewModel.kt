@@ -2,10 +2,13 @@ package com.bavian.nyam.tracker.presentation.setfood
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bavian.nyam.tracker.base.safeCastTo
 import com.bavian.nyam.tracker.domain.infrastructure.ProductIdGenerator
 import com.bavian.nyam.tracker.domain.model.EatenFood
 import com.bavian.nyam.tracker.domain.usecase.AddEatenFoodUseCase
+import com.bavian.nyam.tracker.domain.usecase.DeleteEatenFoodUseCase
 import com.bavian.nyam.tracker.domain.usecase.GetEatenFoodByIdUseCase
+import com.bavian.nyam.tracker.domain.usecase.GetProductByIdUseCase
 import com.bavian.nyam.tracker.presentation.navigation.AppNavigation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,37 +25,68 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 
 class SetFoodViewModel(
-    productId: String?,
+    initialStateSource: SetFoodInitialStateSource,
+    private val getProductByIdUseCase: GetProductByIdUseCase,
     private val getEatenFoodUseCase: GetEatenFoodByIdUseCase,
     private val addEatenFoodUseCase: AddEatenFoodUseCase,
+    private val deleteEatenFoodUseCase: DeleteEatenFoodUseCase,
     private val appNavigation: AppNavigation,
-    private val productIdGenerator: ProductIdGenerator,
+    productIdGenerator: ProductIdGenerator,
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(SetFoodViewModelState())
+    private val _uiState =
+        MutableStateFlow(
+            SetFoodViewModelState(
+                foodId =
+                    initialStateSource
+                        .safeCastTo<SetFoodInitialStateSource.Food>()
+                        ?.id
+                        ?: productIdGenerator.generateId(),
+                canDelete = initialStateSource is SetFoodInitialStateSource.Food,
+            ),
+        )
     val uiState: StateFlow<SetFoodViewModelState> = _uiState.asStateFlow()
 
     init {
         updateTitleText(_uiState.value.date, _uiState.value.time)
-        if (productId != null) {
-            loadProduct(productId)
+        viewModelScope.launch {
+            when (initialStateSource) {
+                is SetFoodInitialStateSource.Product -> loadProduct(initialStateSource.id)
+                is SetFoodInitialStateSource.Food -> loadFood(initialStateSource.id)
+                is SetFoodInitialStateSource.None -> {}
+            }
         }
     }
 
-    private fun loadProduct(id: String) {
-        viewModelScope.launch {
-            val product = getEatenFoodUseCase.execute(id)
-            if (product != null) {
-                _uiState.update {
-                    it.copy(
-                        manufacturer = product.manufacturer,
-                        name = product.name,
-                        weight = "100",
-                        kCaloriesPer100 = product.kCalories,
-                        proteinsPer100 = product.proteins,
-                        fatPer100 = product.fat,
-                        carbohydratesPer100 = product.carbohydrates,
-                    )
-                }
+    private suspend fun loadProduct(id: String) {
+        val product = getProductByIdUseCase.execute(id)
+        if (product != null) {
+            _uiState.update {
+                it.copy(
+                    manufacturer = product.manufacturer,
+                    name = product.name,
+                    weight = "100",
+                    kCaloriesPer100 = product.calories,
+                    proteinsPer100 = product.proteins,
+                    fatPer100 = product.fat,
+                    carbohydratesPer100 = product.carbohydrates,
+                )
+            }
+        }
+    }
+
+    private suspend fun loadFood(id: String) {
+        val food = getEatenFoodUseCase.execute(id)
+        if (food != null) {
+            _uiState.update {
+                it.copy(
+                    manufacturer = food.manufacturer,
+                    name = food.name,
+                    weight = "100",
+                    kCaloriesPer100 = food.kCalories,
+                    proteinsPer100 = food.proteins,
+                    fatPer100 = food.fat,
+                    carbohydratesPer100 = food.carbohydrates,
+                )
             }
         }
     }
@@ -70,12 +104,25 @@ class SetFoodViewModel(
                 _uiState.update { it.copy(date = event.value) }
                 updateTitleText(_uiState.value.date, _uiState.value.time)
             }
+
             is SetFoodViewModelEvent.TimeChanged -> {
                 _uiState.update { it.copy(time = event.value) }
                 updateTitleText(_uiState.value.date, _uiState.value.time)
             }
+
             is SetFoodViewModelEvent.SavePressed -> saveFood()
             is SetFoodViewModelEvent.BackClicked -> appNavigation.back()
+            is SetFoodViewModelEvent.DeleteClicked -> _uiState.update { it.copy(deleteConfirmation = true) }
+            is SetFoodViewModelEvent.DeleteConfirmed -> deleteFood()
+            is SetFoodViewModelEvent.DeleteCancelled -> _uiState.update { it.copy(deleteConfirmation = false) }
+        }
+    }
+
+    private fun deleteFood() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(deleteConfirmation = false) }
+            deleteEatenFoodUseCase.execute(_uiState.value.foodId)
+            appNavigation.back()
         }
     }
 
@@ -119,7 +166,7 @@ class SetFoodViewModel(
             val factor = weightFloat / 100f
             val eatenFood =
                 EatenFood(
-                    id = productIdGenerator.generateId(),
+                    id = state.foodId,
                     manufacturer = state.manufacturer,
                     name = state.name,
                     weight = weightFloat,

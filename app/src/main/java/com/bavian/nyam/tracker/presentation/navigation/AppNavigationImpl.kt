@@ -1,6 +1,7 @@
 package com.bavian.nyam.tracker.presentation.navigation
 
 import com.bavian.nyam.tracker.presentation.navigation.AppNavigation.NavigationAction
+import com.bavian.nyam.tracker.presentation.setfood.SetFoodInitialStateSource
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -21,14 +22,35 @@ class AppNavigationImpl : AppNavigation {
         productId: String?,
         barcode: String?,
     ) {
-        _navigationActions.tryEmit(NavigationAction.Navigate(AppRoute.SetProduct(productId, barcode)))
+        _navigationActions.tryEmit(
+            NavigationAction.Navigate(
+                AppRoute.SetProduct(
+                    productId,
+                    barcode,
+                ),
+            ),
+        )
     }
 
     override fun openProductsListScreen() {
         _navigationActions.tryEmit(NavigationAction.Navigate(AppRoute.ProductsList))
     }
 
-    override fun openAddFoodScreen(productId: String?) {
-        _navigationActions.tryEmit(NavigationAction.Navigate(AppRoute.SetFood(productId)))
+    override fun openAddNewFoodScreen(productId: String?) {
+        val initialStateSource =
+            if (productId == null) {
+                SetFoodInitialStateSource.None
+            } else {
+                SetFoodInitialStateSource.Product(productId)
+            }
+        _navigationActions.tryEmit(
+            NavigationAction.Navigate(AppRoute.SetFood(initialStateSource)),
+        )
+    }
+
+    override fun openEditFoodScreen(foodId: String) {
+        _navigationActions.tryEmit(
+            NavigationAction.Navigate(AppRoute.SetFood(SetFoodInitialStateSource.Food(foodId))),
+        )
     }
 }

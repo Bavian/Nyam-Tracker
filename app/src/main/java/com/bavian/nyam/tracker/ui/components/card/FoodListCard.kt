@@ -2,6 +2,7 @@ package com.bavian.nyam.tracker.ui.components.card
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,13 +10,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -48,6 +59,14 @@ object FoodListCard {
 
     sealed interface Event {
         data class ItemClicked(
+            val id: String,
+        ) : Event
+
+        data class EditClicked(
+            val id: String,
+        ) : Event
+
+        data class DeleteClicked(
             val id: String,
         ) : Event
     }
@@ -93,7 +112,7 @@ fun FoodListCard(
                 }
                 FoodListItemView(
                     item = item,
-                    onClick = { onEvent(FoodListCard.Event.ItemClicked(item.id)) },
+                    onEvent = onEvent,
                 )
             }
         }
@@ -103,14 +122,16 @@ fun FoodListCard(
 @Composable
 private fun FoodListItemView(
     item: FoodListCard.Item,
-    onClick: () -> Unit,
+    onEvent: (FoodListCard.Event) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var menuExpanded by remember { mutableStateOf(false) }
+
     Column(
         modifier =
             modifier
                 .fillMaxWidth()
-                .clickable { onClick() }
+                .clickable { onEvent(FoodListCard.Event.ItemClicked(item.id)) }
                 .padding(vertical = 4.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
@@ -123,13 +144,68 @@ private fun FoodListItemView(
                 text = item.name,
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f),
             )
-            if (item.time.isNotEmpty()) {
-                Text(
-                    text = item.time,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                if (item.time.isNotEmpty()) {
+                    Text(
+                        text = item.time,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Box {
+                    IconButton(
+                        onClick = { menuExpanded = true },
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_more_vert),
+                            contentDescription = stringResource(R.string.products_list_context_menu_description),
+                        )
+                    }
+
+                    DropdownMenu(
+                        expanded = menuExpanded,
+                        onDismissRequest = { menuExpanded = false },
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text(text = stringResource(R.string.products_list_edit)) },
+                            onClick = {
+                                menuExpanded = false
+                                onEvent(FoodListCard.Event.EditClicked(item.id))
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_edit),
+                                    contentDescription = null,
+                                )
+                            },
+                        )
+
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = stringResource(R.string.products_list_delete),
+                                    color = MaterialTheme.colorScheme.error,
+                                )
+                            },
+                            onClick = {
+                                menuExpanded = false
+                                onEvent(FoodListCard.Event.DeleteClicked(item.id))
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_delete_forever),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.error,
+                                )
+                            },
+                        )
+                    }
+                }
             }
         }
 
