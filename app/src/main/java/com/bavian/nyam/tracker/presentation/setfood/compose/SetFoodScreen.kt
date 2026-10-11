@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.bavian.nyam.tracker.R
+import com.bavian.nyam.tracker.ui.components.card.NutrientsCard
 import com.bavian.nyam.tracker.ui.components.picker.DateCarousel
 import com.bavian.nyam.tracker.ui.components.picker.TimePicker
 import com.bavian.nyam.tracker.ui.model.StringSource
@@ -233,40 +234,26 @@ fun SetFoodScreenSuccess(
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             )
 
-            OutlinedTextField(
-                value = state.kCalories.get(),
-                onValueChange = { onEvent(SetFoodScreen.Event.CaloriesChanged(it)) },
-                label = { Text("Calories (kcal)") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            )
-
-            OutlinedTextField(
-                value = state.proteins.get(),
-                onValueChange = { onEvent(SetFoodScreen.Event.ProteinsChanged(it)) },
-                label = { Text("Proteins (g)") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            )
-
-            OutlinedTextField(
-                value = state.fat.get(),
-                onValueChange = { onEvent(SetFoodScreen.Event.FatChanged(it)) },
-                label = { Text("Fat (g)") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            )
-
-            OutlinedTextField(
-                value = state.carbohydrates.get(),
-                onValueChange = { onEvent(SetFoodScreen.Event.CarbohydratesChanged(it)) },
-                label = { Text("Carbohydrates (g)") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            NutrientsCard(
+                state =
+                    NutrientsCard.State(
+                        kCalories = state.kCalories,
+                        proteins = state.proteins,
+                        fats = state.fat,
+                        carbohydrates = state.carbohydrates,
+                    ),
+                onEvent = { event ->
+                    when (event) {
+                        is NutrientsCard.Event.KCaloriesChanged ->
+                            onEvent(SetFoodScreen.Event.CaloriesChanged(event.value))
+                        is NutrientsCard.Event.ProteinsChanged ->
+                            onEvent(SetFoodScreen.Event.ProteinsChanged(event.value))
+                        is NutrientsCard.Event.FatsChanged ->
+                            onEvent(SetFoodScreen.Event.FatChanged(event.value))
+                        is NutrientsCard.Event.CarbohydratesChanged ->
+                            onEvent(SetFoodScreen.Event.CarbohydratesChanged(event.value))
+                    }
+                },
             )
 
             Spacer(modifier = Modifier.height(80.dp))

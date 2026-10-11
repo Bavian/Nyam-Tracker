@@ -28,7 +28,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
@@ -37,6 +36,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.bavian.nyam.tracker.R
 import com.bavian.nyam.tracker.base.mapAsImmutableList
+import com.bavian.nyam.tracker.ui.components.card.NutrientsCard
 import com.bavian.nyam.tracker.ui.components.card.TitledListCard
 import com.bavian.nyam.tracker.ui.model.StringSource
 import com.bavian.nyam.tracker.ui.model.isNotEmpty
@@ -217,62 +217,26 @@ private fun SetProductScreenContent(
         }
 
         item {
-            OutlinedTextField(
-                value = state.calories.get(),
-                onValueChange = { onEvent(SetProductScreen.Event.CaloriesChanged(it)) },
-                label = { Text(stringResource(R.string.set_product_calories)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions =
-                    KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal,
-                        imeAction = ImeAction.Next,
+            NutrientsCard(
+                state =
+                    NutrientsCard.State(
+                        kCalories = state.calories,
+                        proteins = state.proteins,
+                        fats = state.fat,
+                        carbohydrates = state.carbohydrates,
                     ),
-            )
-        }
-
-        item {
-            OutlinedTextField(
-                value = state.proteins.get(),
-                onValueChange = { onEvent(SetProductScreen.Event.ProteinsChanged(it)) },
-                label = { Text(stringResource(R.string.set_product_proteins)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions =
-                    KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal,
-                        imeAction = ImeAction.Next,
-                    ),
-            )
-        }
-
-        item {
-            OutlinedTextField(
-                value = state.fat.get(),
-                onValueChange = { onEvent(SetProductScreen.Event.FatChanged(it)) },
-                label = { Text(stringResource(R.string.set_product_fat)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions =
-                    KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal,
-                        imeAction = ImeAction.Next,
-                    ),
-            )
-        }
-
-        item {
-            OutlinedTextField(
-                value = state.carbohydrates.get(),
-                onValueChange = { onEvent(SetProductScreen.Event.CarbohydratesChanged(it)) },
-                label = { Text(stringResource(R.string.set_product_carbohydrates)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions =
-                    KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal,
-                        imeAction = ImeAction.Done,
-                    ),
+                onEvent = { event ->
+                    when (event) {
+                        is NutrientsCard.Event.KCaloriesChanged ->
+                            onEvent(SetProductScreen.Event.CaloriesChanged(event.value))
+                        is NutrientsCard.Event.ProteinsChanged ->
+                            onEvent(SetProductScreen.Event.ProteinsChanged(event.value))
+                        is NutrientsCard.Event.FatsChanged ->
+                            onEvent(SetProductScreen.Event.FatChanged(event.value))
+                        is NutrientsCard.Event.CarbohydratesChanged ->
+                            onEvent(SetProductScreen.Event.CarbohydratesChanged(event.value))
+                    }
+                },
             )
         }
 
