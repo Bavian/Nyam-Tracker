@@ -13,4 +13,8 @@ class EatenFoodDatabaseImpl(
         eatenFoodDao.getEatenFoodForPeriod(period.first, period.last)
 
     override fun getEatenFoodById(id: String): EatenFoodEntity? = eatenFoodDao.getEatenFoodById(id)
+
+    override fun deleteEatenFood(id: String) {
+        eatenFoodDao.deleteEatenFood(id)
+    }
 }

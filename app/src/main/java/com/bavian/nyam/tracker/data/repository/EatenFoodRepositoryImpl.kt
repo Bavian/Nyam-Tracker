@@ -29,4 +29,10 @@ class EatenFoodRepositoryImpl(
         withContext(Dispatchers.IO) {
             eatenFoodDatabase.getEatenFoodById(id)?.let(eatenFoodMapper::mapToDomain)
         }
+
+    override suspend fun deleteEatenFood(id: String) {
+        withContext(Dispatchers.IO) {
+            eatenFoodDatabase.deleteEatenFood(id)
+        }
+    }
 }

@@ -8,4 +8,6 @@ interface EatenFoodDatabase {
     fun getEatenFoodForPeriod(period: LongRange): List<EatenFoodEntity>
 
     fun getEatenFoodById(id: String): EatenFoodEntity?
+
+    fun deleteEatenFood(id: String)
 }

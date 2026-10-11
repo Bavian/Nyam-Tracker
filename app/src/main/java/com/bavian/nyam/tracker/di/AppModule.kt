@@ -32,6 +32,8 @@ import com.bavian.nyam.tracker.domain.usecase.AddProductUseCase
 import com.bavian.nyam.tracker.domain.usecase.AddProductUseCaseImpl
 import com.bavian.nyam.tracker.domain.usecase.DeleteBarcodeUseCase
 import com.bavian.nyam.tracker.domain.usecase.DeleteBarcodeUseCaseImpl
+import com.bavian.nyam.tracker.domain.usecase.DeleteEatenFoodUseCase
+import com.bavian.nyam.tracker.domain.usecase.DeleteEatenFoodUseCaseImpl
 import com.bavian.nyam.tracker.domain.usecase.DeleteProductUseCase
 import com.bavian.nyam.tracker.domain.usecase.DeleteProductUseCaseImpl
 import com.bavian.nyam.tracker.domain.usecase.GetBarcodeInfoUseCase
@@ -143,6 +145,7 @@ val appModule =
         factoryOf(::GetProductByIdUseCaseImpl) bind GetProductByIdUseCase::class
         factoryOf(::GetProductsUseCaseImpl) bind GetProductsUseCase::class
         factoryOf(::AddEatenFoodUseCaseImpl) bind AddEatenFoodUseCase::class
+        factoryOf(::DeleteEatenFoodUseCaseImpl) bind DeleteEatenFoodUseCase::class
         factoryOf(::GetEatenFoodUseCaseImpl) bind GetEatenFoodUseCase::class
         factoryOf(::GetEatenFoodByIdUseCaseImpl) bind GetEatenFoodByIdUseCase::class
 
