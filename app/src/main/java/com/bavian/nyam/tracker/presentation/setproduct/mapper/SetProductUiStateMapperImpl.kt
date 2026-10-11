@@ -9,9 +9,9 @@ class SetProductUiStateMapperImpl : SetProductUiStateMapper {
             id = state.id,
             manufacturer = state.manufacturer,
             name = state.name,
-            calories = state.calories.toFloatOrNull() ?: 0f,
-            proteins = state.proteins.toFloatOrNull() ?: 0f,
-            fat = state.fat.toFloatOrNull() ?: 0f,
-            carbohydrates = state.carbohydrates.toFloatOrNull() ?: 0f,
+            calories = state.calories,
+            proteins = state.proteins,
+            fat = state.fat,
+            carbohydrates = state.carbohydrates,
         )
 }

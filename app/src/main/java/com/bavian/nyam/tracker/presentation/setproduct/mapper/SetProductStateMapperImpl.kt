@@ -10,10 +10,10 @@ class SetProductStateMapperImpl : SetProductStateMapper {
         SetProductScreen.State.Success(
             manufacturer = state.manufacturer.stringSource,
             name = state.name.stringSource,
-            calories = state.calories.stringSource,
-            proteins = state.proteins.stringSource,
-            fat = state.fat.stringSource,
-            carbohydrates = state.carbohydrates.stringSource,
+            calories = state.calories,
+            proteins = state.proteins,
+            fat = state.fat,
+            carbohydrates = state.carbohydrates,
             barcodes = state.barcodes.mapAsImmutableList { it.stringSource },
             barcodeToDelete = state.barcodeToDelete.stringSource,
         )

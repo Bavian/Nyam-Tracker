@@ -38,6 +38,7 @@ import com.bavian.nyam.tracker.R
 import com.bavian.nyam.tracker.base.mapAsImmutableList
 import com.bavian.nyam.tracker.ui.components.card.NutrientsCard
 import com.bavian.nyam.tracker.ui.components.card.TitledListCard
+import com.bavian.nyam.tracker.ui.components.diagram.NutrientsDiagram
 import com.bavian.nyam.tracker.ui.model.StringSource
 import com.bavian.nyam.tracker.ui.model.isNotEmpty
 import com.bavian.nyam.tracker.ui.model.stringSource
@@ -51,10 +52,10 @@ object SetProductScreen {
         data class Success(
             val manufacturer: StringSource = StringSource.Empty,
             val name: StringSource = StringSource.Empty,
-            val calories: StringSource = StringSource.Empty,
-            val proteins: StringSource = StringSource.Empty,
-            val fat: StringSource = StringSource.Empty,
-            val carbohydrates: StringSource = StringSource.Empty,
+            val calories: Float = 0f,
+            val proteins: Float = 0f,
+            val fat: Float = 0f,
+            val carbohydrates: Float = 0f,
             val barcodes: ImmutableList<StringSource> = persistentListOf(),
             val barcodeToDelete: StringSource = StringSource.Empty,
             val keyboardOpened: Boolean = false,
@@ -220,10 +221,10 @@ private fun SetProductScreenContent(
             NutrientsCard(
                 state =
                     NutrientsCard.State(
-                        kCalories = state.calories,
-                        proteins = state.proteins,
-                        fats = state.fat,
-                        carbohydrates = state.carbohydrates,
+                        kCalories = formatNutrient(state.calories),
+                        proteins = formatNutrient(state.proteins),
+                        fats = formatNutrient(state.fat),
+                        carbohydrates = formatNutrient(state.carbohydrates),
                     ),
                 onEvent = { event ->
                     when (event) {
@@ -237,6 +238,17 @@ private fun SetProductScreenContent(
                             onEvent(SetProductScreen.Event.CarbohydratesChanged(event.value))
                     }
                 },
+            )
+        }
+
+        item {
+            NutrientsDiagram(
+                state =
+                    NutrientsDiagram.State(
+                        proteins = state.proteins,
+                        fats = state.fat,
+                        carbohydrates = state.carbohydrates,
+                    ),
             )
         }
 
@@ -309,10 +321,10 @@ private class SetProductScreenPreviewParameterProvider : PreviewParameterProvide
             SetProductScreen.State.Success(
                 manufacturer = "Nestle".stringSource,
                 name = "Nesquik".stringSource,
-                calories = "379".stringSource,
-                proteins = "8.5".stringSource,
-                fat = "1.8".stringSource,
-                carbohydrates = "81.0".stringSource,
+                calories = 379f,
+                proteins = 8.5f,
+                fat = 1.8f,
+                carbohydrates = 81.0f,
                 barcodes =
                     listOf("4601234567890", "4601234567890", "4609876543210", "4609876543210")
                         .mapAsImmutableList { it.stringSource },
@@ -320,10 +332,10 @@ private class SetProductScreenPreviewParameterProvider : PreviewParameterProvide
             SetProductScreen.State.Success(
                 manufacturer = "Nestle".stringSource,
                 name = "Nesquik".stringSource,
-                calories = "379".stringSource,
-                proteins = "8.5".stringSource,
-                fat = "1.8".stringSource,
-                carbohydrates = "81.0".stringSource,
+                calories = 379f,
+                proteins = 8.5f,
+                fat = 1.8f,
+                carbohydrates = 81.0f,
                 barcodes =
                     listOf("4601234567890", "4601234567890", "4609876543210", "4609876543210")
                         .mapAsImmutableList { it.stringSource },
@@ -331,3 +343,12 @@ private class SetProductScreenPreviewParameterProvider : PreviewParameterProvide
             ),
         )
 }
+
+private fun formatNutrient(value: Float): StringSource =
+    if (value == 0f) {
+        StringSource.Empty
+    } else if ((value % 1f) == 0f) {
+        value.toInt().toString().stringSource
+    } else {
+        value.toString().stringSource
+    }

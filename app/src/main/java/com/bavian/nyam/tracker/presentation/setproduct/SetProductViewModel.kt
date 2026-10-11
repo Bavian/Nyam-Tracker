@@ -56,19 +56,19 @@ class SetProductViewModel(
             }
 
             is SetProductViewModelEvent.CaloriesChanged -> {
-                _uiState.update { it.copy(calories = event.value) }
+                _uiState.update { it.copy(calories = event.value.toFloatOrNull() ?: 0f) }
             }
 
             is SetProductViewModelEvent.ProteinsChanged -> {
-                _uiState.update { it.copy(proteins = event.value) }
+                _uiState.update { it.copy(proteins = event.value.toFloatOrNull() ?: 0f) }
             }
 
             is SetProductViewModelEvent.FatChanged -> {
-                _uiState.update { it.copy(fat = event.value) }
+                _uiState.update { it.copy(fat = event.value.toFloatOrNull() ?: 0f) }
             }
 
             is SetProductViewModelEvent.CarbohydratesChanged -> {
-                _uiState.update { it.copy(carbohydrates = event.value) }
+                _uiState.update { it.copy(carbohydrates = event.value.toFloatOrNull() ?: 0f) }
             }
 
             is SetProductViewModelEvent.ConfirmClicked -> {
@@ -113,10 +113,10 @@ class SetProductViewModel(
                         it.copy(
                             manufacturer = product.manufacturer,
                             name = product.name,
-                            calories = product.calories.toString(),
-                            proteins = product.proteins.toString(),
-                            fat = product.fat.toString(),
-                            carbohydrates = product.carbohydrates.toString(),
+                            calories = product.calories,
+                            proteins = product.proteins,
+                            fat = product.fat,
+                            carbohydrates = product.carbohydrates,
                         )
                     }
                 }
