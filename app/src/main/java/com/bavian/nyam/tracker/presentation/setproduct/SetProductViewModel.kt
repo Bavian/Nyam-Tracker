@@ -12,6 +12,7 @@ import com.bavian.nyam.tracker.domain.usecase.SetBarcodeUseCase
 import com.bavian.nyam.tracker.presentation.navigation.AppNavigation
 import com.bavian.nyam.tracker.presentation.scanner.BarcodeScanner
 import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductUiStateMapper
+import com.bavian.nyam.tracker.presentation.util.ErrorHandler
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,6 +32,7 @@ class SetProductViewModel(
     private val productMapper: SetProductUiStateMapper,
     productIdGenerator: ProductIdGenerator,
     private val appNavigation: AppNavigation,
+    private val errorHandler: ErrorHandler,
 ) : ViewModel() {
     private val _uiState =
         MutableStateFlow(
@@ -163,17 +165,19 @@ class SetProductViewModel(
 
     private fun scanBarcode() {
         viewModelScope.launch {
-            barcodeScanner.startScan().onSuccess { scannerState ->
-                if (scannerState.barcode.isNotBlank()) {
-                    setBarcodeUseCase.execute(
-                        BarcodeInfo(
-                            number = scannerState.barcode,
-                            productId = uiState.value.id,
-                        ),
-                    )
-                    loadBarcodes()
-                }
-            }
+            barcodeScanner
+                .startScan()
+                .onSuccess { scannerState ->
+                    if (scannerState.barcode.isNotBlank()) {
+                        setBarcodeUseCase.execute(
+                            BarcodeInfo(
+                                number = scannerState.barcode,
+                                productId = uiState.value.id,
+                            ),
+                        )
+                        loadBarcodes()
+                    }
+                }.onFailure(errorHandler::handleError)
         }
     }
 

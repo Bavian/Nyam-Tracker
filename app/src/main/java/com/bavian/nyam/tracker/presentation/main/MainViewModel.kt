@@ -8,6 +8,7 @@ import com.bavian.nyam.tracker.domain.usecase.GetEatenFoodUseCase
 import com.bavian.nyam.tracker.presentation.main.mapper.MainScreenEatenFoodItemMapper
 import com.bavian.nyam.tracker.presentation.navigation.AppNavigation
 import com.bavian.nyam.tracker.presentation.scanner.BarcodeScanner
+import com.bavian.nyam.tracker.presentation.util.ErrorHandler
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +28,7 @@ class MainViewModel(
     private val eatenFoodItemMapper: MainScreenEatenFoodItemMapper,
     private val barcodeScanner: BarcodeScanner,
     private val getBarcodeInfoUseCase: GetBarcodeInfoUseCase,
+    private val errorHandler: ErrorHandler,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(MainScreenViewModelState())
     val uiState: StateFlow<MainScreenViewModelState> = _uiState.asStateFlow()
@@ -90,15 +92,16 @@ class MainViewModel(
     private fun startScan() {
         viewModelScope.launch {
             val scanResult = barcodeScanner.startScan()
-            scanResult.getOrNull()?.let { scannerState ->
-                val barcodeInfo = getBarcodeInfoUseCase.execute(scannerState.barcode)
-                val productId = barcodeInfo?.productId
-                if (productId != null) {
-                    appNavigation.openAddNewFoodScreen(productId)
-                } else {
-                    appNavigation.openSetProductScreen(barcode = scannerState.barcode)
-                }
-            }
+            scanResult
+                .onSuccess { scannerState ->
+                    val barcodeInfo = getBarcodeInfoUseCase.execute(scannerState.barcode)
+                    val productId = barcodeInfo?.productId
+                    if (productId != null) {
+                        appNavigation.openAddNewFoodScreen(productId)
+                    } else {
+                        appNavigation.openSetProductScreen(barcode = scannerState.barcode)
+                    }
+                }.onFailure(errorHandler::handleError)
         }
     }
 
