@@ -7,8 +7,10 @@ import com.bavian.nyam.tracker.presentation.setfood.SetFoodViewModelState as Vie
 import com.bavian.nyam.tracker.presentation.setfood.compose.SetFoodScreen.State as ScreenState
 
 internal class SetFoodScreenStateMapperImpl : SetFoodScreenStateMapper {
-    override fun map(state: ViewModelState): ScreenState =
-        ScreenState.Success(
+    override fun map(state: ViewModelState): ScreenState {
+        val weightFloat = state.weight.toFloatOrNull() ?: 0f
+        val factor = weightFloat / 100f
+        return ScreenState.Success(
             title =
                 StringSource.Resource(
                     resId =
@@ -21,11 +23,12 @@ internal class SetFoodScreenStateMapperImpl : SetFoodScreenStateMapper {
             manufacturer = state.manufacturer.stringSource,
             name = state.name.stringSource,
             weight = state.weight.stringSource,
-            kCalories = state.kCalories.stringSource,
-            proteins = state.proteins.stringSource,
-            fat = state.fat.stringSource,
-            carbohydrates = state.carbohydrates.stringSource,
+            kCalories = state.kCaloriesPer100 * factor,
+            proteins = state.proteinsPer100 * factor,
+            fat = state.fatPer100 * factor,
+            carbohydrates = state.carbohydratesPer100 * factor,
             date = state.date,
             time = state.time,
         )
+    }
 }

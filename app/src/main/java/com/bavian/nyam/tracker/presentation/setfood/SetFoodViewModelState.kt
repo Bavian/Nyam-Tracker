@@ -12,13 +12,9 @@ data class SetFoodViewModelState(
     val manufacturer: String = "",
     val name: String = "",
     val weight: String = "100",
-    val kCalories: String = "0",
     val kCaloriesPer100: Float = 0f,
-    val proteins: String = "0",
     val proteinsPer100: Float = 0f,
-    val fat: String = "0",
     val fatPer100: Float = 0f,
-    val carbohydrates: String = "0",
     val carbohydratesPer100: Float = 0f,
     val date: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
     val time: LocalTime =
