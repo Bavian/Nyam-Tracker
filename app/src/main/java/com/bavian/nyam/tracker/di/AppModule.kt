@@ -80,6 +80,8 @@ import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductStateMap
 import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductStateMapperImpl
 import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductUiStateMapper
 import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductUiStateMapperImpl
+import com.bavian.nyam.tracker.presentation.util.ErrorHandler
+import com.bavian.nyam.tracker.presentation.util.ErrorHandlerImpl
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
@@ -89,6 +91,7 @@ import org.koin.dsl.module
 val appModule =
     module {
         factoryOf(::BarcodeScannerImpl) bind BarcodeScanner::class
+        factoryOf(::ErrorHandlerImpl) bind ErrorHandler::class
         singleOf(::AppNavigationImpl) bind AppNavigation::class
         viewModelOf(::MainViewModel)
         viewModelOf(::ProductsListViewModel)
