@@ -6,4 +6,6 @@ interface EatenFoodDatabase {
     fun insertEatenFood(eatenFood: EatenFoodEntity)
 
     fun getEatenFoodForPeriod(period: LongRange): List<EatenFoodEntity>
+
+    fun getEatenFoodById(id: String): EatenFoodEntity?
 }
