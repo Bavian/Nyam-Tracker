@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.bavian.nyam.tracker.R
 import com.bavian.nyam.tracker.ui.components.card.NutrientsCard
+import com.bavian.nyam.tracker.ui.components.diagram.NutrientsDiagram
 import com.bavian.nyam.tracker.ui.components.picker.DateCarousel
 import com.bavian.nyam.tracker.ui.components.picker.TimePicker
 import com.bavian.nyam.tracker.ui.model.StringSource
@@ -56,10 +57,10 @@ object SetFoodScreen {
             val manufacturer: StringSource,
             val name: StringSource,
             val weight: StringSource,
-            val kCalories: StringSource,
-            val proteins: StringSource,
-            val fat: StringSource,
-            val carbohydrates: StringSource,
+            val kCalories: Float,
+            val proteins: Float,
+            val fat: Float,
+            val carbohydrates: Float,
             val date: LocalDate,
             val time: LocalTime,
         ) : State
@@ -237,10 +238,10 @@ fun SetFoodScreenSuccess(
             NutrientsCard(
                 state =
                     NutrientsCard.State(
-                        kCalories = state.kCalories,
-                        proteins = state.proteins,
-                        fats = state.fat,
-                        carbohydrates = state.carbohydrates,
+                        kCalories = formatNutrient(state.kCalories),
+                        proteins = formatNutrient(state.proteins),
+                        fats = formatNutrient(state.fat),
+                        carbohydrates = formatNutrient(state.carbohydrates),
                     ),
                 onEvent = { event ->
                     when (event) {
@@ -254,6 +255,15 @@ fun SetFoodScreenSuccess(
                             onEvent(SetFoodScreen.Event.CarbohydratesChanged(event.value))
                     }
                 },
+            )
+
+            NutrientsDiagram(
+                state =
+                    NutrientsDiagram.State(
+                        proteins = state.proteins,
+                        fats = state.fat,
+                        carbohydrates = state.carbohydrates,
+                    ),
             )
 
             Spacer(modifier = Modifier.height(80.dp))
@@ -281,10 +291,10 @@ internal class SetFoodScreenPreviewParameterProvider : PreviewParameterProvider<
                 manufacturer = "Sample Manufacturer".stringSource,
                 name = "Sample Food".stringSource,
                 weight = "250".stringSource,
-                kCalories = "500".stringSource,
-                proteins = "20".stringSource,
-                fat = "10".stringSource,
-                carbohydrates = "40".stringSource,
+                kCalories = 500f,
+                proteins = 20f,
+                fat = 10f,
+                carbohydrates = 40f,
                 date = Clock.System.todayIn(TimeZone.currentSystemDefault()),
                 time =
                     Clock.System
@@ -297,10 +307,10 @@ internal class SetFoodScreenPreviewParameterProvider : PreviewParameterProvider<
                 manufacturer = StringSource.Empty,
                 name = StringSource.Empty,
                 weight = StringSource.Empty,
-                kCalories = StringSource.Empty,
-                proteins = StringSource.Empty,
-                fat = StringSource.Empty,
-                carbohydrates = StringSource.Empty,
+                kCalories = 0f,
+                proteins = 0f,
+                fat = 0f,
+                carbohydrates = 0f,
                 date = Clock.System.todayIn(TimeZone.currentSystemDefault()) - DatePeriod(days = 1),
                 time =
                     Clock.System
@@ -310,3 +320,12 @@ internal class SetFoodScreenPreviewParameterProvider : PreviewParameterProvider<
             ),
         )
 }
+
+private fun formatNutrient(value: Float): StringSource =
+    if (value == 0f) {
+        StringSource.Empty
+    } else if ((value % 1f) == 0f) {
+        value.toInt().toString().stringSource
+    } else {
+        value.toString().stringSource
+    }
