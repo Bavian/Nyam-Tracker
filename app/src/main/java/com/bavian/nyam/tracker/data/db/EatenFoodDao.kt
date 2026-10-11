@@ -16,4 +16,7 @@ interface EatenFoodDao {
         start: Long,
         end: Long,
     ): List<EatenFoodEntity>
+
+    @Query("SELECT * FROM eaten_food WHERE id = :id")
+    fun getEatenFoodById(id: String): EatenFoodEntity?
 }

@@ -24,4 +24,9 @@ class EatenFoodRepositoryImpl(
                 .getEatenFoodForPeriod(period)
                 .map(eatenFoodMapper::mapToDomain)
         }
+
+    override suspend fun getEatenFoodById(id: String): EatenFood? =
+        withContext(Dispatchers.IO) {
+            eatenFoodDatabase.getEatenFoodById(id)?.let(eatenFoodMapper::mapToDomain)
+        }
 }

@@ -11,4 +11,6 @@ class EatenFoodDatabaseImpl(
 
     override fun getEatenFoodForPeriod(period: LongRange): List<EatenFoodEntity> =
         eatenFoodDao.getEatenFoodForPeriod(period.first, period.last)
+
+    override fun getEatenFoodById(id: String): EatenFoodEntity? = eatenFoodDao.getEatenFoodById(id)
 }
