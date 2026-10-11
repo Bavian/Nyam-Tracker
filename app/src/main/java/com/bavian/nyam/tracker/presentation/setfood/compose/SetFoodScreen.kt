@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import com.bavian.nyam.tracker.R
 import com.bavian.nyam.tracker.ui.components.card.NutrientsCard
 import com.bavian.nyam.tracker.ui.components.diagram.NutrientsDiagram
+import com.bavian.nyam.tracker.ui.components.loader.SnakeLoaderWrapper
 import com.bavian.nyam.tracker.ui.components.picker.DateCarousel
 import com.bavian.nyam.tracker.ui.components.picker.TimePicker
 import com.bavian.nyam.tracker.ui.model.StringSource
@@ -55,6 +56,14 @@ import kotlin.time.Clock
 
 object SetFoodScreen {
     sealed interface State {
+        val canDelete: Boolean
+        val deleteConfirmation: Boolean
+
+        data class Loading(
+            override val canDelete: Boolean = false,
+            override val deleteConfirmation: Boolean = false,
+        ) : State
+
         data class Success(
             val title: StringSource,
             val manufacturer: StringSource,
@@ -66,8 +75,8 @@ object SetFoodScreen {
             val carbohydrates: Float,
             val date: LocalDate,
             val time: LocalTime,
-            val canDelete: Boolean = false,
-            val deleteConfirmation: Boolean = false,
+            override val canDelete: Boolean = false,
+            override val deleteConfirmation: Boolean = false,
         ) : State
     }
 
@@ -125,207 +134,241 @@ fun SetFoodScreen(
     state: SetFoodScreen.State,
     onEvent: (SetFoodScreen.Event) -> Unit,
 ) {
-    when (state) {
-        is SetFoodScreen.State.Success -> SetFoodScreenSuccess(state, onEvent)
-    }
+    val successState = state as? SetFoodScreen.State.Success
+    SetFoodScreenContent(
+        title = successState?.title ?: StringSource.Empty,
+        manufacturer = successState?.manufacturer ?: StringSource.Empty,
+        name = successState?.name ?: StringSource.Empty,
+        weight = successState?.weight ?: StringSource.Empty,
+        kCalories = successState?.kCalories ?: 0f,
+        proteins = successState?.proteins ?: 0f,
+        fat = successState?.fat ?: 0f,
+        carbohydrates = successState?.carbohydrates ?: 0f,
+        date = successState?.date ?: Clock.System.todayIn(TimeZone.currentSystemDefault()),
+        time =
+            successState?.time ?: Clock.System
+                .now()
+                .toLocalDateTime(TimeZone.currentSystemDefault())
+                .time,
+        canDelete = state.canDelete,
+        deleteConfirmation = state.deleteConfirmation,
+        loading = state is SetFoodScreen.State.Loading,
+        onEvent = onEvent,
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SetFoodScreenSuccess(
-    state: SetFoodScreen.State.Success,
+fun SetFoodScreenContent(
+    title: StringSource,
+    manufacturer: StringSource,
+    name: StringSource,
+    weight: StringSource,
+    kCalories: Float,
+    proteins: Float,
+    fat: Float,
+    carbohydrates: Float,
+    date: LocalDate,
+    time: LocalTime,
+    canDelete: Boolean,
+    deleteConfirmation: Boolean,
+    loading: Boolean,
     onEvent: (SetFoodScreen.Event) -> Unit,
 ) {
-    Scaffold(
-        modifier = Modifier.imePadding(),
-        topBar = {
-            TopAppBar(
-                title = {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = state.title.get(),
-                            style = MaterialTheme.typography.titleLarge,
-                            textAlign = TextAlign.Center,
-                        )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = { onEvent(SetFoodScreen.Event.BackClicked) }) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_arrow_back),
-                            contentDescription = stringResource(R.string.set_product_back_description),
-                        )
-                    }
-                },
-                actions = {
-                    if (state.canDelete) {
-                        IconButton(onClick = { onEvent(SetFoodScreen.Event.DeleteClicked) }) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_delete_forever),
-                                contentDescription = stringResource(R.string.products_list_delete),
-                                tint = MaterialTheme.colorScheme.error,
+    SnakeLoaderWrapper(
+        isLoading = loading,
+    ) {
+        Scaffold(
+            modifier = Modifier.imePadding(),
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = title.get(),
+                                style = MaterialTheme.typography.titleLarge,
+                                textAlign = TextAlign.Center,
                             )
                         }
-                    } else {
-                        Spacer(modifier = Modifier.width(48.dp))
-                    }
-                },
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { onEvent(SetFoodScreen.Event.SavePressed) },
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_check),
-                    contentDescription = stringResource(R.string.set_food_save_content_description),
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { onEvent(SetFoodScreen.Event.BackClicked) }) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_arrow_back),
+                                contentDescription = stringResource(R.string.set_product_back_description),
+                            )
+                        }
+                    },
+                    actions = {
+                        if (canDelete) {
+                            IconButton(onClick = { onEvent(SetFoodScreen.Event.DeleteClicked) }) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_delete_forever),
+                                    contentDescription = stringResource(R.string.products_list_delete),
+                                    tint = MaterialTheme.colorScheme.error,
+                                )
+                            }
+                        } else {
+                            Spacer(modifier = Modifier.width(48.dp))
+                        }
+                    },
+                )
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = { onEvent(SetFoodScreen.Event.SavePressed) },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_check),
+                        contentDescription = stringResource(R.string.set_food_save_content_description),
+                    )
+                }
+            },
+        ) { paddingValues ->
+            if (deleteConfirmation) {
+                AlertDialog(
+                    onDismissRequest = { onEvent(SetFoodScreen.Event.DeleteCancelled) },
+                    title = { Text(text = stringResource(R.string.products_list_delete_dialog_title)) },
+                    text = {
+                        Text(
+                            text =
+                                stringResource(
+                                    R.string.products_list_delete_dialog_message,
+                                    name.get(),
+                                    manufacturer.get(),
+                                ),
+                        )
+                    },
+                    confirmButton = {
+                        TextButton(onClick = { onEvent(SetFoodScreen.Event.DeleteConfirmed) }) {
+                            Text(
+                                text = stringResource(R.string.products_list_delete_dialog_confirm),
+                                color = MaterialTheme.colorScheme.error,
+                            )
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { onEvent(SetFoodScreen.Event.DeleteCancelled) }) {
+                            Text(text = stringResource(R.string.products_list_delete_dialog_cancel))
+                        }
+                    },
                 )
             }
-        },
-    ) { paddingValues ->
-        if (state.deleteConfirmation) {
-            AlertDialog(
-                onDismissRequest = { onEvent(SetFoodScreen.Event.DeleteCancelled) },
-                title = { Text(text = stringResource(R.string.products_list_delete_dialog_title)) },
-                text = {
-                    Text(
-                        text =
-                            stringResource(
-                                R.string.products_list_delete_dialog_message,
-                                state.name.get(),
-                                state.manufacturer.get(),
-                            ),
-                    )
-                },
-                confirmButton = {
-                    TextButton(onClick = { onEvent(SetFoodScreen.Event.DeleteConfirmed) }) {
-                        Text(
-                            text = stringResource(R.string.products_list_delete_dialog_confirm),
-                            color = MaterialTheme.colorScheme.error,
-                        )
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { onEvent(SetFoodScreen.Event.DeleteCancelled) }) {
-                        Text(text = stringResource(R.string.products_list_delete_dialog_cancel))
-                    }
-                },
-            )
-        }
-
-        Column(
-            modifier =
-                Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(
-                        bottom = 16.dp,
-                    ),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            DateCarousel(
-                state = DateCarousel.State(state.date),
-                onEvent = { event ->
-                    if (event is DateCarousel.Event.DatePicked) {
-                        onEvent(SetFoodScreen.Event.DateChanged(event.date))
-                    }
-                },
-                modifier = Modifier.fillMaxWidth(),
-            )
 
             Column(
                 modifier =
                     Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp),
+                        .padding(paddingValues)
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(
+                            bottom = 16.dp,
+                        ),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                Box(
-                    contentAlignment = Alignment.Center,
+                DateCarousel(
+                    state = DateCarousel.State(date),
+                    onEvent = { event ->
+                        if (event is DateCarousel.Event.DatePicked) {
+                            onEvent(SetFoodScreen.Event.DateChanged(event.date))
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+
+                Column(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 8.dp),
+                            .padding(horizontal = 24.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    TimePicker(
-                        state = TimePicker.State(state.time),
-                        onEvent = {
-                            if (it is TimePicker.Event.TimeChanged) {
-                                onEvent(SetFoodScreen.Event.TimeChanged(it.time))
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp),
+                    ) {
+                        TimePicker(
+                            state = TimePicker.State(time),
+                            onEvent = {
+                                if (it is TimePicker.Event.TimeChanged) {
+                                    onEvent(SetFoodScreen.Event.TimeChanged(it.time))
+                                }
+                            },
+                        )
+                    }
+
+                    OutlinedTextField(
+                        value = manufacturer.get(),
+                        onValueChange = { onEvent(SetFoodScreen.Event.ManufacturerChanged(it)) },
+                        label = { Text(stringResource(R.string.set_food_manufacturer)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    )
+
+                    OutlinedTextField(
+                        value = name.get(),
+                        onValueChange = { onEvent(SetFoodScreen.Event.NameChanged(it)) },
+                        label = { Text("Name") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    )
+
+                    OutlinedTextField(
+                        value = weight.get(),
+                        onValueChange = { onEvent(SetFoodScreen.Event.WeightChanged(it)) },
+                        label = { Text("Weight (g)") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    )
+
+                    NutrientsCard(
+                        state =
+                            NutrientsCard.State(
+                                kCalories = formatNutrient(kCalories),
+                                proteins = formatNutrient(proteins),
+                                fats = formatNutrient(fat),
+                                carbohydrates = formatNutrient(carbohydrates),
+                            ),
+                        onEvent = { event ->
+                            when (event) {
+                                is NutrientsCard.Event.KCaloriesChanged ->
+                                    onEvent(SetFoodScreen.Event.CaloriesChanged(event.value))
+
+                                is NutrientsCard.Event.ProteinsChanged ->
+                                    onEvent(SetFoodScreen.Event.ProteinsChanged(event.value))
+
+                                is NutrientsCard.Event.FatsChanged ->
+                                    onEvent(SetFoodScreen.Event.FatChanged(event.value))
+
+                                is NutrientsCard.Event.CarbohydratesChanged ->
+                                    onEvent(SetFoodScreen.Event.CarbohydratesChanged(event.value))
                             }
                         },
                     )
+
+                    NutrientsDiagram(
+                        state =
+                            NutrientsDiagram.State(
+                                proteins = proteins,
+                                fats = fat,
+                                carbohydrates = carbohydrates,
+                            ),
+                    )
+
+                    Spacer(modifier = Modifier.height(80.dp))
                 }
-
-                OutlinedTextField(
-                    value = state.manufacturer.get(),
-                    onValueChange = { onEvent(SetFoodScreen.Event.ManufacturerChanged(it)) },
-                    label = { Text(stringResource(R.string.set_food_manufacturer)) },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                )
-
-                OutlinedTextField(
-                    value = state.name.get(),
-                    onValueChange = { onEvent(SetFoodScreen.Event.NameChanged(it)) },
-                    label = { Text("Name") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                )
-
-                OutlinedTextField(
-                    value = state.weight.get(),
-                    onValueChange = { onEvent(SetFoodScreen.Event.WeightChanged(it)) },
-                    label = { Text("Weight (g)") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                )
-
-                NutrientsCard(
-                    state =
-                        NutrientsCard.State(
-                            kCalories = formatNutrient(state.kCalories),
-                            proteins = formatNutrient(state.proteins),
-                            fats = formatNutrient(state.fat),
-                            carbohydrates = formatNutrient(state.carbohydrates),
-                        ),
-                    onEvent = { event ->
-                        when (event) {
-                            is NutrientsCard.Event.KCaloriesChanged ->
-                                onEvent(SetFoodScreen.Event.CaloriesChanged(event.value))
-
-                            is NutrientsCard.Event.ProteinsChanged ->
-                                onEvent(SetFoodScreen.Event.ProteinsChanged(event.value))
-
-                            is NutrientsCard.Event.FatsChanged ->
-                                onEvent(SetFoodScreen.Event.FatChanged(event.value))
-
-                            is NutrientsCard.Event.CarbohydratesChanged ->
-                                onEvent(SetFoodScreen.Event.CarbohydratesChanged(event.value))
-                        }
-                    },
-                )
-
-                NutrientsDiagram(
-                    state =
-                        NutrientsDiagram.State(
-                            proteins = state.proteins,
-                            fats = state.fat,
-                            carbohydrates = state.carbohydrates,
-                        ),
-                )
-
-                Spacer(modifier = Modifier.height(80.dp))
             }
         }
     }
@@ -346,6 +389,9 @@ private fun SetFoodScreenPreview(
 internal class SetFoodScreenPreviewParameterProvider : PreviewParameterProvider<SetFoodScreen.State> {
     override val values: Sequence<SetFoodScreen.State> =
         sequenceOf(
+            SetFoodScreen.State.Loading(
+                canDelete = true,
+            ),
             SetFoodScreen.State.Success(
                 title = StringSource.Resource(R.string.set_food_title_future),
                 manufacturer = "Sample Manufacturer".stringSource,

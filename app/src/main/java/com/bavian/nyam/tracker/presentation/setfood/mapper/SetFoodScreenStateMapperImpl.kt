@@ -8,6 +8,13 @@ import com.bavian.nyam.tracker.presentation.setfood.compose.SetFoodScreen.State 
 
 internal class SetFoodScreenStateMapperImpl : SetFoodScreenStateMapper {
     override fun map(state: ViewModelState): ScreenState {
+        if (state.loading) {
+            return ScreenState.Loading(
+                canDelete = state.canDelete,
+                deleteConfirmation = state.deleteConfirmation,
+            )
+        }
+
         val weightFloat = state.weight.toFloatOrNull() ?: 0f
         val factor = weightFloat / 100f
         return ScreenState.Success(

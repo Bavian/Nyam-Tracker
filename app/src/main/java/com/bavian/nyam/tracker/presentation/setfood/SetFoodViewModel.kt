@@ -42,6 +42,7 @@ class SetFoodViewModel(
                         ?.id
                         ?: productIdGenerator.generateId(),
                 canDelete = initialStateSource is SetFoodInitialStateSource.Food,
+                loading = initialStateSource is SetFoodInitialStateSource.Product || initialStateSource is SetFoodInitialStateSource.Food,
             ),
         )
     val uiState: StateFlow<SetFoodViewModelState> = _uiState.asStateFlow()
@@ -69,8 +70,11 @@ class SetFoodViewModel(
                     proteinsPer100 = product.proteins,
                     fatPer100 = product.fat,
                     carbohydratesPer100 = product.carbohydrates,
+                    loading = false,
                 )
             }
+        } else {
+            _uiState.update { it.copy(loading = false) }
         }
     }
 
@@ -86,8 +90,11 @@ class SetFoodViewModel(
                     proteinsPer100 = food.proteins,
                     fatPer100 = food.fat,
                     carbohydratesPer100 = food.carbohydrates,
+                    loading = false,
                 )
             }
+        } else {
+            _uiState.update { it.copy(loading = false) }
         }
     }
 
