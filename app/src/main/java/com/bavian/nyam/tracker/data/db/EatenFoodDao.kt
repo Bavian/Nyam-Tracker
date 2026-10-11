@@ -19,4 +19,7 @@ interface EatenFoodDao {
 
     @Query("SELECT * FROM eaten_food WHERE id = :id")
     fun getEatenFoodById(id: String): EatenFoodEntity?
+
+    @Query("DELETE FROM eaten_food WHERE id = :id")
+    fun deleteEatenFood(id: String)
 }

@@ -8,4 +8,6 @@ interface EatenFoodRepository {
     suspend fun getEatenFoodForPeriod(period: LongRange): List<EatenFood>
 
     suspend fun getEatenFoodById(id: String): EatenFood?
+
+    suspend fun deleteEatenFood(id: String)
 }
