@@ -41,12 +41,10 @@ class MainScreenStateMapperImpl : MainScreenStateMapper {
                                             .fromEpochMilliseconds(item.timestamp)
                                             .toLocalDateTime(timeZone)
                                     val timeStr =
-                                        "${
-                                            localDateTime.hour.toString().padStart(
-                                                2,
-                                                '0',
-                                            )
-                                        }:${localDateTime.minute.toString().padStart(2, '0')}"
+                                        "${localDateTime.hour.toString().padStart(
+                                            2,
+                                            '0',
+                                        )}:${localDateTime.minute.toString().padStart(2, '0')}"
                                     MainScreen.State.Success.EatenFoodGroup.Item(
                                         id = item.id,
                                         name = item.name,

@@ -1,34 +1,25 @@
 package com.bavian.nyam.tracker.presentation.main
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
@@ -36,9 +27,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.bavian.nyam.tracker.R
+import com.bavian.nyam.tracker.base.mapAsImmutableList
+import com.bavian.nyam.tracker.ui.components.card.FoodListCard
 import com.bavian.nyam.tracker.ui.components.diagram.NutrientsDiagram
 import com.bavian.nyam.tracker.ui.components.loader.SnakeLoaderWrapper
 import com.bavian.nyam.tracker.ui.components.picker.DateCarousel
+import com.bavian.nyam.tracker.ui.model.stringSource
 import com.bavian.nyam.tracker.ui.preview.PreviewScreen
 import com.bavian.nyam.tracker.ui.theme.NyamTrackerTheme
 import kotlinx.collections.immutable.ImmutableList
@@ -216,10 +210,18 @@ fun MainScreenContent(
                     items = eatenFoodGroups,
                     key = { group -> group.title },
                 ) { group ->
-                    EatenFoodGroupBlock(
-                        group = group,
-                        onItemClick = { foodId ->
-                            onEvent(MainScreen.Event.EatenFoodTap(foodId))
+                    FoodListCard(
+                        state =
+                            FoodListCard.State(
+                                title = group.title.stringSource,
+                                items = group.items.mapAsImmutableList(::mapFoodItem),
+                            ),
+                        onEvent = { event ->
+                            when (event) {
+                                is FoodListCard.Event.ItemClicked -> {
+                                    onEvent(MainScreen.Event.EatenFoodTap(event.id))
+                                }
+                            }
                         },
                     )
                 }
@@ -228,140 +230,18 @@ fun MainScreenContent(
     }
 }
 
-@Composable
-private fun EatenFoodGroupBlock(
-    group: MainScreen.State.Success.EatenFoodGroup,
-    onItemClick: (String) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors =
-            CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            ),
-    ) {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Text(
-                text = group.title,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-
-            HorizontalDivider(
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f),
-            )
-
-            group.items.forEachIndexed { index, item ->
-                if (index > 0) {
-                    HorizontalDivider(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f),
-                    )
-                }
-                EatenFoodItemView(
-                    item = item,
-                    onClick = { onItemClick(item.id) },
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun EatenFoodItemView(
-    item: MainScreen.State.Success.EatenFoodGroup.Item,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .clickable { onClick() }
-                .padding(vertical = 4.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = item.name,
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Bold,
-            )
-            if (item.time.isNotEmpty()) {
-                Text(
-                    text = item.time,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-
-        if (item.manufacturer.isNotEmpty()) {
-            Text(
-                text = item.manufacturer,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-
-        Row(
-            modifier = Modifier.padding(top = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            EatenFoodNutrientInfo(
-                label = stringResource(R.string.eaten_food_weight_prefix),
-                value = item.weight,
-            )
-            EatenFoodNutrientInfo(
-                label = stringResource(R.string.products_list_calories_prefix),
-                value = item.calories,
-            )
-            EatenFoodNutrientInfo(
-                label = stringResource(R.string.products_list_proteins_prefix),
-                value = item.proteins,
-            )
-            EatenFoodNutrientInfo(
-                label = stringResource(R.string.products_list_fat_prefix),
-                value = item.fat,
-            )
-            EatenFoodNutrientInfo(
-                label = stringResource(R.string.products_list_carbohydrates_prefix),
-                value = item.carbohydrates,
-            )
-        }
-    }
-}
-
-@Composable
-private fun EatenFoodNutrientInfo(
-    label: String,
-    value: String,
-    modifier: Modifier = Modifier,
-) {
-    Row(modifier = modifier) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.Bold,
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.labelSmall,
-        )
-    }
-}
+private fun mapFoodItem(item: MainScreen.State.Success.EatenFoodGroup.Item): FoodListCard.Item =
+    FoodListCard.Item(
+        id = item.id,
+        name = item.name,
+        manufacturer = item.manufacturer,
+        weight = item.weight,
+        calories = item.calories,
+        proteins = item.proteins,
+        fat = item.fat,
+        carbohydrates = item.carbohydrates,
+        time = item.time,
+    )
 
 @Composable
 @PreviewScreen
