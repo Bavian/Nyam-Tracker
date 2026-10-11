@@ -36,6 +36,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.bavian.nyam.tracker.R
+import com.bavian.nyam.tracker.ui.components.diagram.NutrientsDiagram
 import com.bavian.nyam.tracker.ui.components.loader.SnakeLoaderWrapper
 import com.bavian.nyam.tracker.ui.components.picker.DateCarousel
 import com.bavian.nyam.tracker.ui.preview.PreviewScreen
@@ -58,6 +59,10 @@ object MainScreen {
         data class Success(
             override val selectedDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
             val eatenFoodGroups: ImmutableList<EatenFoodGroup> = persistentListOf(),
+            val kCalories: Float = 0f,
+            val proteins: Float = 0f,
+            val fat: Float = 0f,
+            val carbohydrates: Float = 0f,
         ) : State {
             data class EatenFoodGroup(
                 val title: String,
@@ -114,9 +119,14 @@ fun MainScreen(
         }
     }
 
+    val successState = state as? MainScreen.State.Success
     MainScreenContent(
         selectedDate = state.selectedDate,
-        eatenFoodGroups = (state as? MainScreen.State.Success?)?.eatenFoodGroups ?: persistentListOf(),
+        eatenFoodGroups = successState?.eatenFoodGroups ?: persistentListOf(),
+        kCalories = successState?.kCalories ?: 0f,
+        proteins = successState?.proteins ?: 0f,
+        fat = successState?.fat ?: 0f,
+        carbohydrates = successState?.carbohydrates ?: 0f,
         loading = state is MainScreen.State.Loading,
         onEvent = onEvent,
     )
@@ -126,6 +136,10 @@ fun MainScreen(
 fun MainScreenContent(
     selectedDate: LocalDate,
     eatenFoodGroups: ImmutableList<MainScreen.State.Success.EatenFoodGroup>,
+    kCalories: Float,
+    proteins: Float,
+    fat: Float,
+    carbohydrates: Float,
     loading: Boolean,
     onEvent: (MainScreen.Event) -> Unit,
 ) {
@@ -187,6 +201,17 @@ fun MainScreenContent(
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
+                item(key = "nutrients_diagram") {
+                    NutrientsDiagram(
+                        state =
+                            NutrientsDiagram.State(
+                                proteins = proteins,
+                                fats = fat,
+                                carbohydrates = carbohydrates,
+                            ),
+                    )
+                }
+
                 items(
                     items = eatenFoodGroups,
                     key = { group -> group.title },
@@ -406,6 +431,10 @@ private class MainScreenPreviewParameterProvider : PreviewParameterProvider<Main
                                 ),
                         ),
                     ),
+                kCalories = 704f,
+                proteins = 17.8f,
+                fat = 6.1f,
+                carbohydrates = 146f,
             ),
         )
 }

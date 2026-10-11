@@ -19,7 +19,8 @@ class MainScreenStateMapperImpl : MainScreenStateMapper {
 
         val grouped =
             state.eatenFoodGroups.groupBy { item ->
-                val localDateTime = Instant.fromEpochMilliseconds(item.timestamp).toLocalDateTime(timeZone)
+                val localDateTime =
+                    Instant.fromEpochMilliseconds(item.timestamp).toLocalDateTime(timeZone)
                 val startHour = localDateTime.hour
                 val endHour = (startHour + 1) % 24
                 val startStr = startHour.toString().padStart(2, '0') + ":00"
@@ -35,12 +36,17 @@ class MainScreenStateMapperImpl : MainScreenStateMapper {
                         items =
                             items
                                 .map { item ->
-                                    val localDateTime = Instant.fromEpochMilliseconds(item.timestamp).toLocalDateTime(timeZone)
+                                    val localDateTime =
+                                        Instant
+                                            .fromEpochMilliseconds(item.timestamp)
+                                            .toLocalDateTime(timeZone)
                                     val timeStr =
-                                        "${localDateTime.hour.toString().padStart(
-                                            2,
-                                            '0',
-                                        )}:${localDateTime.minute.toString().padStart(2, '0')}"
+                                        "${
+                                            localDateTime.hour.toString().padStart(
+                                                2,
+                                                '0',
+                                            )
+                                        }:${localDateTime.minute.toString().padStart(2, '0')}"
                                     MainScreen.State.Success.EatenFoodGroup.Item(
                                         id = item.id,
                                         name = item.name,
@@ -59,6 +65,10 @@ class MainScreenStateMapperImpl : MainScreenStateMapper {
         return MainScreen.State.Success(
             selectedDate = state.selectedDate,
             eatenFoodGroups = eatenFoodGroups,
+            kCalories = state.eatenFoodGroups.fold(0f) { acc, item -> acc + item.calories },
+            proteins = state.eatenFoodGroups.fold(0f) { acc, item -> acc + item.proteins },
+            fat = state.eatenFoodGroups.fold(0f) { acc, item -> acc + item.fat },
+            carbohydrates = state.eatenFoodGroups.fold(0f) { acc, item -> acc + item.carbohydrates },
         )
     }
 
