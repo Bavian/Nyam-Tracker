@@ -19,6 +19,11 @@
     <string name="nutrients_card_proteins">Proteins (g)</string>
     <string name="nutrients_card_fats">Fats (g)</string>
     <string name="nutrients_card_carbohydrates">Carbohydrates (g)</string>
+
+    <string name="nutrients_diagram_proteins">Proteins</string>
+    <string name="nutrients_diagram_fats">Fats</string>
+    <string name="nutrients_diagram_carbohydrates">Carbohydrates</string>
+    <string name="nutrients_diagram_total">Total</string>
     <string name="set_product_back_description">Back</string>
     <string name="set_product_confirm_description">Confirm</string>
     <string name="set_product_barcodes_title">Barcode</string>
