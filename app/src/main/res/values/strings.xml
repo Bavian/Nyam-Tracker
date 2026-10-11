@@ -65,4 +65,6 @@
     <string name="set_food_ok">OK</string>
     <string name="set_food_cancel">Cancel</string>
     <string name="set_food_save_content_description">Save</string>
+
+    <string name="calories_summary_format">%1$d kcal</string>
 </resources>

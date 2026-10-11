@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -28,6 +29,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.bavian.nyam.tracker.R
 import com.bavian.nyam.tracker.base.mapAsImmutableList
+import com.bavian.nyam.tracker.ui.components.calories.CaloriesSummary
 import com.bavian.nyam.tracker.ui.components.card.FoodListCard
 import com.bavian.nyam.tracker.ui.components.diagram.NutrientsDiagram
 import com.bavian.nyam.tracker.ui.components.loader.SnakeLoaderWrapper
@@ -158,17 +160,26 @@ fun MainScreenContent(
                     color = MaterialTheme.colorScheme.background,
                     shadowElevation = 2.dp,
                 ) {
-                    DateCarousel(
-                        state = DateCarousel.State(selectedDate),
-                        onEvent = { event ->
-                            when (event) {
-                                is DateCarousel.Event.DatePicked -> {
-                                    onEvent(MainScreen.Event.CalendarDatePicked(event.date))
-                                }
-                            }
-                        },
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
-                    )
+                    ) {
+                        DateCarousel(
+                            state = DateCarousel.State(selectedDate),
+                            onEvent = { event ->
+                                when (event) {
+                                    is DateCarousel.Event.DatePicked -> {
+                                        onEvent(MainScreen.Event.CalendarDatePicked(event.date))
+                                    }
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                        CaloriesSummary(
+                            calories = kCalories,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                        HorizontalDivider()
+                    }
                 }
             },
             floatingActionButton = {
