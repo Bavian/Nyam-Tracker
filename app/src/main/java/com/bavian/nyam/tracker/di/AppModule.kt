@@ -1,5 +1,6 @@
 package com.bavian.nyam.tracker.di
 
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.Room
 import com.bavian.nyam.tracker.data.db.BarcodeDatabase
 import com.bavian.nyam.tracker.data.db.BarcodeDatabaseImpl
@@ -84,6 +85,7 @@ import com.bavian.nyam.tracker.presentation.util.ErrorHandler
 import com.bavian.nyam.tracker.presentation.util.ErrorHandlerImpl
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -96,7 +98,17 @@ val appModule =
         viewModelOf(::MainViewModel)
         viewModelOf(::ProductsListViewModel)
         viewModelOf(::SetProductViewModel)
-        viewModelOf(::SetFoodViewModel)
+        viewModel { params ->
+            SetFoodViewModel(
+                initialStateSource = params.get(),
+                getProductByIdUseCase = lazy { get<GetProductByIdUseCase>() },
+                getEatenFoodUseCase = lazy { get<GetEatenFoodByIdUseCase>() },
+                addEatenFoodUseCase = lazy { get<AddEatenFoodUseCase>() },
+                deleteEatenFoodUseCase = lazy { get<DeleteEatenFoodUseCase>() },
+                appNavigation = get(),
+                productIdGenerator = get(),
+            )
+        }
 
         single {
             Room
