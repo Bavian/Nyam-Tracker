@@ -39,6 +39,7 @@ import com.bavian.nyam.tracker.base.mapAsImmutableList
 import com.bavian.nyam.tracker.ui.components.card.NutrientsCard
 import com.bavian.nyam.tracker.ui.components.card.TitledListCard
 import com.bavian.nyam.tracker.ui.components.diagram.NutrientsDiagram
+import com.bavian.nyam.tracker.ui.components.loader.SnakeLoaderWrapper
 import com.bavian.nyam.tracker.ui.model.StringSource
 import com.bavian.nyam.tracker.ui.model.isNotEmpty
 import com.bavian.nyam.tracker.ui.model.stringSource
@@ -49,6 +50,12 @@ import kotlinx.collections.immutable.persistentListOf
 
 object SetProductScreen {
     sealed interface State {
+        val barcodeToDelete: StringSource
+
+        data class Loading(
+            override val barcodeToDelete: StringSource = StringSource.Empty,
+        ) : State
+
         data class Success(
             val manufacturer: StringSource = StringSource.Empty,
             val name: StringSource = StringSource.Empty,
@@ -57,7 +64,7 @@ object SetProductScreen {
             val fat: Float = 0f,
             val carbohydrates: Float = 0f,
             val barcodes: ImmutableList<StringSource> = persistentListOf(),
-            val barcodeToDelete: StringSource = StringSource.Empty,
+            override val barcodeToDelete: StringSource = StringSource.Empty,
             val keyboardOpened: Boolean = false,
         ) : State
     }
@@ -125,73 +132,94 @@ fun SetProductScreen(
         }
     }
 
-    Scaffold(
-        modifier = Modifier.imePadding(),
-        topBar = {
-            TopAppBar(
-                title = {
-                    when (state) {
-                        is SetProductScreen.State.Success -> {
-                            TextField(
-                                value = state.name.get(),
-                                onValueChange = { onEvent(SetProductScreen.Event.NameChanged(it)) },
-                                placeholder = {
-                                    Text(
-                                        text = stringResource(R.string.set_product_name),
-                                        style = MaterialTheme.typography.titleLarge,
-                                    )
-                                },
-                                textStyle = MaterialTheme.typography.titleLarge,
-                                singleLine = true,
-                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                                colors =
-                                    TextFieldDefaults.colors(
-                                        focusedContainerColor = Color.Transparent,
-                                        unfocusedContainerColor = Color.Transparent,
-                                        disabledContainerColor = Color.Transparent,
-                                        focusedIndicatorColor = Color.Transparent,
-                                        unfocusedIndicatorColor = Color.Transparent,
-                                    ),
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth(),
+    val successState = state as? SetProductScreen.State.Success
+    val loading = state is SetProductScreen.State.Loading
+
+    SnakeLoaderWrapper(
+        isLoading = loading,
+    ) {
+        Scaffold(
+            modifier = Modifier.imePadding(),
+            topBar = {
+                TopAppBar(
+                    title = {
+                        TextField(
+                            value = successState?.name?.get() ?: "",
+                            onValueChange = { onEvent(SetProductScreen.Event.NameChanged(it)) },
+                            placeholder = {
+                                Text(
+                                    text = stringResource(R.string.set_product_name),
+                                    style = MaterialTheme.typography.titleLarge,
+                                )
+                            },
+                            textStyle = MaterialTheme.typography.titleLarge,
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                            colors =
+                                TextFieldDefaults.colors(
+                                    focusedContainerColor = Color.Transparent,
+                                    unfocusedContainerColor = Color.Transparent,
+                                    disabledContainerColor = Color.Transparent,
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent,
+                                ),
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth(),
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { onEvent(SetProductScreen.Event.BackClicked) }) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_arrow_back),
+                                contentDescription = stringResource(R.string.set_product_back_description),
                             )
                         }
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = { onEvent(SetProductScreen.Event.BackClicked) }) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_arrow_back),
-                            contentDescription = stringResource(R.string.set_product_back_description),
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(
-                        onClick = { onEvent(SetProductScreen.Event.ConfirmClicked) },
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_check),
-                            contentDescription = stringResource(R.string.set_product_confirm_description),
-                        )
-                    }
-                },
-            )
-        },
-    ) { innerPadding ->
-        when (state) {
-            is SetProductScreen.State.Success -> {
-                SetProductScreenContent(
-                    state = state,
-                    onEvent = onEvent,
-                    modifier =
-                        Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize(),
+                    },
+                    actions = {
+                        IconButton(
+                            onClick = { onEvent(SetProductScreen.Event.ConfirmClicked) },
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_24dp_check),
+                                contentDescription = stringResource(R.string.set_product_confirm_description),
+                            )
+                        }
+                    },
                 )
-            }
+            },
+        ) { innerPadding ->
+            SetProductScreenContent(
+                state = successState ?: SetProductScreen.State.Success(),
+                onEvent = onEvent,
+                modifier =
+                    Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+            )
         }
+    }
+
+    state.barcodeToDelete.takeIf { it.isNotEmpty() }?.let { barcodeNumber ->
+        AlertDialog(
+            onDismissRequest = { onEvent(SetProductScreen.Event.DeleteBarcodeCancelled) },
+            title = { Text(text = stringResource(R.string.set_product_delete_barcode_dialog_title)) },
+            text = {
+                Text(
+                    text = stringResource(R.string.set_product_delete_barcode_dialog_message, barcodeNumber.get()),
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = { onEvent(SetProductScreen.Event.DeleteBarcodeConfirmed) }) {
+                    Text(text = stringResource(R.string.set_product_delete_barcode_dialog_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { onEvent(SetProductScreen.Event.DeleteBarcodeCancelled) }) {
+                    Text(text = stringResource(R.string.set_product_delete_barcode_dialog_cancel))
+                }
+            },
+        )
     }
 }
 
@@ -276,28 +304,6 @@ private fun SetProductScreenContent(
             )
         }
     }
-
-    state.barcodeToDelete.takeIf { it.isNotEmpty() }?.let { barcodeNumber ->
-        AlertDialog(
-            onDismissRequest = { onEvent(SetProductScreen.Event.DeleteBarcodeCancelled) },
-            title = { Text(text = stringResource(R.string.set_product_delete_barcode_dialog_title)) },
-            text = {
-                Text(
-                    text = stringResource(R.string.set_product_delete_barcode_dialog_message, barcodeNumber.get()),
-                )
-            },
-            confirmButton = {
-                TextButton(onClick = { onEvent(SetProductScreen.Event.DeleteBarcodeConfirmed) }) {
-                    Text(text = stringResource(R.string.set_product_delete_barcode_dialog_confirm))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { onEvent(SetProductScreen.Event.DeleteBarcodeCancelled) }) {
-                    Text(text = stringResource(R.string.set_product_delete_barcode_dialog_cancel))
-                }
-            },
-        )
-    }
 }
 
 @Composable
@@ -317,6 +323,7 @@ private fun SetProductScreenPreview(
 private class SetProductScreenPreviewParameterProvider : PreviewParameterProvider<SetProductScreen.State> {
     override val values: Sequence<SetProductScreen.State> =
         sequenceOf(
+            SetProductScreen.State.Loading(),
             SetProductScreen.State.Success(),
             SetProductScreen.State.Success(
                 manufacturer = "Nestle".stringSource,
