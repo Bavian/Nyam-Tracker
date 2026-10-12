@@ -39,6 +39,7 @@ class SetProductViewModel(
             value =
                 SetProductViewModelState(
                     id = initialProductId ?: productIdGenerator.generateId(),
+                    productLoading = initialProductId != null,
                 ),
         )
     val uiState: StateFlow<SetProductViewModelState> = _uiState.asStateFlow()
@@ -109,8 +110,11 @@ class SetProductViewModel(
 
     private fun loadProductIfIdExists() {
         initialProductId?.let { id ->
+            _uiState.update { it.copy(productLoading = true) }
+
             viewModelScope.launch {
-                getProductByIdUseCase.execute(id)?.let { product ->
+                val product = getProductByIdUseCase.execute(id)
+                if (product != null) {
                     _uiState.update {
                         it.copy(
                             manufacturer = product.manufacturer,
@@ -119,19 +123,25 @@ class SetProductViewModel(
                             proteins = product.proteins,
                             fat = product.fat,
                             carbohydrates = product.carbohydrates,
+                            productLoading = false,
                         )
                     }
+                } else {
+                    _uiState.update { it.copy(productLoading = false) }
                 }
             }
         }
     }
 
     private fun loadBarcodes() {
+        _uiState.update { it.copy(barcodesLoading = true) }
+
         viewModelScope.launch {
             val productBarcodes = getBarcodesByProductIdUseCase.execute(uiState.value.id)
             _uiState.update { currentState ->
                 currentState.copy(
                     barcodes = productBarcodes.barcodes.map { it.number }.toImmutableList(),
+                    barcodesLoading = false,
                 )
             }
         }

@@ -6,8 +6,14 @@ import com.bavian.nyam.tracker.presentation.setproduct.SetProductViewModelState
 import com.bavian.nyam.tracker.ui.model.stringSource
 
 class SetProductStateMapperImpl : SetProductStateMapper {
-    override fun map(state: SetProductViewModelState): SetProductScreen.State =
-        SetProductScreen.State.Success(
+    override fun map(state: SetProductViewModelState): SetProductScreen.State {
+        if (state.productLoading || state.barcodesLoading) {
+            return SetProductScreen.State.Loading(
+                barcodeToDelete = state.barcodeToDelete.stringSource,
+            )
+        }
+
+        return SetProductScreen.State.Success(
             manufacturer = state.manufacturer.stringSource,
             name = state.name.stringSource,
             calories = state.calories,
@@ -17,4 +23,5 @@ class SetProductStateMapperImpl : SetProductStateMapper {
             barcodes = state.barcodes.mapAsImmutableList { it.stringSource },
             barcodeToDelete = state.barcodeToDelete.stringSource,
         )
+    }
 }
