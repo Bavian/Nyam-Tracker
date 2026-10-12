@@ -26,10 +26,10 @@ import kotlin.time.Clock
 
 class SetFoodViewModel(
     initialStateSource: SetFoodInitialStateSource,
-    private val getProductByIdUseCase: GetProductByIdUseCase,
-    private val getEatenFoodUseCase: GetEatenFoodByIdUseCase,
-    private val addEatenFoodUseCase: AddEatenFoodUseCase,
-    private val deleteEatenFoodUseCase: DeleteEatenFoodUseCase,
+    private val getProductByIdUseCase: Lazy<GetProductByIdUseCase>,
+    private val getEatenFoodUseCase: Lazy<GetEatenFoodByIdUseCase>,
+    private val addEatenFoodUseCase: Lazy<AddEatenFoodUseCase>,
+    private val deleteEatenFoodUseCase: Lazy<DeleteEatenFoodUseCase>,
     private val appNavigation: AppNavigation,
     productIdGenerator: ProductIdGenerator,
 ) : ViewModel() {
@@ -59,7 +59,7 @@ class SetFoodViewModel(
     }
 
     private suspend fun loadProduct(id: String) {
-        val product = getProductByIdUseCase.execute(id)
+        val product = getProductByIdUseCase.value.execute(id)
         if (product != null) {
             _uiState.update {
                 it.copy(
@@ -79,7 +79,7 @@ class SetFoodViewModel(
     }
 
     private suspend fun loadFood(id: String) {
-        val food = getEatenFoodUseCase.execute(id)
+        val food = getEatenFoodUseCase.value.execute(id)
         if (food != null) {
             _uiState.update {
                 it.copy(
@@ -128,7 +128,7 @@ class SetFoodViewModel(
     private fun deleteFood() {
         viewModelScope.launch {
             _uiState.update { it.copy(deleteConfirmation = false) }
-            deleteEatenFoodUseCase.execute(_uiState.value.foodId)
+            deleteEatenFoodUseCase.value.execute(_uiState.value.foodId)
             appNavigation.back()
         }
     }
@@ -183,7 +183,7 @@ class SetFoodViewModel(
                     carbohydrates = state.carbohydratesPer100 * factor,
                     timestamp = timestamp,
                 )
-            addEatenFoodUseCase.execute(eatenFood)
+            addEatenFoodUseCase.value.execute(eatenFood)
             appNavigation.back()
         }
     }
