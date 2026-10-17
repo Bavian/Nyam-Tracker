@@ -1,6 +1,6 @@
 package com.bavian.nyam.tracker.data.repository
 
-import com.bavian.nyam.tracker.data.db.EatenFoodDatabase
+import com.bavian.nyam.tracker.data.db.eatenfood.EatenFoodDatabase
 import com.bavian.nyam.tracker.data.mapper.EatenFoodMapper
 import com.bavian.nyam.tracker.domain.model.EatenFood
 import com.bavian.nyam.tracker.domain.repository.EatenFoodRepository

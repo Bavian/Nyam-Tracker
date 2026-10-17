@@ -1,4 +1,4 @@
-package com.bavian.nyam.tracker.data.db
+package com.bavian.nyam.tracker.data.db.barcode
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
