@@ -4,11 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bavian.nyam.tracker.domain.infrastructure.ProductIdGenerator
 import com.bavian.nyam.tracker.domain.model.BarcodeInfo
-import com.bavian.nyam.tracker.domain.usecase.AddProductUseCase
-import com.bavian.nyam.tracker.domain.usecase.DeleteBarcodeUseCase
-import com.bavian.nyam.tracker.domain.usecase.GetBarcodesByProductIdUseCase
-import com.bavian.nyam.tracker.domain.usecase.GetProductByIdUseCase
-import com.bavian.nyam.tracker.domain.usecase.SetBarcodeUseCase
+import com.bavian.nyam.tracker.domain.usecase.barcode.DeleteBarcodeUseCase
+import com.bavian.nyam.tracker.domain.usecase.barcode.GetBarcodesByProductIdUseCase
+import com.bavian.nyam.tracker.domain.usecase.barcode.SetBarcodeUseCase
+import com.bavian.nyam.tracker.domain.usecase.product.AddProductUseCase
+import com.bavian.nyam.tracker.domain.usecase.product.GetProductByIdUseCase
 import com.bavian.nyam.tracker.presentation.navigation.AppNavigation
 import com.bavian.nyam.tracker.presentation.scanner.BarcodeScanner
 import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductUiStateMapper

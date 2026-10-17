@@ -1,4 +1,4 @@
-package com.bavian.nyam.tracker.domain.usecase
+package com.bavian.nyam.tracker.domain.usecase.eatenfood
 
 import com.bavian.nyam.tracker.domain.model.EatenFood
 

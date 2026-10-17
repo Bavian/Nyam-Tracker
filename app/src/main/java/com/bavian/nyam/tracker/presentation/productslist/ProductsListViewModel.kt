@@ -3,8 +3,8 @@ package com.bavian.nyam.tracker.presentation.productslist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bavian.nyam.tracker.domain.model.ProductSearchParams
-import com.bavian.nyam.tracker.domain.usecase.DeleteProductUseCase
-import com.bavian.nyam.tracker.domain.usecase.GetProductsUseCase
+import com.bavian.nyam.tracker.domain.usecase.product.DeleteProductUseCase
+import com.bavian.nyam.tracker.domain.usecase.product.GetProductsUseCase
 import com.bavian.nyam.tracker.presentation.navigation.AppNavigation
 import com.bavian.nyam.tracker.presentation.productslist.mapper.ProductsListProductMapper
 import kotlinx.collections.immutable.toImmutableList

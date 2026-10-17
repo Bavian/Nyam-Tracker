@@ -2,9 +2,9 @@ package com.bavian.nyam.tracker.presentation.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bavian.nyam.tracker.domain.usecase.DeleteEatenFoodUseCase
-import com.bavian.nyam.tracker.domain.usecase.GetBarcodeInfoUseCase
-import com.bavian.nyam.tracker.domain.usecase.GetEatenFoodUseCase
+import com.bavian.nyam.tracker.domain.usecase.barcode.GetBarcodeInfoUseCase
+import com.bavian.nyam.tracker.domain.usecase.eatenfood.DeleteEatenFoodUseCase
+import com.bavian.nyam.tracker.domain.usecase.eatenfood.GetEatenFoodUseCase
 import com.bavian.nyam.tracker.presentation.main.mapper.MainScreenEatenFoodItemMapper
 import com.bavian.nyam.tracker.presentation.navigation.AppNavigation
 import com.bavian.nyam.tracker.presentation.scanner.BarcodeScanner
