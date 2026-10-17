@@ -5,10 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.bavian.nyam.tracker.base.safeCastTo
 import com.bavian.nyam.tracker.domain.infrastructure.ProductIdGenerator
 import com.bavian.nyam.tracker.domain.model.EatenFood
-import com.bavian.nyam.tracker.domain.usecase.AddEatenFoodUseCase
-import com.bavian.nyam.tracker.domain.usecase.DeleteEatenFoodUseCase
-import com.bavian.nyam.tracker.domain.usecase.GetEatenFoodByIdUseCase
-import com.bavian.nyam.tracker.domain.usecase.GetProductByIdUseCase
+import com.bavian.nyam.tracker.domain.usecase.eatenfood.AddEatenFoodUseCase
+import com.bavian.nyam.tracker.domain.usecase.eatenfood.DeleteEatenFoodUseCase
+import com.bavian.nyam.tracker.domain.usecase.eatenfood.GetEatenFoodByIdUseCase
+import com.bavian.nyam.tracker.domain.usecase.product.GetProductByIdUseCase
 import com.bavian.nyam.tracker.presentation.navigation.AppNavigation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

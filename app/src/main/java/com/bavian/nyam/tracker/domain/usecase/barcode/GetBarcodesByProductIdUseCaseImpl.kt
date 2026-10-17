@@ -1,4 +1,4 @@
-package com.bavian.nyam.tracker.domain.usecase
+package com.bavian.nyam.tracker.domain.usecase.barcode
 
 import com.bavian.nyam.tracker.domain.model.ProductBarcodes
 import com.bavian.nyam.tracker.domain.repository.BarcodeRepository
