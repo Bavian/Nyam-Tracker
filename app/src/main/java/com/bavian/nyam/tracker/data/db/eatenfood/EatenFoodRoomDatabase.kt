@@ -1,4 +1,4 @@
-package com.bavian.nyam.tracker.data.db
+package com.bavian.nyam.tracker.data.db.eatenfood
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

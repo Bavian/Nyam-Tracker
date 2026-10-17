@@ -1,6 +1,6 @@
 package com.bavian.nyam.tracker.data.repository
 
-import com.bavian.nyam.tracker.data.db.BarcodeDatabase
+import com.bavian.nyam.tracker.data.db.barcode.BarcodeDatabase
 import com.bavian.nyam.tracker.data.mapper.BarcodeMapper
 import com.bavian.nyam.tracker.domain.model.BarcodeInfo
 import com.bavian.nyam.tracker.domain.model.ProductBarcodes

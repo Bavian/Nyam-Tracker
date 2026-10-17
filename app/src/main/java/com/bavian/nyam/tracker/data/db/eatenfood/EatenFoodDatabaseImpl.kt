@@ -1,4 +1,4 @@
-package com.bavian.nyam.tracker.data.db
+package com.bavian.nyam.tracker.data.db.eatenfood
 
 import com.bavian.nyam.tracker.data.model.EatenFoodEntity
 

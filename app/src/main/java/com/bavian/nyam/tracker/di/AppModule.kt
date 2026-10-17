@@ -1,12 +1,12 @@
 package com.bavian.nyam.tracker.di
 
 import androidx.room.Room
-import com.bavian.nyam.tracker.data.db.BarcodeDatabase
-import com.bavian.nyam.tracker.data.db.BarcodeDatabaseImpl
-import com.bavian.nyam.tracker.data.db.BarcodeRoomDatabase
-import com.bavian.nyam.tracker.data.db.EatenFoodDatabase
-import com.bavian.nyam.tracker.data.db.EatenFoodDatabaseImpl
-import com.bavian.nyam.tracker.data.db.EatenFoodRoomDatabase
+import com.bavian.nyam.tracker.data.db.barcode.BarcodeDatabase
+import com.bavian.nyam.tracker.data.db.barcode.BarcodeDatabaseImpl
+import com.bavian.nyam.tracker.data.db.barcode.BarcodeRoomDatabase
+import com.bavian.nyam.tracker.data.db.eatenfood.EatenFoodDatabase
+import com.bavian.nyam.tracker.data.db.eatenfood.EatenFoodDatabaseImpl
+import com.bavian.nyam.tracker.data.db.eatenfood.EatenFoodRoomDatabase
 import com.bavian.nyam.tracker.data.db.product.ProductDatabase
 import com.bavian.nyam.tracker.data.db.product.ProductDatabaseImpl
 import com.bavian.nyam.tracker.data.db.product.ProductRoomDatabase

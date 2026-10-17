@@ -1,4 +1,4 @@
-package com.bavian.nyam.tracker.data.db
+package com.bavian.nyam.tracker.data.db.barcode
 
 import com.bavian.nyam.tracker.data.model.BarcodeInfoEntity
 
