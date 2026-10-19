@@ -10,15 +10,21 @@ import com.bavian.nyam.tracker.data.db.eatenfood.EatenFoodRoomDatabase
 import com.bavian.nyam.tracker.data.db.product.ProductDatabase
 import com.bavian.nyam.tracker.data.db.product.ProductDatabaseImpl
 import com.bavian.nyam.tracker.data.db.product.ProductRoomDatabase
+import com.bavian.nyam.tracker.data.db.weight.WeightDatabase
+import com.bavian.nyam.tracker.data.db.weight.WeightDatabaseImpl
+import com.bavian.nyam.tracker.data.db.weight.WeightRoomDatabase
 import com.bavian.nyam.tracker.data.mapper.BarcodeMapper
 import com.bavian.nyam.tracker.data.mapper.BarcodeMapperImpl
 import com.bavian.nyam.tracker.data.mapper.EatenFoodMapper
 import com.bavian.nyam.tracker.data.mapper.EatenFoodMapperImpl
 import com.bavian.nyam.tracker.data.mapper.ProductMapper
 import com.bavian.nyam.tracker.data.mapper.ProductMapperImpl
+import com.bavian.nyam.tracker.data.mapper.WeightMapper
+import com.bavian.nyam.tracker.data.mapper.WeightMapperImpl
 import com.bavian.nyam.tracker.data.repository.BarcodeRepositoryImpl
 import com.bavian.nyam.tracker.data.repository.EatenFoodRepositoryImpl
 import com.bavian.nyam.tracker.data.repository.ProductRepositoryImpl
+import com.bavian.nyam.tracker.data.repository.WeightRepositoryImpl
 import com.bavian.nyam.tracker.domain.infrastructure.ProductIdGenerator
 import com.bavian.nyam.tracker.domain.infrastructure.ProductIdGeneratorImpl
 import com.bavian.nyam.tracker.domain.infrastructure.StringDistanceCalculator
@@ -26,6 +32,7 @@ import com.bavian.nyam.tracker.domain.infrastructure.StringDistanceCalculatorDam
 import com.bavian.nyam.tracker.domain.repository.BarcodeRepository
 import com.bavian.nyam.tracker.domain.repository.EatenFoodRepository
 import com.bavian.nyam.tracker.domain.repository.ProductRepository
+import com.bavian.nyam.tracker.domain.repository.WeightRepository
 import com.bavian.nyam.tracker.domain.usecase.barcode.DeleteBarcodeUseCase
 import com.bavian.nyam.tracker.domain.usecase.barcode.DeleteBarcodeUseCaseImpl
 import com.bavian.nyam.tracker.domain.usecase.barcode.GetBarcodeInfoUseCase
@@ -50,6 +57,14 @@ import com.bavian.nyam.tracker.domain.usecase.product.GetProductByIdUseCase
 import com.bavian.nyam.tracker.domain.usecase.product.GetProductByIdUseCaseImpl
 import com.bavian.nyam.tracker.domain.usecase.product.GetProductsUseCase
 import com.bavian.nyam.tracker.domain.usecase.product.GetProductsUseCaseImpl
+import com.bavian.nyam.tracker.domain.usecase.weight.DeleteWeightUseCase
+import com.bavian.nyam.tracker.domain.usecase.weight.DeleteWeightUseCaseImpl
+import com.bavian.nyam.tracker.domain.usecase.weight.GetNearestWeightUseCase
+import com.bavian.nyam.tracker.domain.usecase.weight.GetNearestWeightUseCaseImpl
+import com.bavian.nyam.tracker.domain.usecase.weight.GetWeightsInRangeUseCase
+import com.bavian.nyam.tracker.domain.usecase.weight.GetWeightsInRangeUseCaseImpl
+import com.bavian.nyam.tracker.domain.usecase.weight.SetWeightUseCase
+import com.bavian.nyam.tracker.domain.usecase.weight.SetWeightUseCaseImpl
 import com.bavian.nyam.tracker.presentation.main.MainViewModel
 import com.bavian.nyam.tracker.presentation.main.mapper.MainScreenEatenFoodItemMapper
 import com.bavian.nyam.tracker.presentation.main.mapper.MainScreenEatenFoodItemMapperImpl
@@ -132,9 +147,18 @@ val appModule =
                 .build()
         }
         single { get<EatenFoodRoomDatabase>().eatenFoodDao() }
+
+        single {
+            Room
+                .databaseBuilder(get(), WeightRoomDatabase::class.java, "weights.db")
+                .fallbackToDestructiveMigration(true)
+                .build()
+        }
+        single { get<WeightRoomDatabase>().weightDao() }
         singleOf(::ProductDatabaseImpl) bind ProductDatabase::class
         singleOf(::BarcodeDatabaseImpl) bind BarcodeDatabase::class
         singleOf(::EatenFoodDatabaseImpl) bind EatenFoodDatabase::class
+        singleOf(::WeightDatabaseImpl) bind WeightDatabase::class
 
         factoryOf(::ProductIdGeneratorImpl) bind ProductIdGenerator::class
         factoryOf(::StringDistanceCalculatorDamerauLevenshteinImpl) bind StringDistanceCalculator::class
@@ -163,8 +187,15 @@ val appModule =
         factoryOf(::GetEatenFoodUseCaseImpl) bind GetEatenFoodUseCase::class
         factoryOf(::GetEatenFoodByIdUseCaseImpl) bind GetEatenFoodByIdUseCase::class
 
+        factoryOf(::SetWeightUseCaseImpl) bind SetWeightUseCase::class
+        factoryOf(::DeleteWeightUseCaseImpl) bind DeleteWeightUseCase::class
+        factoryOf(::GetWeightsInRangeUseCaseImpl) bind GetWeightsInRangeUseCase::class
+        factoryOf(::GetNearestWeightUseCaseImpl) bind GetNearestWeightUseCase::class
+
         factoryOf(::BarcodeMapperImpl) bind BarcodeMapper::class
+        factoryOf(::WeightMapperImpl) bind WeightMapper::class
         factoryOf(::BarcodeRepositoryImpl) bind BarcodeRepository::class
+        factoryOf(::WeightRepositoryImpl) bind WeightRepository::class
         factoryOf(::SetBarcodeUseCaseImpl) bind SetBarcodeUseCase::class
         factoryOf(::DeleteBarcodeUseCaseImpl) bind DeleteBarcodeUseCase::class
         factoryOf(::GetBarcodeInfoUseCaseImpl) bind GetBarcodeInfoUseCase::class
