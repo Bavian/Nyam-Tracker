@@ -20,6 +20,8 @@ interface AppNavigation {
 
     fun openEditFoodScreen(foodId: String)
 
+    fun openSetWeightScreen(timestamp: Long? = null)
+
     sealed interface NavigationAction {
         data class Back(
             val result: Any? = null,

@@ -53,4 +53,10 @@ class AppNavigationImpl : AppNavigation {
             NavigationAction.Navigate(AppRoute.SetFood(SetFoodInitialStateSource.Food(foodId))),
         )
     }
+
+    override fun openSetWeightScreen(timestamp: Long?) {
+        _navigationActions.tryEmit(
+            NavigationAction.Navigate(AppRoute.SetWeight(timestamp)),
+        )
+    }
 }

@@ -1,5 +1,6 @@
 package com.bavian.nyam.tracker.presentation.main
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
@@ -34,6 +36,7 @@ import com.bavian.nyam.tracker.ui.components.card.FoodListCard
 import com.bavian.nyam.tracker.ui.components.diagram.NutrientsDiagram
 import com.bavian.nyam.tracker.ui.components.loader.SnakeLoaderWrapper
 import com.bavian.nyam.tracker.ui.components.picker.DateCarousel
+import com.bavian.nyam.tracker.ui.model.StringSource
 import com.bavian.nyam.tracker.ui.model.stringSource
 import com.bavian.nyam.tracker.ui.preview.PreviewScreen
 import com.bavian.nyam.tracker.ui.theme.NyamTrackerTheme
@@ -47,13 +50,16 @@ import kotlin.time.Clock
 object MainScreen {
     sealed interface State {
         val selectedDate: LocalDate
+        val weight: StringSource
 
         data class Loading(
             override val selectedDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
+            override val weight: StringSource = "-- kg".stringSource,
         ) : State
 
         data class Success(
             override val selectedDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
+            override val weight: StringSource = "-- kg".stringSource,
             val eatenFoodGroups: ImmutableList<EatenFoodGroup> = persistentListOf(),
             val kCalories: Float = 0f,
             val proteins: Float = 0f,
@@ -101,6 +107,8 @@ object MainScreen {
         data class EatenFoodDeleteTap(
             val foodId: String,
         ) : Event
+
+        data object WeightTap : Event
     }
 }
 
@@ -126,6 +134,7 @@ fun MainScreen(
     val successState = state as? MainScreen.State.Success
     MainScreenContent(
         selectedDate = state.selectedDate,
+        weight = state.weight,
         eatenFoodGroups = successState?.eatenFoodGroups ?: persistentListOf(),
         kCalories = successState?.kCalories ?: 0f,
         proteins = successState?.proteins ?: 0f,
@@ -139,6 +148,7 @@ fun MainScreen(
 @Composable
 fun MainScreenContent(
     selectedDate: LocalDate,
+    weight: StringSource,
     eatenFoodGroups: ImmutableList<MainScreen.State.Success.EatenFoodGroup>,
     kCalories: Float,
     proteins: Float,
@@ -163,6 +173,15 @@ fun MainScreenContent(
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
+                        Text(
+                            text = weight.get(),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier =
+                                Modifier
+                                    .padding(start = 16.dp, top = 8.dp)
+                                    .clickable { onEvent(MainScreen.Event.WeightTap) },
+                        )
                         DateCarousel(
                             state = DateCarousel.State(selectedDate),
                             onEvent = { event ->

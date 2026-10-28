@@ -24,4 +24,6 @@ sealed interface MainScreenViewModelEvent {
     data class EatenFoodDeleteTap(
         val foodId: String,
     ) : MainScreenViewModelEvent
+
+    data object WeightTap : MainScreenViewModelEvent
 }

@@ -44,6 +44,8 @@
     <string name="main_scan_barcode">Scan Barcode</string>
     <string name="main_products_list">Products</string>
     <string name="main_menu_description">Main Menu</string>
+    <string name="main_weight_format">%1$s kg</string>
+    <string name="main_weight_empty">-- kg</string>
 
     <string name="products_list_edit">Edit</string>
     <string name="products_list_delete">Delete</string>
@@ -65,6 +67,13 @@
     <string name="set_food_ok">OK</string>
     <string name="set_food_cancel">Cancel</string>
     <string name="set_food_save_content_description">Save</string>
+
+    <string name="set_weight_hint">Weight (kg)</string>
+    <string name="set_weight_save_content_description">Save weight</string>
+    <string name="set_weight_delete_dialog_title">Delete Weight</string>
+    <string name="set_weight_delete_dialog_message">Are you sure you want to delete this weight record?</string>
+    <string name="set_weight_delete_dialog_confirm">Delete</string>
+    <string name="set_weight_delete_dialog_cancel">Cancel</string>
 
     <string name="calories_summary_format">%1$d kcal</string>
 </resources>

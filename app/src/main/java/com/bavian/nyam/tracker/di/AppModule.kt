@@ -95,6 +95,11 @@ import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductStateMap
 import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductStateMapperImpl
 import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductUiStateMapper
 import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductUiStateMapperImpl
+import com.bavian.nyam.tracker.presentation.setweight.SetWeightViewModel
+import com.bavian.nyam.tracker.presentation.setweight.mapper.SetWeightScreenEventMapper
+import com.bavian.nyam.tracker.presentation.setweight.mapper.SetWeightScreenEventMapperImpl
+import com.bavian.nyam.tracker.presentation.setweight.mapper.SetWeightScreenStateMapper
+import com.bavian.nyam.tracker.presentation.setweight.mapper.SetWeightScreenStateMapperImpl
 import com.bavian.nyam.tracker.presentation.util.ErrorHandler
 import com.bavian.nyam.tracker.presentation.util.ErrorHandlerImpl
 import org.koin.core.module.dsl.factoryOf
@@ -121,6 +126,15 @@ val appModule =
                 deleteEatenFoodUseCase = lazy { get<DeleteEatenFoodUseCase>() },
                 appNavigation = get(),
                 productIdGenerator = get(),
+            )
+        }
+        viewModel { params ->
+            SetWeightViewModel(
+                initialTimestamp = params.getOrNull(),
+                getNearestWeightUseCase = lazy { get<GetNearestWeightUseCase>() },
+                setWeightUseCase = lazy { get<SetWeightUseCase>() },
+                deleteWeightUseCase = lazy { get<DeleteWeightUseCase>() },
+                appNavigation = get(),
             )
         }
 
@@ -176,6 +190,8 @@ val appModule =
         factoryOf(::ProductsListScreenEventMapperImpl) bind ProductsListScreenEventMapper::class
         factoryOf(::SetFoodScreenEventMapperImpl) bind SetFoodScreenEventMapper::class
         factoryOf(::SetFoodScreenStateMapperImpl) bind SetFoodScreenStateMapper::class
+        factoryOf(::SetWeightScreenEventMapperImpl) bind SetWeightScreenEventMapper::class
+        factoryOf(::SetWeightScreenStateMapperImpl) bind SetWeightScreenStateMapper::class
         factoryOf(::ProductRepositoryImpl) bind ProductRepository::class
         factoryOf(::EatenFoodRepositoryImpl) bind EatenFoodRepository::class
         factoryOf(::AddProductUseCaseImpl) bind AddProductUseCase::class

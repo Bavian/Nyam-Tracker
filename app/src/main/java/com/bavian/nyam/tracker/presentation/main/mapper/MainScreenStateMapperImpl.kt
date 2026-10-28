@@ -2,6 +2,8 @@ package com.bavian.nyam.tracker.presentation.main.mapper
 
 import com.bavian.nyam.tracker.presentation.main.MainScreen
 import com.bavian.nyam.tracker.presentation.main.MainScreenViewModelState
+import com.bavian.nyam.tracker.ui.model.StringSource
+import com.bavian.nyam.tracker.ui.model.stringSource
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -9,9 +11,17 @@ import kotlin.time.Instant
 
 class MainScreenStateMapperImpl : MainScreenStateMapper {
     override fun map(state: MainScreenViewModelState): MainScreen.State {
+        val weightSource =
+            if (state.weight == null) {
+                StringSource.Empty
+            } else {
+                "${formatNumber(state.weight)} kg".stringSource
+            }
+
         if (state.loading) {
             return MainScreen.State.Loading(
                 selectedDate = state.selectedDate,
+                weight = weightSource,
             )
         }
 
@@ -62,6 +72,7 @@ class MainScreenStateMapperImpl : MainScreenStateMapper {
 
         return MainScreen.State.Success(
             selectedDate = state.selectedDate,
+            weight = weightSource,
             eatenFoodGroups = eatenFoodGroups,
             kCalories = state.eatenFoodGroups.fold(0f) { acc, item -> acc + item.calories },
             proteins = state.eatenFoodGroups.fold(0f) { acc, item -> acc + item.proteins },
