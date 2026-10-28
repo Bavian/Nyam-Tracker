@@ -22,4 +22,9 @@ sealed interface AppRoute : NavKey {
     data class SetFood(
         val initialStateSource: SetFoodInitialStateSource,
     ) : AppRoute
+
+    @Serializable
+    data class SetWeight(
+        val timestamp: Long? = null,
+    ) : AppRoute
 }

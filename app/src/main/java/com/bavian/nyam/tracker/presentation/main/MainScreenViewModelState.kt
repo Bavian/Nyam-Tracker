@@ -10,6 +10,7 @@ import kotlin.time.Clock
 data class MainScreenViewModelState(
     val selectedDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
     val eatenFoodGroups: ImmutableList<Item> = persistentListOf(),
+    val weight: Float? = null,
     val loading: Boolean = true,
 ) {
     data class Item(

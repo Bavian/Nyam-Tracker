@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.bavian.nyam.tracker.domain.usecase.barcode.GetBarcodeInfoUseCase
 import com.bavian.nyam.tracker.domain.usecase.eatenfood.DeleteEatenFoodUseCase
 import com.bavian.nyam.tracker.domain.usecase.eatenfood.GetEatenFoodUseCase
+import com.bavian.nyam.tracker.domain.usecase.weight.GetNearestWeightUseCase
 import com.bavian.nyam.tracker.presentation.main.mapper.MainScreenEatenFoodItemMapper
 import com.bavian.nyam.tracker.presentation.navigation.AppNavigation
 import com.bavian.nyam.tracker.presentation.scanner.BarcodeScanner
@@ -25,6 +26,7 @@ class MainViewModel(
     private val appNavigation: AppNavigation,
     private val getEatenFoodUseCase: GetEatenFoodUseCase,
     private val deleteEatenFoodUseCase: DeleteEatenFoodUseCase,
+    private val getNearestWeightUseCase: GetNearestWeightUseCase,
     private val eatenFoodItemMapper: MainScreenEatenFoodItemMapper,
     private val barcodeScanner: BarcodeScanner,
     private val getBarcodeInfoUseCase: GetBarcodeInfoUseCase,
@@ -46,7 +48,17 @@ class MainViewModel(
             is MainScreenViewModelEvent.EatenFoodTap -> openEditFoodScreen(event.foodId)
             is MainScreenViewModelEvent.EatenFoodEditTap -> openEditFoodScreen(event.foodId)
             is MainScreenViewModelEvent.EatenFoodDeleteTap -> deleteEatenFood(event.foodId)
+            is MainScreenViewModelEvent.WeightTap -> openSetWeightScreen()
         }
+    }
+
+    private fun openSetWeightScreen() {
+        val timeZone = TimeZone.currentSystemDefault()
+        val startOfDay =
+            uiState.value.selectedDate
+                .atStartOfDayIn(timeZone)
+                .toEpochMilliseconds()
+        appNavigation.openSetWeightScreen(startOfDay)
     }
 
     private fun deleteEatenFood(foodId: String) {
@@ -71,10 +83,14 @@ class MainViewModel(
                 eatenFoodList
                     .sortedBy { it.timestamp }
                     .map(eatenFoodItemMapper::map)
+            val startOfDay = date.atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+            val weightResult = getNearestWeightUseCase(startOfDay)
+            val weight = weightResult.getOrNull()?.weight
             _uiState.update {
                 it.copy(
                     selectedDate = date,
                     eatenFoodGroups = foodItems.toImmutableList(),
+                    weight = weight,
                     loading = false,
                 )
             }
