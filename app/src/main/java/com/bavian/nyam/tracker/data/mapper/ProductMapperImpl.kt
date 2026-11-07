@@ -14,6 +14,7 @@ class ProductMapperImpl : ProductMapper {
             proteins = domain.proteins.times(100).roundToInt(),
             fat = domain.fat.times(100).roundToInt(),
             carbohydrates = domain.carbohydrates.times(100).roundToInt(),
+            price = domain.price,
         )
 
     override fun mapToDomain(entity: ProductEntity): Product =
@@ -25,5 +26,6 @@ class ProductMapperImpl : ProductMapper {
             proteins = entity.proteins / 100f,
             fat = entity.fat / 100f,
             carbohydrates = entity.carbohydrates / 100f,
+            price = entity.price,
         )
 }

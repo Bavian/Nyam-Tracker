@@ -21,4 +21,6 @@ data class ProductEntity(
     val fat: Int,
     @ColumnInfo(name = "carbohydrates")
     val carbohydrates: Int,
+    @ColumnInfo(name = "price")
+    val price: Float,
 )

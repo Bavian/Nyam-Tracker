@@ -18,6 +18,8 @@ class SetProductEventMapperImpl : SetProductEventMapper {
                 SetProductViewModelEvent.FatChanged(event.value)
             is SetProductScreen.Event.CarbohydratesChanged ->
                 SetProductViewModelEvent.CarbohydratesChanged(event.value)
+            is SetProductScreen.Event.PriceChanged ->
+                SetProductViewModelEvent.PriceChanged(event.value)
             is SetProductScreen.Event.ConfirmClicked ->
                 SetProductViewModelEvent.ConfirmClicked
             is SetProductScreen.Event.BackClicked ->
