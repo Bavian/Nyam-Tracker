@@ -43,6 +43,7 @@ import com.bavian.nyam.tracker.ui.components.picker.TimePicker
 import com.bavian.nyam.tracker.ui.model.StringSource
 import com.bavian.nyam.tracker.ui.model.stringSource
 import com.bavian.nyam.tracker.ui.preview.PreviewScreen
+import com.bavian.nyam.tracker.ui.theme.NyamTrackerTheme
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
@@ -263,7 +264,7 @@ fun SetWeightScreenContent(
 private fun SetWeightScreenPreview(
     @PreviewParameter(SetWeightScreenPreviewParameterProvider::class)
     state: SetWeightScreen.State,
-) {
+) = NyamTrackerTheme {
     SetWeightScreen(
         state = state,
         onEvent = {},
