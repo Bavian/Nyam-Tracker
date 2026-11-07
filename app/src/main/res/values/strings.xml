@@ -65,6 +65,7 @@
     <string name="set_food_proteins">Proteins (g)</string>
     <string name="set_food_fat">Fat (g)</string>
     <string name="set_food_carbohydrates">Carbohydrates (g)</string>
+    <string name="set_food_price">Price</string>
     <string name="set_food_ok">OK</string>
     <string name="set_food_cancel">Cancel</string>
     <string name="set_food_save_content_description">Save</string>

@@ -272,15 +272,15 @@ private class ProductsListScreenPreviewParameterProvider : PreviewParameterProvi
             ProductsListScreen.State.Success(
                 products =
                     persistentListOf(
-                        ProductsListProduct("1", "Nestle", "Nesquik", "379.0", "8.5", "1.8", "81.0"),
-                        ProductsListProduct("2", "Coca-Cola", "Cola", "42.0", "0.0", "0.0", "10.6"),
+                        ProductsListProduct("1", "Nestle", "Nesquik", "379.0", "8.5", "1.8", "81.0", "150.0"),
+                        ProductsListProduct("2", "Coca-Cola", "Cola", "42.0", "0.0", "0.0", "10.6", "80.0"),
                     ),
             ),
             ProductsListScreen.State.Success(
                 searchQuery = "Nes",
                 products =
                     persistentListOf(
-                        ProductsListProduct("1", "Nestle", "Nesquik", "379.0", "8.5", "1.8", "81.0"),
+                        ProductsListProduct("1", "Nestle", "Nesquik", "379.0", "8.5", "1.8", "81.0", "150.0"),
                     ),
                 expandedProductId = "1",
             ),

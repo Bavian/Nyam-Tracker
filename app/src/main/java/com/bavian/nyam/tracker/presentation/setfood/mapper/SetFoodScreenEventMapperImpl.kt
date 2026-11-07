@@ -13,6 +13,7 @@ internal class SetFoodScreenEventMapperImpl : SetFoodScreenEventMapper {
             is SetFoodScreen.Event.ProteinsChanged -> SetFoodViewModelEvent.ProteinsChanged(event.value)
             is SetFoodScreen.Event.FatChanged -> SetFoodViewModelEvent.FatChanged(event.value)
             is SetFoodScreen.Event.CarbohydratesChanged -> SetFoodViewModelEvent.CarbohydratesChanged(event.value)
+            is SetFoodScreen.Event.PriceChanged -> SetFoodViewModelEvent.PriceChanged(event.value)
             is SetFoodScreen.Event.DateChanged -> SetFoodViewModelEvent.DateChanged(event.value)
             is SetFoodScreen.Event.TimeChanged -> SetFoodViewModelEvent.TimeChanged(event.value)
             is SetFoodScreen.Event.SavePressed -> SetFoodViewModelEvent.SavePressed

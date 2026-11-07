@@ -70,6 +70,7 @@ class SetFoodViewModel(
                     proteinsPer100 = product.proteins,
                     fatPer100 = product.fat,
                     carbohydratesPer100 = product.carbohydrates,
+                    pricePer100 = product.price,
                     loading = false,
                 )
             }
@@ -90,6 +91,7 @@ class SetFoodViewModel(
                     proteinsPer100 = food.proteins,
                     fatPer100 = food.fat,
                     carbohydratesPer100 = food.carbohydrates,
+                    pricePer100 = food.price,
                     loading = false,
                 )
             }
@@ -107,6 +109,7 @@ class SetFoodViewModel(
             is SetFoodViewModelEvent.ProteinsChanged -> updateProteins(event.value)
             is SetFoodViewModelEvent.FatChanged -> updateFat(event.value)
             is SetFoodViewModelEvent.CarbohydratesChanged -> updateCarbohydrates(event.value)
+            is SetFoodViewModelEvent.PriceChanged -> updatePrice(event.value)
             is SetFoodViewModelEvent.DateChanged -> {
                 _uiState.update { it.copy(date = event.value) }
                 updateTitleText(_uiState.value.date, _uiState.value.time)
@@ -165,6 +168,14 @@ class SetFoodViewModel(
         _uiState.update { it.copy(carbohydratesPer100 = per100) }
     }
 
+    private fun updatePrice(price: String) {
+        val value = price.toFloatOrNull() ?: 0f
+        val weight = _uiState.value.weight.toFloatOrNull() ?: 100f
+        val factor = weight / 100f
+        val per100 = if (factor > 0f) value / factor else value
+        _uiState.update { it.copy(pricePer100 = per100) }
+    }
+
     private fun saveFood() {
         val state = _uiState.value
         viewModelScope.launch {
@@ -182,6 +193,7 @@ class SetFoodViewModel(
                     fat = state.fatPer100 * factor,
                     carbohydrates = state.carbohydratesPer100 * factor,
                     timestamp = timestamp,
+                    price = state.pricePer100 * factor,
                 )
             addEatenFoodUseCase.value.execute(eatenFood)
             appNavigation.back()

@@ -32,6 +32,10 @@ sealed class SetFoodViewModelEvent {
         val value: String,
     ) : SetFoodViewModelEvent()
 
+    data class PriceChanged(
+        val value: String,
+    ) : SetFoodViewModelEvent()
+
     data class DateChanged(
         val value: LocalDate,
     ) : SetFoodViewModelEvent()

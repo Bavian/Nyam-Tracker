@@ -10,4 +10,5 @@ data class EatenFood(
     val fat: Float,
     val carbohydrates: Float,
     val timestamp: Long,
+    val price: Float,
 )

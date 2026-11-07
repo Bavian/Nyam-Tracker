@@ -34,6 +34,7 @@ internal class SetFoodScreenStateMapperImpl : SetFoodScreenStateMapper {
             proteins = state.proteinsPer100 * factor,
             fat = state.fatPer100 * factor,
             carbohydrates = state.carbohydratesPer100 * factor,
+            price = state.pricePer100 * factor,
             date = state.date,
             time = state.time,
             canDelete = state.canDelete,
