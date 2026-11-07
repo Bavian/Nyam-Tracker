@@ -20,6 +20,7 @@ class SetProductStateMapperImpl : SetProductStateMapper {
             proteins = state.proteins,
             fat = state.fat,
             carbohydrates = state.carbohydrates,
+            price = state.price,
             barcodes = state.barcodes.mapAsImmutableList { it.stringSource },
             barcodeToDelete = state.barcodeToDelete.stringSource,
         )

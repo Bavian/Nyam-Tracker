@@ -74,6 +74,10 @@ class SetProductViewModel(
                 _uiState.update { it.copy(carbohydrates = event.value.toFloatOrNull() ?: 0f) }
             }
 
+            is SetProductViewModelEvent.PriceChanged -> {
+                _uiState.update { it.copy(price = event.value.toFloatOrNull() ?: 0f) }
+            }
+
             is SetProductViewModelEvent.ConfirmClicked -> {
                 confirmAddition()
             }
@@ -123,6 +127,7 @@ class SetProductViewModel(
                             proteins = product.proteins,
                             fat = product.fat,
                             carbohydrates = product.carbohydrates,
+                            price = product.price,
                             productLoading = false,
                         )
                     }

@@ -11,6 +11,7 @@ data class SetProductViewModelState(
     val proteins: Float = 0f,
     val fat: Float = 0f,
     val carbohydrates: Float = 0f,
+    val price: Float = 0f,
     val barcodes: ImmutableList<String> = persistentListOf(),
     val barcodeToDelete: String = "",
     val productLoading: Boolean = false,

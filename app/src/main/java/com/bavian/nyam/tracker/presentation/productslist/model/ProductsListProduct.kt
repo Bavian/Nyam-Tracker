@@ -8,4 +8,5 @@ data class ProductsListProduct(
     val proteins: String,
     val fat: String,
     val carbohydrates: String,
+    val price: String,
 )

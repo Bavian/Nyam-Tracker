@@ -13,5 +13,6 @@ class SetProductUiStateMapperImpl : SetProductUiStateMapper {
             proteins = state.proteins,
             fat = state.fat,
             carbohydrates = state.carbohydrates,
+            price = state.price,
         )
 }

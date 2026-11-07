@@ -25,6 +25,10 @@ sealed interface SetProductViewModelEvent {
         val value: String,
     ) : SetProductViewModelEvent
 
+    data class PriceChanged(
+        val value: String,
+    ) : SetProductViewModelEvent
+
     data object ConfirmClicked : SetProductViewModelEvent
 
     data object BackClicked : SetProductViewModelEvent

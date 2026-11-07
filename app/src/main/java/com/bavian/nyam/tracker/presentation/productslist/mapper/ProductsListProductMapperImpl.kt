@@ -13,5 +13,6 @@ class ProductsListProductMapperImpl : ProductsListProductMapper {
             proteins = domain.proteins.toString(),
             fat = domain.fat.toString(),
             carbohydrates = domain.carbohydrates.toString(),
+            price = domain.price.toString(),
         )
 }

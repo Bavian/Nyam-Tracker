@@ -8,4 +8,5 @@ data class Product(
     val proteins: Float,
     val fat: Float,
     val carbohydrates: Float,
+    val price: Float,
 )

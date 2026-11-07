@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
@@ -63,6 +64,7 @@ object SetProductScreen {
             val proteins: Float = 0f,
             val fat: Float = 0f,
             val carbohydrates: Float = 0f,
+            val price: Float = 0f,
             val barcodes: ImmutableList<StringSource> = persistentListOf(),
             override val barcodeToDelete: StringSource = StringSource.Empty,
             val keyboardOpened: Boolean = false,
@@ -91,6 +93,10 @@ object SetProductScreen {
         ) : Event
 
         data class CarbohydratesChanged(
+            val value: String,
+        ) : Event
+
+        data class PriceChanged(
             val value: String,
         ) : Event
 
@@ -246,6 +252,21 @@ private fun SetProductScreenContent(
         }
 
         item {
+            OutlinedTextField(
+                value = formatPrice(state.price).get(),
+                onValueChange = { onEvent(SetProductScreen.Event.PriceChanged(it)) },
+                label = { Text(stringResource(R.string.set_product_price)) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                keyboardOptions =
+                    KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal,
+                        imeAction = ImeAction.Next,
+                    ),
+            )
+        }
+
+        item {
             NutrientsCard(
                 state =
                     NutrientsCard.State(
@@ -332,6 +353,7 @@ private class SetProductScreenPreviewParameterProvider : PreviewParameterProvide
                 proteins = 8.5f,
                 fat = 1.8f,
                 carbohydrates = 81.0f,
+                price = 150f,
                 barcodes =
                     listOf("4601234567890", "4601234567890", "4609876543210", "4609876543210")
                         .mapAsImmutableList { it.stringSource },
@@ -343,6 +365,7 @@ private class SetProductScreenPreviewParameterProvider : PreviewParameterProvide
                 proteins = 8.5f,
                 fat = 1.8f,
                 carbohydrates = 81.0f,
+                price = 150f,
                 barcodes =
                     listOf("4601234567890", "4601234567890", "4609876543210", "4609876543210")
                         .mapAsImmutableList { it.stringSource },
@@ -356,6 +379,15 @@ private fun formatNutrient(value: Float): StringSource =
         StringSource.Empty
     } else if ((value % 1f) == 0f) {
         value.toInt().toString().stringSource
+    } else {
+        value.toString().stringSource
+    }
+
+private fun formatPrice(value: Float): StringSource =
+    if (value == 0f) {
+        StringSource.Empty
+    } else if ((value % 1f) == 0f) {
+        value.toLong().toString().stringSource
     } else {
         value.toString().stringSource
     }
