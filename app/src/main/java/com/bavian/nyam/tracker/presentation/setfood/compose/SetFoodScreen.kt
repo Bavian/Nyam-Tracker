@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -73,6 +74,7 @@ object SetFoodScreen {
             val proteins: Float,
             val fat: Float,
             val carbohydrates: Float,
+            val price: Float = 0f,
             val date: LocalDate,
             val time: LocalTime,
             override val canDelete: Boolean = false,
@@ -106,6 +108,10 @@ object SetFoodScreen {
         ) : Event
 
         data class CarbohydratesChanged(
+            val value: String,
+        ) : Event
+
+        data class PriceChanged(
             val value: String,
         ) : Event
 
@@ -144,6 +150,7 @@ fun SetFoodScreen(
         proteins = successState?.proteins ?: 0f,
         fat = successState?.fat ?: 0f,
         carbohydrates = successState?.carbohydrates ?: 0f,
+        price = successState?.price ?: 0f,
         date = successState?.date ?: Clock.System.todayIn(TimeZone.currentSystemDefault()),
         time =
             successState?.time ?: Clock.System
@@ -168,6 +175,7 @@ fun SetFoodScreenContent(
     proteins: Float,
     fat: Float,
     carbohydrates: Float,
+    price: Float,
     date: LocalDate,
     time: LocalTime,
     canDelete: Boolean,
@@ -333,6 +341,19 @@ fun SetFoodScreenContent(
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     )
 
+                    OutlinedTextField(
+                        value = formatPrice(price).get(),
+                        onValueChange = { onEvent(SetFoodScreen.Event.PriceChanged(it)) },
+                        label = { Text(stringResource(R.string.set_food_price)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        keyboardOptions =
+                            KeyboardOptions(
+                                keyboardType = KeyboardType.Decimal,
+                                imeAction = ImeAction.Next,
+                            ),
+                    )
+
                     NutrientsCard(
                         state =
                             NutrientsCard.State(
@@ -401,6 +422,7 @@ internal class SetFoodScreenPreviewParameterProvider : PreviewParameterProvider<
                 proteins = 20f,
                 fat = 10f,
                 carbohydrates = 40f,
+                price = 100f,
                 date = Clock.System.todayIn(TimeZone.currentSystemDefault()),
                 time =
                     Clock.System
@@ -418,6 +440,7 @@ internal class SetFoodScreenPreviewParameterProvider : PreviewParameterProvider<
                 proteins = 20f,
                 fat = 10f,
                 carbohydrates = 40f,
+                price = 100f,
                 date = Clock.System.todayIn(TimeZone.currentSystemDefault()),
                 time =
                     Clock.System
@@ -448,6 +471,15 @@ internal class SetFoodScreenPreviewParameterProvider : PreviewParameterProvider<
 }
 
 private fun formatNutrient(value: Float): StringSource =
+    if (value == 0f) {
+        StringSource.Empty
+    } else if ((value % 1f) == 0f) {
+        value.toInt().toString().stringSource
+    } else {
+        value.toString().stringSource
+    }
+
+private fun formatPrice(value: Float): StringSource =
     if (value == 0f) {
         StringSource.Empty
     } else if ((value % 1f) == 0f) {

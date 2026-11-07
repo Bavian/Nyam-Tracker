@@ -15,5 +15,6 @@ class MainScreenEatenFoodItemMapperImpl : MainScreenEatenFoodItemMapper {
             fat = eatenFood.fat,
             carbohydrates = eatenFood.carbohydrates,
             timestamp = eatenFood.timestamp,
+            price = eatenFood.price,
         )
 }

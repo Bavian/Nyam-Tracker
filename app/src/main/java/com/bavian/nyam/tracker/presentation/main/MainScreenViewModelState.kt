@@ -23,5 +23,6 @@ data class MainScreenViewModelState(
         val fat: Float,
         val carbohydrates: Float,
         val timestamp: Long,
+        val price: Float,
     )
 }
