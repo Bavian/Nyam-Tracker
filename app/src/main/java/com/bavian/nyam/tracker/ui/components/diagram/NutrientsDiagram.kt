@@ -1,9 +1,5 @@
 package com.bavian.nyam.tracker.ui.components.diagram
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,7 +13,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,7 +26,16 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.bavian.nyam.tracker.R
+import com.bavian.nyam.tracker.ui.theme.NutrientCarbohydrateColor
+import com.bavian.nyam.tracker.ui.theme.NutrientFatColor
+import com.bavian.nyam.tracker.ui.theme.NutrientProteinColor
 import com.bavian.nyam.tracker.ui.theme.NyamTrackerTheme
+import com.patrykandpatrick.vico.compose.common.Fill
+import com.patrykandpatrick.vico.compose.pie.PieChart
+import com.patrykandpatrick.vico.compose.pie.PieChartHost
+import com.patrykandpatrick.vico.compose.pie.PieSize
+import com.patrykandpatrick.vico.compose.pie.data.PieChartModel
+import com.patrykandpatrick.vico.compose.pie.rememberPieChart
 import java.util.Locale
 
 object NutrientsDiagram {
@@ -42,9 +46,9 @@ object NutrientsDiagram {
     )
 
     data class Colors(
-        val proteins: Color = Color(0xFF42A5F5),
-        val fats: Color = Color(0xFFFFA726),
-        val carbohydrates: Color = Color(0xFF66BB6A),
+        val proteins: Color = NutrientProteinColor,
+        val fats: Color = NutrientFatColor,
+        val carbohydrates: Color = NutrientCarbohydrateColor,
     )
 }
 
@@ -112,63 +116,46 @@ private fun NutrientsPieChart(
     diagramSize: Dp,
     modifier: Modifier = Modifier,
 ) {
-    val animationProgress = remember { Animatable(1f) }
-    LaunchedEffect(state) {
-        animationProgress.snapTo(0f)
-        animationProgress.animateTo(
-            targetValue = 1f,
-            animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing),
-        )
-    }
-
     val emptyTrackColor = MaterialTheme.colorScheme.surfaceVariant
 
-    Canvas(
-        modifier = modifier.size(diagramSize),
-    ) {
-        if (totalWeight <= 0f) {
-            drawCircle(color = emptyTrackColor)
-            return@Canvas
-        }
-
-        val nutrients =
-            listOf(
-                state.proteins to colors.proteins,
-                state.fats to colors.fats,
-                state.carbohydrates to colors.carbohydrates,
-            ).filter { (weight, _) -> weight > 0f }
-
-        var currentStartAngle = -90f
-
-        if (nutrients.size == 1) {
-            val (_, color) = nutrients.first()
-            drawArc(
-                color = color,
-                startAngle = currentStartAngle,
-                sweepAngle = 360f * animationProgress.value,
-                useCenter = true,
-            )
-        } else {
-            val gapDegrees = 2f
-            val totalGap = nutrients.size * gapDegrees
-            val availableDegrees = 360f - totalGap
-
-            nutrients.forEach { (weight, color) ->
-                val proportion = weight / totalWeight
-                val sweepAngle = (proportion * availableDegrees) * animationProgress.value
-
-                if (sweepAngle > 0f) {
-                    drawArc(
-                        color = color,
-                        startAngle = currentStartAngle,
-                        sweepAngle = -sweepAngle,
-                        useCenter = true,
-                    )
-                }
-                currentStartAngle -= (proportion * availableDegrees) + gapDegrees
-            }
-        }
+    if (totalWeight <= 0f) {
+        Box(
+            modifier =
+                modifier
+                    .size(diagramSize)
+                    .clip(CircleShape)
+                    .background(emptyTrackColor),
+        )
+        return
     }
+
+    val pieChart =
+        rememberPieChart(
+            sliceProvider =
+                PieChart.SliceProvider.series(
+                    listOf(
+                        PieChart.Slice(fill = Fill(colors.proteins)),
+                        PieChart.Slice(fill = Fill(colors.fats)),
+                        PieChart.Slice(fill = Fill(colors.carbohydrates)),
+                    ),
+                ),
+            spacing = 2.dp,
+            outerSize = PieSize.Outer.Fill,
+            innerSize = PieSize.Inner.Zero,
+            startAngle = -90f,
+        )
+
+    val model =
+        remember(state.proteins, state.fats, state.carbohydrates) {
+            PieChartModel.build(state.proteins, state.fats, state.carbohydrates)
+        }
+
+    PieChartHost(
+        chart = pieChart,
+        model = model,
+        modifier = modifier.size(diagramSize),
+        chartAreaHeight = diagramSize,
+    )
 }
 
 @Composable
