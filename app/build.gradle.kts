@@ -70,6 +70,8 @@ dependencies {
     implementation(libs.koin.androidx.compose)
     implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.vico.compose)
+    implementation(libs.vico.compose.m3)
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)

@@ -1,7 +1,6 @@
 package com.bavian.nyam.tracker.ui.components.card
 
-import android.graphics.Paint
-import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -22,27 +22,32 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.bavian.nyam.tracker.R
-import kotlin.math.cos
-import kotlin.math.sin
+import com.bavian.nyam.tracker.ui.theme.NutrientCarbohydrateColor
+import com.bavian.nyam.tracker.ui.theme.NutrientFatColor
+import com.bavian.nyam.tracker.ui.theme.NutrientProteinColor
+import com.bavian.nyam.tracker.ui.theme.NyamTrackerTheme
+import com.patrykandpatrick.vico.compose.common.Fill
+import com.patrykandpatrick.vico.compose.pie.PieChart
+import com.patrykandpatrick.vico.compose.pie.PieChartHost
+import com.patrykandpatrick.vico.compose.pie.PieSize
+import com.patrykandpatrick.vico.compose.pie.data.PieChartModel
+import com.patrykandpatrick.vico.compose.pie.rememberPieChart
+import java.util.Locale
 
 object ProductCard {
     data class State(
@@ -70,6 +75,10 @@ object ProductCard {
         data object DismissMenu : Event
     }
 }
+
+private val ProteinsColor = NutrientProteinColor
+private val FatsColor = NutrientFatColor
+private val CarbohydratesColor = NutrientCarbohydrateColor
 
 @Composable
 fun ProductCard(
@@ -202,7 +211,20 @@ fun ProductCard(
                 }
             }
 
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(8.dp))
+
+            val proteinsVal = state.proteins.toNutritionValue()
+            val fatVal = state.fat.toNutritionValue()
+            val carbohydratesVal = state.carbohydrates.toNutritionValue()
+
+            val proteinCalories = proteinsVal * 4.0
+            val fatCalories = fatVal * 9.0
+            val carbohydrateCalories = carbohydratesVal * 4.0
+
+            val totalMacroCalories = proteinCalories + fatCalories + carbohydrateCalories
+            val proteinPct = if (totalMacroCalories > 0.0) (proteinCalories / totalMacroCalories) * 100.0 else 0.0
+            val fatPct = if (totalMacroCalories > 0.0) (fatCalories / totalMacroCalories) * 100.0 else 0.0
+            val carbohydratePct = if (totalMacroCalories > 0.0) (carbohydrateCalories / totalMacroCalories) * 100.0 else 0.0
 
             // Macro chart, nutrients and consumed weight
             Row(
@@ -212,100 +234,88 @@ fun ProductCard(
             ) {
                 MacroDonutChart(
                     calories = state.calories.toNutritionValue(),
-                    proteins = state.proteins.toNutritionValue(),
-                    fat = state.fat.toNutritionValue(),
-                    carbohydrates = state.carbohydrates.toNutritionValue(),
-                    modifier = Modifier.size(112.dp),
+                    proteinPct = proteinPct,
+                    fatPct = fatPct,
+                    carbohydratePct = carbohydratePct,
+                    modifier = Modifier.size(90.dp),
                 )
 
-                Spacer(Modifier.width(4.dp))
-
-                Row(
+                Column(
                     modifier = Modifier.weight(1f),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
-                    NutrientColumn(
-                        label =
-                            stringResource(
-                                R.string.products_list_proteins_prefix,
-                            ),
-                        value = state.proteins,
-                        color = colors.primary,
-                        modifier = Modifier.weight(1f),
+                    Text(
+                        text = state.weight,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.onSurface,
+                        maxLines = 1,
                     )
 
-                    NutrientColumn(
-                        label =
-                            stringResource(
-                                R.string.products_list_fat_prefix,
-                            ),
-                        value = state.fat,
-                        color = colors.tertiary,
-                        modifier = Modifier.weight(1f),
-                    )
+                    Spacer(Modifier.height(2.dp))
 
-                    NutrientColumn(
-                        label =
-                            stringResource(
-                                R.string.products_list_carbohydrates_prefix,
-                            ),
-                        value = state.carbohydrates,
-                        color = colors.secondary,
-                        modifier = Modifier.weight(1f),
+                    NutrientRow(
+                        name = stringResource(R.string.nutrients_diagram_proteins),
+                        value = "${state.proteins} г",
+                        percentage = proteinPct.toFloat(),
+                        color = ProteinsColor,
+                    )
+                    NutrientRow(
+                        name = stringResource(R.string.nutrients_diagram_fats),
+                        value = "${state.fat} г",
+                        percentage = fatPct.toFloat(),
+                        color = FatsColor,
+                    )
+                    NutrientRow(
+                        name = stringResource(R.string.nutrients_diagram_carbohydrates),
+                        value = "${state.carbohydrates} г",
+                        percentage = carbohydratePct.toFloat(),
+                        color = CarbohydratesColor,
                     )
                 }
-
-                Spacer(Modifier.width(4.dp))
-
-                Text(
-                    text = state.weight,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = colors.onSurface,
-                    maxLines = 1,
-                )
             }
         }
     }
 }
 
 @Composable
-private fun NutrientColumn(
-    label: String,
+private fun NutrientRow(
+    name: String,
     value: String,
+    percentage: Float,
     color: Color,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(6.dp),
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        Box(
-            modifier =
-                Modifier
-                    .size(12.dp)
-                    .padding(1.dp),
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            Canvas(Modifier.size(10.dp)) {
-                drawCircle(color = color)
-            }
+            Box(
+                modifier =
+                    Modifier
+                        .size(8.dp)
+                        .clip(CircleShape)
+                        .background(color),
+            )
+            Text(
+                text = name,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
         }
-
         Text(
-            text = label,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-
-        Text(
-            text = "$value г",
-            style = MaterialTheme.typography.titleMedium,
+            text = "$value (${formatPercentage(percentage)})",
+            style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface,
             maxLines = 1,
-            overflow = TextOverflow.Clip,
         )
     }
 }
@@ -313,176 +323,83 @@ private fun NutrientColumn(
 @Composable
 private fun MacroDonutChart(
     calories: Double,
-    proteins: Double,
-    fat: Double,
-    carbohydrates: Double,
+    proteinPct: Double,
+    fatPct: Double,
+    carbohydratePct: Double,
     modifier: Modifier = Modifier,
 ) {
-    val colors = MaterialTheme.colorScheme
+    val totalPct = proteinPct + fatPct + carbohydratePct
 
-    val proteinCalories = proteins * 4.0
-    val fatCalories = fat * 9.0
-    val carbohydrateCalories = carbohydrates * 4.0
-
-    val totalMacroCalories =
-        proteinCalories + fatCalories + carbohydrateCalories
-
-    val segments =
-        listOf(
-            MacroSegment(
-                color = colors.primary,
-                calories = proteinCalories,
-            ),
-            MacroSegment(
-                color = colors.tertiary,
-                calories = fatCalories,
-            ),
-            MacroSegment(
-                color = colors.secondary,
-                calories = carbohydrateCalories,
-            ),
-        )
-
-    val trackColor = colors.surfaceVariant
-    val centerTextColor = colors.onSurface
-
-    Canvas(modifier = modifier) {
-        val strokeWidth = size.minDimension * 0.18f
-        val diameter = size.minDimension - strokeWidth
-        val topLeft =
-            Offset(
-                (size.width - diameter) / 2f,
-                (size.height - diameter) / 2f,
-            )
-
-        val arcSize =
-            androidx.compose.ui.geometry.Size(
-                diameter,
-                diameter,
-            )
-
-        // Background track
-        drawArc(
-            color = trackColor,
+    val pieChart =
+        rememberPieChart(
+            sliceProvider =
+                PieChart.SliceProvider.series(
+                    listOf(
+                        PieChart.Slice(fill = Fill(ProteinsColor)),
+                        PieChart.Slice(fill = Fill(FatsColor)),
+                        PieChart.Slice(fill = Fill(CarbohydratesColor)),
+                    ),
+                ),
+            spacing = 2.dp,
+            outerSize = PieSize.Outer.Fill,
+            innerSize = PieSize.Inner.fixed(64.dp),
             startAngle = -90f,
-            sweepAngle = 360f,
-            useCenter = false,
-            topLeft = topLeft,
-            size = arcSize,
-            style = Stroke(width = strokeWidth),
         )
 
-        var startAngle = -90f
-
-        segments.forEach { segment ->
-            if (totalMacroCalories > 0.0) {
-                val fraction = segment.calories / totalMacroCalories
-                val sweepAngle = (fraction * 360.0).toFloat()
-
-                drawArc(
-                    color = segment.color,
-                    startAngle = startAngle,
-                    sweepAngle = sweepAngle,
-                    useCenter = false,
-                    topLeft = topLeft,
-                    size = arcSize,
-                    style =
-                        Stroke(
-                            width = strokeWidth,
-                            cap = StrokeCap.Butt,
-                        ),
-                )
-
-                // Percentage placed inside its segment
-                if (fraction >= 0.08) {
-                    val middleAngle =
-                        Math.toRadians(
-                            (startAngle + sweepAngle / 2f).toDouble(),
-                        )
-
-                    val radius = diameter / 2f
-                    val labelRadius = radius
-
-                    val centerX = size.width / 2f
-                    val centerY = size.height / 2f
-
-                    val labelX =
-                        centerX +
-                            (labelRadius * cos(middleAngle)).toFloat()
-
-                    val labelY =
-                        centerY +
-                            (labelRadius * sin(middleAngle)).toFloat()
-
-                    val percentage = (fraction * 100).toInt()
-
-                    val paint =
-                        Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                            color = android.graphics.Color.WHITE
-                            textSize = 11.sp.toPx()
-                            textAlign = Paint.Align.CENTER
-                            typeface =
-                                android.graphics.Typeface.create(
-                                    android.graphics.Typeface.DEFAULT,
-                                    android.graphics.Typeface.BOLD,
-                                )
-                        }
-
-                    drawContext.canvas.nativeCanvas.drawText(
-                        "$percentage%",
-                        labelX,
-                        labelY + paint.textSize * 0.35f,
-                        paint,
-                    )
-                }
-
-                startAngle += sweepAngle
+    val model =
+        remember(proteinPct, fatPct, carbohydratePct) {
+            if (totalPct > 0.0) {
+                PieChartModel.build(proteinPct, fatPct, carbohydratePct)
+            } else {
+                PieChartModel.build(0f, 0f, 0f)
             }
         }
 
-        // Calories in the center
-        val caloriePaint =
-            Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = centerTextColor.toArgb()
-                textAlign = Paint.Align.CENTER
-                textSize = 20.sp.toPx()
-                typeface =
-                    android.graphics.Typeface.create(
-                        android.graphics.Typeface.DEFAULT,
-                        android.graphics.Typeface.BOLD,
-                    )
-            }
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center,
+    ) {
+        if (totalPct > 0.0) {
+            PieChartHost(
+                chart = pieChart,
+                model = model,
+                modifier = Modifier.matchParentSize(),
+            )
+        } else {
+            Box(
+                modifier =
+                    Modifier
+                        .matchParentSize()
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceVariant),
+            )
+        }
 
-        val unitPaint =
-            Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = colors.onSurfaceVariant.toArgb()
-                textAlign = Paint.Align.CENTER
-                textSize = 12.sp.toPx()
-            }
-
-        val centerX = size.width / 2f
-        val centerY = size.height / 2f
-
-        drawContext.canvas.nativeCanvas.drawText(
-            calories.toDisplayString(),
-            centerX,
-            centerY,
-            caloriePaint,
-        )
-
-        drawContext.canvas.nativeCanvas.drawText(
-            "ккал",
-            centerX,
-            centerY + unitPaint.textSize * 1.2f,
-            unitPaint,
-        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                text = calories.toDisplayString(),
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            Text(
+                text = "ккал",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 
-private data class MacroSegment(
-    val color: Color,
-    val calories: Double,
-)
+private fun formatPercentage(percentage: Float): String =
+    if ((percentage % 1f) == 0f) {
+        "${percentage.toInt()}%"
+    } else {
+        "${String.format(Locale.getDefault(), "%.1f", percentage)}%"
+    }
 
 private fun String.toNutritionValue(): Double =
     replace(',', '.')
@@ -496,19 +413,19 @@ private fun Double.toDisplayString(): String =
         if (this % 1.0 == 0.0) {
             toLong().toString()
         } else {
-            "%.1f".format(java.util.Locale.US, this)
+            "%.1f".format(Locale.getDefault(), this)
         }
     } else {
         "0"
     }
 
-@Preview
+@PreviewLightDark
 @Composable
 private fun ProductCardPreview(
     @PreviewParameter(ProductCardPreviewParameterProvider::class)
     state: ProductCard.State,
 ) {
-    MaterialTheme {
+    NyamTrackerTheme {
         ProductCard(
             state = state,
             onEvent = {},

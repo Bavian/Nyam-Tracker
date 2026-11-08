@@ -20,3 +20,8 @@ val MintBackground = Color(0xFFF4F9F6)
 val MintSurface = Color(0xFFFFFFFF)
 val TongueRed = Color(0xFFE64A19)
 val TextDark = Color(0xFF0F1F17)
+
+// Nutrient Colors
+val NutrientProteinColor = Color(0xFF42A5F5)
+val NutrientFatColor = Color(0xFFFFA726)
+val NutrientCarbohydrateColor = Color(0xFF66BB6A)
