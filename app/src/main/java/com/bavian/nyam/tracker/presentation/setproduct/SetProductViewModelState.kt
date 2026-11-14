@@ -4,7 +4,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 data class SetProductViewModelState(
-    val id: String,
+    val id: String?,
     val manufacturer: String = "",
     val name: String = "",
     val calories: Float = 0f,
@@ -16,4 +16,5 @@ data class SetProductViewModelState(
     val barcodeToDelete: String = "",
     val productLoading: Boolean = false,
     val barcodesLoading: Boolean = false,
+    val initialBarcode: String? = null,
 )

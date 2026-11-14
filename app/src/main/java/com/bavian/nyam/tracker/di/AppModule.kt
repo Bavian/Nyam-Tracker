@@ -120,8 +120,8 @@ val appModule =
         viewModelOf(::ProductsListViewModel)
         viewModel { params ->
             SetProductViewModel(
-                initialProductId = params.getOrNull(),
-                barcode = params.getOrNull(),
+                initialProductId = params[0],
+                barcode = params[1],
                 addProductUseCase = get(),
                 getProductByIdUseCase = get(),
                 setBarcodeUseCase = get(),
@@ -129,7 +129,6 @@ val appModule =
                 deleteBarcodeUseCase = get(),
                 barcodeScanner = get(),
                 productMapper = get(),
-                productIdGenerator = get(),
                 appNavigation = get(),
                 errorHandler = get(),
                 clockUtil = get(),
