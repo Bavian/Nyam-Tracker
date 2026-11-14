@@ -13,6 +13,7 @@ import com.bavian.nyam.tracker.presentation.navigation.AppNavigation
 import com.bavian.nyam.tracker.presentation.scanner.BarcodeScanner
 import com.bavian.nyam.tracker.presentation.setproduct.mapper.SetProductUiStateMapper
 import com.bavian.nyam.tracker.presentation.util.ErrorHandler
+import com.bavian.nyam.tracker.utils.ClockUtil
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,6 +34,7 @@ class SetProductViewModel(
     productIdGenerator: ProductIdGenerator,
     private val appNavigation: AppNavigation,
     private val errorHandler: ErrorHandler,
+    private val clockUtil: ClockUtil,
 ) : ViewModel() {
     private val _uiState =
         MutableStateFlow(
@@ -174,6 +176,7 @@ class SetProductViewModel(
             BarcodeInfo(
                 number = barcode,
                 productId = productId,
+                lastModifiedTimestamp = clockUtil.epoch,
             ),
         )
     }
@@ -188,6 +191,7 @@ class SetProductViewModel(
                             BarcodeInfo(
                                 number = scannerState.barcode,
                                 productId = uiState.value.id,
+                                lastModifiedTimestamp = clockUtil.epoch,
                             ),
                         )
                         loadBarcodes()

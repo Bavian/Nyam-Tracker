@@ -132,6 +132,7 @@ val appModule =
                 productIdGenerator = get(),
                 appNavigation = get(),
                 errorHandler = get(),
+                clockUtil = get(),
             )
         }
         viewModel { params ->

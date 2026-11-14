@@ -10,4 +10,6 @@ data class BarcodeInfoEntity(
     val number: String,
     @ColumnInfo(name = "product_id")
     val productId: String,
+    @ColumnInfo(name = "last_modified_timestamp")
+    val lastModifiedTimestamp: Long,
 )
