@@ -8,5 +8,6 @@ data class WeightsInfo(
     data class Item(
         val weight: Float,
         val timestamp: Long,
+        val lastModifiedTimestamp: Long,
     )
 }
