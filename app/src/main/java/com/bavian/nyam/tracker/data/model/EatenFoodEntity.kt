@@ -25,6 +25,8 @@ data class EatenFoodEntity(
     val carbohydrates: Int,
     @ColumnInfo(name = "timestamp")
     val timestamp: Long,
+    @ColumnInfo(name = "last_modified_timestamp")
+    val lastModifiedTimestamp: Long,
     @ColumnInfo(name = "price")
     val price: Float,
 )

@@ -144,6 +144,7 @@ val appModule =
                 deleteEatenFoodUseCase = lazy { get<DeleteEatenFoodUseCase>() },
                 appNavigation = get(),
                 productIdGenerator = get(),
+                clockUtil = get(),
             )
         }
         viewModel { params ->
