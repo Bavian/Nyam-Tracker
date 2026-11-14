@@ -2,8 +2,11 @@ package com.bavian.nyam.tracker.presentation.setproduct.mapper
 
 import com.bavian.nyam.tracker.domain.model.Product
 import com.bavian.nyam.tracker.presentation.setproduct.SetProductViewModelState
+import com.bavian.nyam.tracker.utils.ClockUtil
 
-class SetProductUiStateMapperImpl : SetProductUiStateMapper {
+class SetProductUiStateMapperImpl(
+    private val clockUtil: ClockUtil,
+) : SetProductUiStateMapper {
     override fun mapToDomain(state: SetProductViewModelState): Product =
         Product(
             id = state.id,
@@ -14,5 +17,6 @@ class SetProductUiStateMapperImpl : SetProductUiStateMapper {
             fat = state.fat,
             carbohydrates = state.carbohydrates,
             price = state.price,
+            timestamp = clockUtil.epoch,
         )
 }

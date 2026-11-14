@@ -102,6 +102,8 @@ import com.bavian.nyam.tracker.presentation.setweight.mapper.SetWeightScreenStat
 import com.bavian.nyam.tracker.presentation.setweight.mapper.SetWeightScreenStateMapperImpl
 import com.bavian.nyam.tracker.presentation.util.ErrorHandler
 import com.bavian.nyam.tracker.presentation.util.ErrorHandlerImpl
+import com.bavian.nyam.tracker.utils.ClockUtil
+import com.bavian.nyam.tracker.utils.ClockUtilImpl
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
@@ -191,6 +193,7 @@ val appModule =
 
         factoryOf(::ProductIdGeneratorImpl) bind ProductIdGenerator::class
         factoryOf(::StringDistanceCalculatorDamerauLevenshteinImpl) bind StringDistanceCalculator::class
+        factoryOf(::ClockUtilImpl) bind ClockUtil::class
 
         factoryOf(::ProductMapperImpl) bind ProductMapper::class
         factoryOf(::EatenFoodMapperImpl) bind EatenFoodMapper::class
