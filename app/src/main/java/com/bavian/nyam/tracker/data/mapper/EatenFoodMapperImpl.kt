@@ -16,6 +16,7 @@ class EatenFoodMapperImpl : EatenFoodMapper {
             fat = domain.fat.times(100).roundToInt(),
             carbohydrates = domain.carbohydrates.times(100).roundToInt(),
             timestamp = domain.timestamp,
+            lastModifiedTimestamp = domain.lastModifiedTimestamp,
             price = domain.price,
         )
 
@@ -30,6 +31,7 @@ class EatenFoodMapperImpl : EatenFoodMapper {
             fat = entity.fat / 100f,
             carbohydrates = entity.carbohydrates / 100f,
             timestamp = entity.timestamp,
+            lastModifiedTimestamp = entity.lastModifiedTimestamp,
             price = entity.price,
         )
 }

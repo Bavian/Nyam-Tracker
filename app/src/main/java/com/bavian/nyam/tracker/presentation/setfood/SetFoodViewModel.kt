@@ -10,6 +10,7 @@ import com.bavian.nyam.tracker.domain.usecase.eatenfood.DeleteEatenFoodUseCase
 import com.bavian.nyam.tracker.domain.usecase.eatenfood.GetEatenFoodByIdUseCase
 import com.bavian.nyam.tracker.domain.usecase.product.GetProductByIdUseCase
 import com.bavian.nyam.tracker.presentation.navigation.AppNavigation
+import com.bavian.nyam.tracker.utils.ClockUtil
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,6 +33,7 @@ class SetFoodViewModel(
     private val deleteEatenFoodUseCase: Lazy<DeleteEatenFoodUseCase>,
     private val appNavigation: AppNavigation,
     productIdGenerator: ProductIdGenerator,
+    private val clockUtil: ClockUtil,
 ) : ViewModel() {
     private val _uiState =
         MutableStateFlow(
@@ -193,6 +195,7 @@ class SetFoodViewModel(
                     fat = state.fatPer100 * factor,
                     carbohydrates = state.carbohydratesPer100 * factor,
                     timestamp = timestamp,
+                    lastModifiedTimestamp = clockUtil.epoch,
                     price = state.pricePer100 * factor,
                 )
             addEatenFoodUseCase.value.execute(eatenFood)
