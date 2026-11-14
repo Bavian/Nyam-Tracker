@@ -116,7 +116,22 @@ val appModule =
         singleOf(::AppNavigationImpl) bind AppNavigation::class
         viewModelOf(::MainViewModel)
         viewModelOf(::ProductsListViewModel)
-        viewModelOf(::SetProductViewModel)
+        viewModel { params ->
+            SetProductViewModel(
+                initialProductId = params.getOrNull(),
+                barcode = params.getOrNull(),
+                addProductUseCase = get(),
+                getProductByIdUseCase = get(),
+                setBarcodeUseCase = get(),
+                getBarcodesByProductIdUseCase = get(),
+                deleteBarcodeUseCase = get(),
+                barcodeScanner = get(),
+                productMapper = get(),
+                productIdGenerator = get(),
+                appNavigation = get(),
+                errorHandler = get(),
+            )
+        }
         viewModel { params ->
             SetFoodViewModel(
                 initialStateSource = params.get(),
