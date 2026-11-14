@@ -9,5 +9,5 @@ data class Product(
     val fat: Float,
     val carbohydrates: Float,
     val price: Float,
-    val timestamp: Long,
+    val lastModifiedTimestamp: Long,
 )

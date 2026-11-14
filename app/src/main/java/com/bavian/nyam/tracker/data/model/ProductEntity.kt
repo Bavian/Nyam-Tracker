@@ -23,6 +23,6 @@ data class ProductEntity(
     val carbohydrates: Int,
     @ColumnInfo(name = "price")
     val price: Float,
-    @ColumnInfo(name = "timestamp")
-    val timestamp: Long,
+    @ColumnInfo(name = "last_modified_timestamp")
+    val lastModifiedTimestamp: Long,
 )

@@ -17,6 +17,6 @@ class SetProductUiStateMapperImpl(
             fat = state.fat,
             carbohydrates = state.carbohydrates,
             price = state.price,
-            timestamp = clockUtil.epoch,
+            lastModifiedTimestamp = clockUtil.epoch,
         )
 }
