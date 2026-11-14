@@ -8,11 +8,13 @@ class BarcodeMapperImpl : BarcodeMapper {
         BarcodeInfoEntity(
             number = domain.number,
             productId = domain.productId,
+            lastModifiedTimestamp = domain.lastModifiedTimestamp,
         )
 
     override fun mapToDomain(entity: BarcodeInfoEntity): BarcodeInfo =
         BarcodeInfo(
             number = entity.number,
             productId = entity.productId,
+            lastModifiedTimestamp = entity.lastModifiedTimestamp,
         )
 }
