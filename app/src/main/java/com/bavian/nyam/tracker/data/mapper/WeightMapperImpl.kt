@@ -8,11 +8,13 @@ class WeightMapperImpl : WeightMapper {
         WeightEntity(
             weight = domain.weight,
             timestamp = domain.timestamp,
+            lastModifiedTimestamp = domain.lastModifiedTimestamp,
         )
 
     override fun mapToDomain(entity: WeightEntity): WeightsInfo.Item =
         WeightsInfo.Item(
             weight = entity.weight,
             timestamp = entity.timestamp,
+            lastModifiedTimestamp = entity.lastModifiedTimestamp,
         )
 }

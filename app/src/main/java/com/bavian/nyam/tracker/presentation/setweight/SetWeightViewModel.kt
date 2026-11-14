@@ -7,6 +7,7 @@ import com.bavian.nyam.tracker.domain.usecase.weight.DeleteWeightUseCase
 import com.bavian.nyam.tracker.domain.usecase.weight.GetNearestWeightUseCase
 import com.bavian.nyam.tracker.domain.usecase.weight.SetWeightUseCase
 import com.bavian.nyam.tracker.presentation.navigation.AppNavigation
+import com.bavian.nyam.tracker.utils.ClockUtil
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,6 +30,7 @@ class SetWeightViewModel(
     private val setWeightUseCase: Lazy<SetWeightUseCase>,
     private val deleteWeightUseCase: Lazy<DeleteWeightUseCase>,
     private val appNavigation: AppNavigation,
+    private val clockUtil: ClockUtil,
 ) : ViewModel() {
     private val initialDate: LocalDate
     private val initialTime: LocalTime
@@ -128,6 +130,7 @@ class SetWeightViewModel(
                 WeightsInfo.Item(
                     weight = weightFloat,
                     timestamp = timestamp,
+                    lastModifiedTimestamp = clockUtil.epoch,
                 ),
             )
             appNavigation.back()

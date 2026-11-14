@@ -154,6 +154,7 @@ val appModule =
                 setWeightUseCase = lazy { get<SetWeightUseCase>() },
                 deleteWeightUseCase = lazy { get<DeleteWeightUseCase>() },
                 appNavigation = get(),
+                clockUtil = get(),
             )
         }
 
