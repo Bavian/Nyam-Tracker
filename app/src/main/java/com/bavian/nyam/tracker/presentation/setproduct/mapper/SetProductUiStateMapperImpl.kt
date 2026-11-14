@@ -1,15 +1,17 @@
 package com.bavian.nyam.tracker.presentation.setproduct.mapper
 
+import com.bavian.nyam.tracker.domain.infrastructure.ProductIdGenerator
 import com.bavian.nyam.tracker.domain.model.Product
 import com.bavian.nyam.tracker.presentation.setproduct.SetProductViewModelState
 import com.bavian.nyam.tracker.utils.ClockUtil
 
 class SetProductUiStateMapperImpl(
     private val clockUtil: ClockUtil,
+    private val productIdGenerator: ProductIdGenerator,
 ) : SetProductUiStateMapper {
     override fun mapToDomain(state: SetProductViewModelState): Product =
         Product(
-            id = state.id,
+            id = state.id ?: productIdGenerator.generateId(),
             manufacturer = state.manufacturer,
             name = state.name,
             calories = state.calories,

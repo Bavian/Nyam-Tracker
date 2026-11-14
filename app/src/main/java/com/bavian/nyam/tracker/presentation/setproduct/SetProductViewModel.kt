@@ -2,7 +2,6 @@ package com.bavian.nyam.tracker.presentation.setproduct
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bavian.nyam.tracker.domain.infrastructure.ProductIdGenerator
 import com.bavian.nyam.tracker.domain.model.BarcodeInfo
 import com.bavian.nyam.tracker.domain.usecase.barcode.DeleteBarcodeUseCase
 import com.bavian.nyam.tracker.domain.usecase.barcode.GetBarcodesByProductIdUseCase
@@ -22,8 +21,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SetProductViewModel(
-    private val initialProductId: String?,
-    private val barcode: String?,
+    initialProductId: String?,
+    barcode: String?,
     private val addProductUseCase: AddProductUseCase,
     private val getProductByIdUseCase: GetProductByIdUseCase,
     private val setBarcodeUseCase: SetBarcodeUseCase,
@@ -31,7 +30,6 @@ class SetProductViewModel(
     private val deleteBarcodeUseCase: DeleteBarcodeUseCase,
     private val barcodeScanner: BarcodeScanner,
     private val productMapper: SetProductUiStateMapper,
-    productIdGenerator: ProductIdGenerator,
     private val appNavigation: AppNavigation,
     private val errorHandler: ErrorHandler,
     private val clockUtil: ClockUtil,
@@ -40,8 +38,9 @@ class SetProductViewModel(
         MutableStateFlow(
             value =
                 SetProductViewModelState(
-                    id = initialProductId ?: productIdGenerator.generateId(),
+                    id = initialProductId,
                     productLoading = initialProductId != null,
+                    initialBarcode = barcode,
                 ),
         )
     val uiState: StateFlow<SetProductViewModelState> = _uiState.asStateFlow()
@@ -115,7 +114,7 @@ class SetProductViewModel(
     }
 
     private fun loadProductIfIdExists() {
-        initialProductId?.let { id ->
+        _uiState.value.id?.let { id ->
             _uiState.update { it.copy(productLoading = true) }
 
             viewModelScope.launch {
@@ -141,10 +140,11 @@ class SetProductViewModel(
     }
 
     private fun loadBarcodes() {
-        _uiState.update { it.copy(barcodesLoading = true) }
+        val id = _uiState.value.id ?: return
 
+        _uiState.update { it.copy(barcodesLoading = true) }
         viewModelScope.launch {
-            val productBarcodes = getBarcodesByProductIdUseCase.execute(uiState.value.id)
+            val productBarcodes = getBarcodesByProductIdUseCase.execute(id)
             _uiState.update { currentState ->
                 currentState.copy(
                     barcodes = productBarcodes.barcodes.map { it.number }.toImmutableList(),
@@ -160,8 +160,9 @@ class SetProductViewModel(
             val domainProduct = productMapper.mapToDomain(state)
             addProductUseCase.execute(domainProduct)
 
-            if (!barcode.isNullOrBlank()) {
-                saveBarcodeInfo(barcode, domainProduct.id)
+            val currentBarcode = state.initialBarcode
+            if (!currentBarcode.isNullOrBlank()) {
+                saveBarcodeInfo(currentBarcode, domainProduct.id)
             }
 
             appNavigation.back(result = domainProduct.id)
@@ -187,14 +188,19 @@ class SetProductViewModel(
                 .startScan()
                 .onSuccess { scannerState ->
                     if (scannerState.barcode.isNotBlank()) {
-                        setBarcodeUseCase.execute(
-                            BarcodeInfo(
-                                number = scannerState.barcode,
-                                productId = uiState.value.id,
-                                lastModifiedTimestamp = clockUtil.epoch,
-                            ),
-                        )
-                        loadBarcodes()
+                        val id = _uiState.value.id
+                        if (id == null) {
+                            _uiState.update { it.copy(initialBarcode = scannerState.barcode) }
+                        } else {
+                            setBarcodeUseCase.execute(
+                                BarcodeInfo(
+                                    number = scannerState.barcode,
+                                    productId = id,
+                                    lastModifiedTimestamp = clockUtil.epoch,
+                                ),
+                            )
+                            loadBarcodes()
+                        }
                     }
                 }.onFailure(errorHandler::handleError)
         }
@@ -203,10 +209,17 @@ class SetProductViewModel(
     private fun deleteBarcode() {
         val barcodeToDelete = _uiState.value.barcodeToDelete
         if (barcodeToDelete != "") {
-            viewModelScope.launch {
-                deleteBarcodeUseCase(barcodeToDelete)
+            if (barcodeToDelete == _uiState.value.initialBarcode) {
+                _uiState.update { it.copy(initialBarcode = null) }
+            }
+            if (_uiState.value.barcodes.contains(barcodeToDelete)) {
+                viewModelScope.launch {
+                    deleteBarcodeUseCase(barcodeToDelete)
+                    _uiState.update { it.copy(barcodeToDelete = "") }
+                    loadBarcodes()
+                }
+            } else {
                 _uiState.update { it.copy(barcodeToDelete = "") }
-                loadBarcodes()
             }
         }
     }

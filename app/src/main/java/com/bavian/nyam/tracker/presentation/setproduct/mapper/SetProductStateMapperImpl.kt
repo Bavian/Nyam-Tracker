@@ -1,9 +1,9 @@
 package com.bavian.nyam.tracker.presentation.setproduct.mapper
 
-import com.bavian.nyam.tracker.base.mapAsImmutableList
 import com.bavian.nyam.tracker.presentation.setproduct.SetProductScreen
 import com.bavian.nyam.tracker.presentation.setproduct.SetProductViewModelState
 import com.bavian.nyam.tracker.ui.model.stringSource
+import com.bavian.nyam.tracker.utils.buildPersistentList
 
 class SetProductStateMapperImpl : SetProductStateMapper {
     override fun map(state: SetProductViewModelState): SetProductScreen.State {
@@ -21,7 +21,13 @@ class SetProductStateMapperImpl : SetProductStateMapper {
             fat = state.fat,
             carbohydrates = state.carbohydrates,
             price = state.price,
-            barcodes = state.barcodes.mapAsImmutableList { it.stringSource },
+            barcodes =
+                buildPersistentList {
+                    state.barcodes.forEach { add(it.stringSource) }
+                    if (!state.initialBarcode.isNullOrBlank() && (state.initialBarcode !in state.barcodes)) {
+                        add(state.initialBarcode.stringSource)
+                    }
+                },
             barcodeToDelete = state.barcodeToDelete.stringSource,
         )
     }
