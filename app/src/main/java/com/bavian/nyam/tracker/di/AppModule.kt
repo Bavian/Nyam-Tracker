@@ -100,6 +100,11 @@ import com.bavian.nyam.tracker.presentation.setweight.mapper.SetWeightScreenEven
 import com.bavian.nyam.tracker.presentation.setweight.mapper.SetWeightScreenEventMapperImpl
 import com.bavian.nyam.tracker.presentation.setweight.mapper.SetWeightScreenStateMapper
 import com.bavian.nyam.tracker.presentation.setweight.mapper.SetWeightScreenStateMapperImpl
+import com.bavian.nyam.tracker.presentation.stats.StatsViewModel
+import com.bavian.nyam.tracker.presentation.stats.mapper.StatsScreenEventMapper
+import com.bavian.nyam.tracker.presentation.stats.mapper.StatsScreenEventMapperImpl
+import com.bavian.nyam.tracker.presentation.stats.mapper.StatsScreenStateMapper
+import com.bavian.nyam.tracker.presentation.stats.mapper.StatsScreenStateMapperImpl
 import com.bavian.nyam.tracker.presentation.util.ErrorHandler
 import com.bavian.nyam.tracker.presentation.util.ErrorHandlerImpl
 import com.bavian.nyam.tracker.utils.ClockUtil
@@ -118,6 +123,7 @@ val appModule =
         singleOf(::AppNavigationImpl) bind AppNavigation::class
         viewModelOf(::MainViewModel)
         viewModelOf(::ProductsListViewModel)
+        viewModelOf(::StatsViewModel)
         viewModel { params ->
             SetProductViewModel(
                 initialProductId = params[0],
@@ -212,6 +218,8 @@ val appModule =
         factoryOf(::SetFoodScreenStateMapperImpl) bind SetFoodScreenStateMapper::class
         factoryOf(::SetWeightScreenEventMapperImpl) bind SetWeightScreenEventMapper::class
         factoryOf(::SetWeightScreenStateMapperImpl) bind SetWeightScreenStateMapper::class
+        factoryOf(::StatsScreenStateMapperImpl) bind StatsScreenStateMapper::class
+        factoryOf(::StatsScreenEventMapperImpl) bind StatsScreenEventMapper::class
         factoryOf(::ProductRepositoryImpl) bind ProductRepository::class
         factoryOf(::EatenFoodRepositoryImpl) bind EatenFoodRepository::class
         factoryOf(::AddProductUseCaseImpl) bind AddProductUseCase::class

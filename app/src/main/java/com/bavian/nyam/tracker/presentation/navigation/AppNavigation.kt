@@ -22,6 +22,8 @@ interface AppNavigation {
 
     fun openSetWeightScreen(timestamp: Long? = null)
 
+    fun openStatsScreen()
+
     sealed interface NavigationAction {
         data class Back(
             val result: Any? = null,

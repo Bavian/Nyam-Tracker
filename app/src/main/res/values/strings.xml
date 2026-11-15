@@ -78,4 +78,8 @@
     <string name="set_weight_delete_dialog_cancel">Cancel</string>
 
     <string name="calories_summary_format">%1$d kcal</string>
+
+    <string name="stats_screen_title">Period Statistics</string>
+    <string name="stats_back_description">Back</string>
+    <string name="stats_average_format">Avg: %1$s</string>
 </resources>

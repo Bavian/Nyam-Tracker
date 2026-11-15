@@ -27,4 +27,7 @@ sealed interface AppRoute : NavKey {
     data class SetWeight(
         val timestamp: Long? = null,
     ) : AppRoute
+
+    @Serializable
+    data object Stats : AppRoute
 }
