@@ -1,9 +1,9 @@
 package com.bavian.nyam.tracker.presentation.main.mapper
 
+import com.bavian.nyam.tracker.R
 import com.bavian.nyam.tracker.presentation.main.MainScreen
 import com.bavian.nyam.tracker.presentation.main.MainScreenViewModelState
 import com.bavian.nyam.tracker.ui.model.StringSource
-import com.bavian.nyam.tracker.ui.model.stringSource
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -13,9 +13,9 @@ class MainScreenStateMapperImpl : MainScreenStateMapper {
     override fun map(state: MainScreenViewModelState): MainScreen.State {
         val weightSource =
             if (state.weight == null) {
-                StringSource.Empty
+                StringSource.Resource(R.string.main_weight_empty)
             } else {
-                "${formatNumber(state.weight)} kg".stringSource
+                StringSource.Resource(R.string.main_weight_format, formatNumber(state.weight))
             }
 
         if (state.loading) {

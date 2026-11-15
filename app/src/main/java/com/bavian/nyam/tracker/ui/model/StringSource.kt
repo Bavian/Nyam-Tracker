@@ -23,7 +23,7 @@ sealed interface StringSource {
         constructor(resId: Int, vararg formatArgs: Any) : this(resId, formatArgs.toList())
 
         @Composable
-        override fun get(): String = stringResource(resId)
+        override fun get(): String = stringResource(resId, formatArgs = formatArgs.toTypedArray())
     }
 
     companion object {
