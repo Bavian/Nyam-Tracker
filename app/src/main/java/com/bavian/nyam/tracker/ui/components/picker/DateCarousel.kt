@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.bavian.nyam.tracker.R
+import com.bavian.nyam.tracker.ui.theme.NyamTrackerTheme
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -195,7 +196,7 @@ private fun formatDate(date: LocalDate): String {
 private fun DateCarouselPreview(
     @PreviewParameter(DateCarouselPreviewParameterProvider::class)
     state: DateCarousel.State,
-) {
+) = NyamTrackerTheme {
     DateCarousel(
         state = state,
         onEvent = {},

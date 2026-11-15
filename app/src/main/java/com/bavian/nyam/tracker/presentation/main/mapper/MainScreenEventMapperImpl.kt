@@ -14,5 +14,6 @@ class MainScreenEventMapperImpl : MainScreenEventMapper {
             is MainScreen.Event.EatenFoodEditTap -> MainScreenViewModelEvent.EatenFoodEditTap(event.foodId)
             is MainScreen.Event.EatenFoodDeleteTap -> MainScreenViewModelEvent.EatenFoodDeleteTap(event.foodId)
             is MainScreen.Event.WeightTap -> MainScreenViewModelEvent.WeightTap
+            is MainScreen.Event.StatsTap -> MainScreenViewModelEvent.StatsTap
         }
 }

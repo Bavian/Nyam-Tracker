@@ -59,4 +59,10 @@ class AppNavigationImpl : AppNavigation {
             NavigationAction.Navigate(AppRoute.SetWeight(timestamp)),
         )
     }
+
+    override fun openStatsScreen() {
+        _navigationActions.tryEmit(
+            NavigationAction.Navigate(AppRoute.Stats),
+        )
+    }
 }

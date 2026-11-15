@@ -26,4 +26,6 @@ sealed interface MainScreenViewModelEvent {
     ) : MainScreenViewModelEvent
 
     data object WeightTap : MainScreenViewModelEvent
+
+    data object StatsTap : MainScreenViewModelEvent
 }

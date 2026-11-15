@@ -49,6 +49,7 @@ class MainViewModel(
             is MainScreenViewModelEvent.EatenFoodEditTap -> openEditFoodScreen(event.foodId)
             is MainScreenViewModelEvent.EatenFoodDeleteTap -> deleteEatenFood(event.foodId)
             is MainScreenViewModelEvent.WeightTap -> openSetWeightScreen()
+            is MainScreenViewModelEvent.StatsTap -> appNavigation.openStatsScreen()
         }
     }
 

@@ -31,6 +31,10 @@ import com.bavian.nyam.tracker.presentation.setweight.SetWeightViewModel
 import com.bavian.nyam.tracker.presentation.setweight.compose.SetWeightScreen
 import com.bavian.nyam.tracker.presentation.setweight.mapper.SetWeightScreenEventMapper
 import com.bavian.nyam.tracker.presentation.setweight.mapper.SetWeightScreenStateMapper
+import com.bavian.nyam.tracker.presentation.stats.StatsScreen
+import com.bavian.nyam.tracker.presentation.stats.StatsViewModel
+import com.bavian.nyam.tracker.presentation.stats.mapper.StatsScreenEventMapper
+import com.bavian.nyam.tracker.presentation.stats.mapper.StatsScreenStateMapper
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
@@ -128,6 +132,17 @@ fun AppNavGraph(appNavigation: AppNavigation = koinInject()) {
                     val eventMapper = koinInject<SetWeightScreenEventMapper>()
                     val state by viewModel.uiState.collectAsStateWithLifecycle()
                     SetWeightScreen(
+                        state = stateMapper.map(state),
+                        onEvent = { eventMapper.map(it).let(viewModel::onEvent) },
+                    )
+                }
+
+                entry<AppRoute.Stats> {
+                    val viewModel: StatsViewModel = koinViewModel()
+                    val stateMapper = koinInject<StatsScreenStateMapper>()
+                    val eventMapper = koinInject<StatsScreenEventMapper>()
+                    val state by viewModel.uiState.collectAsStateWithLifecycle()
+                    StatsScreen(
                         state = stateMapper.map(state),
                         onEvent = { eventMapper.map(it).let(viewModel::onEvent) },
                     )
