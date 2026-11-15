@@ -57,12 +57,12 @@ object MainScreen {
 
         data class Loading(
             override val selectedDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
-            override val weight: StringSource = "-- kg".stringSource,
+            override val weight: StringSource = StringSource.Resource(R.string.main_weight_empty),
         ) : State
 
         data class Success(
             override val selectedDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
-            override val weight: StringSource = "-- kg".stringSource,
+            override val weight: StringSource = StringSource.Resource(R.string.main_weight_empty),
             val eatenFoodGroups: ImmutableList<EatenFoodGroup> = persistentListOf(),
             val kCalories: Float = 0f,
             val proteins: Float = 0f,
